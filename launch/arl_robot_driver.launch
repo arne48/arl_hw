@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+  <!-- Driver parameters -->
+  <param name="/arl_hw/using_rpi" value="false" type="bool"/>
+
+  <!-- Robot Driver -->
+  <node pkg="arl_hw" type="arl_driver_node" name="arl_driver_node" />
+
+</launch>

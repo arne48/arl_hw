@@ -25,6 +25,7 @@ struct timespec tick;
 
 
 void terminationHandler(int signal) {
+  ROS_INFO("Received Signal %d", signal);
 }
 
 void timespecInc(struct timespec *tick, int ns) {
@@ -54,6 +55,8 @@ void *controlLoop(void *) {
   ros::NodeHandle nh;
 
   ARLRobot robot;
+  robot.initialize(nh);
+
   controller_manager::ControllerManager cm(&robot, nh);
 
   // Set real-time scheduler
