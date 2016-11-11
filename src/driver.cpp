@@ -1,9 +1,31 @@
+#include <stdio.h>
+#include <getopt.h>
+#include <execinfo.h>
+#include <signal.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <pthread.h>
+
 #include <ros/ros.h>
 #include <arl_hw/robot.h>
 #include <controller_manager/controller_manager.h>
 
+
+#define CLOCK_PRIO 0
+#define CONTROL_PRIO 0
+
+static pthread_t controlThread;
+static pthread_attr_t controlThreadAttr;
+
 struct timespec ts = {0, 0};
 struct timespec tick;
+
+
+void terminationHandler(int signal) {
+}
 
 void timespecInc(struct timespec *tick, int ns) {
   tick->tv_nsec += ns;
@@ -27,17 +49,19 @@ void waitForNextControlLoop(struct timespec tick, int sampling_ns) {
   clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tick, NULL);
 }
 
-int main(int argc, char **argv) {
+void *controlLoop(void *) {
 
-  //Initialize ROS communication
-  ros::init(argc, argv, "arl_driver_node");
   ros::NodeHandle nh;
 
   ARLRobot robot;
   controller_manager::ControllerManager cm(&robot, nh);
 
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
+  // Set real-time scheduler
+  struct sched_param thread_param;
+  int policy = SCHED_FIFO;
+  thread_param.sched_priority = sched_get_priority_max(policy);
+  pthread_setschedparam(pthread_self(), policy, &thread_param);
+
 
   //Set update rate with ROS datatype in HZ
   ros::Rate rate(1000); //HZ
@@ -82,4 +106,34 @@ int main(int argc, char **argv) {
     waitForNextControlLoop(tick, int(rate.expectedCycleTime().toNSec()));
 
   }
+
+}
+
+int main(int argc, char **argv) {
+
+  // Keep the kernel from swapping us out
+  if (mlockall(MCL_CURRENT | MCL_FUTURE) < 0) {
+    perror("mlockall");
+    return -1;
+  }
+
+  //Initialize ROS communication
+  ros::init(argc, argv, "arl_driver_node");
+
+
+  // Catch attempts to quit
+  signal(SIGTERM, terminationHandler);
+  signal(SIGINT, terminationHandler);
+  signal(SIGHUP, terminationHandler);
+
+  //Start thread
+  int rv;
+  if ((rv = pthread_create(&controlThread, &controlThreadAttr, controlLoop, 0)) != 0) {
+    ROS_FATAL("Unable to create control thread: rv = %d", rv);
+    exit(EXIT_FAILURE);
+  }
+
+  ros::spin();
+  pthread_join(controlThread, (void **)&rv);
+
 }
