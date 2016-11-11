@@ -7,6 +7,8 @@ class ARLRobot : public hardware_interface::RobotHW {
 public:
   ARLRobot();
   ~ARLRobot();
+  void initialize();
+  void close();
   void read(const ros::Time& time, const ros::Duration& period);
   void write(const ros::Time& time, const ros::Duration& period);
 

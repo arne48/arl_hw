@@ -95,7 +95,7 @@ void *controlLoop(void *) {
       break;
     }
 
-    ROS_INFO("Loops ran at %fhz off by %dms", 1 / period.toSec(), int(period.toNSec() - rate.expectedCycleTime().toNSec()) / 1000);
+    ROS_INFO("Loops ran at %fhz off by %dus", 1 / period.toSec(), int(period.toNSec() - rate.expectedCycleTime().toNSec()) / 1000);
 
     //Main update
     robot.read(now, period);
