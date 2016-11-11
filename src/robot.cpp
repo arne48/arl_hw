@@ -22,10 +22,8 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
   }else {
 
     wiringPiSetup();
-    for (int pin = 0; pin < 8; ++pin) {
-      pinMode(pin, OUTPUT);
-      digitalWrite (pin, 0);
-    }
+    pinMode(0, OUTPUT);
+    digitalWrite (0, LOW);
 
     initialized = true;
     ROS_INFO("RPi initialized");
@@ -43,6 +41,9 @@ void ARLRobot::read(const ros::Time& time, const ros::Duration& period) {
     return;
   }
 
+  digitalWrite (0, HIGH);
+  delay(10);
+
   ROS_DEBUG("READ with %f hz", 1 / period.toSec());
 }
 
@@ -52,5 +53,8 @@ void ARLRobot::write(const ros::Time& time, const ros::Duration& period) {
     return;
   }
 
+  digitalWrite (0, LOW);
+  delay(10);
+  
   ROS_DEBUG("WRITE with %f hz", 1 / period.toSec());
 }
