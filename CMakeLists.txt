@@ -137,6 +137,7 @@ add_executable(arl_driver_node src/driver.cpp)
 ## Specify libraries to link a library or executable target against
 target_link_libraries(arl_robot
   ${catkin_LIBRARIES}
+  ${WIRINGPI_LIBRARIES}
 )
 
 target_link_libraries(arl_driver_node

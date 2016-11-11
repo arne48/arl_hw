@@ -13,6 +13,7 @@ public:
   void write(const ros::Time& time, const ros::Duration& period);
 
 private:
+  bool initialized;
   ros::Time last_read_;
   ros::Time last_write_;
 };
