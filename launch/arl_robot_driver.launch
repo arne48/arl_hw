@@ -2,7 +2,7 @@
 <launch>
 
   <!-- Driver parameters -->
-  <param name="/arl_hw/using_rpi" value="false" type="bool"/>
+  <param name="/arl_hw/using_rpi" value="true" type="bool"/>
 
   <!-- Robot Driver -->
   <node pkg="arl_hw" type="arl_driver_node" name="arl_driver_node" />

@@ -120,6 +120,7 @@ include_directories(
 ## Declare a C++ library
 add_library(arl_robot
    src/robot.cpp
+   src/raspberry_pi.cpp
 )
 
 ## Add cmake target dependencies of the library
