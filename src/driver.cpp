@@ -137,6 +137,6 @@ int main(int argc, char **argv) {
   }
 
   ros::spin();
-  pthread_join(controlThread, (void **)&rv);
+  pthread_join(controlThread, (void **) &rv);
 
 }

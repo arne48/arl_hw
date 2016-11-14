@@ -5,16 +5,21 @@
 #include <arl_hw/communication_device.h>
 #include <wiringPi.h>
 
-class RaspberryPi: public CommunicationDevice {
-	
-	public:
-	  RaspberryPi();
-	  ~RaspberryPi();
-	  virtual bool read();
-	  virtual bool write();
-	  virtual bool initialize();
-	  virtual bool close();
-	  
+class RaspberryPi : public CommunicationDevice {
+
+public:
+  RaspberryPi();
+
+  ~RaspberryPi();
+
+  virtual bool read();
+
+  virtual bool write();
+
+  virtual bool initialize();
+
+  virtual bool close();
+
 };
 
 #endif // RASPBERRY_PI_H
