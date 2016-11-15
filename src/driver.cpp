@@ -1,12 +1,7 @@
 #include <stdio.h>
-#include <getopt.h>
-#include <execinfo.h>
 #include <signal.h>
 #include <sys/mman.h>
 #include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <fcntl.h>
 #include <pthread.h>
 
 #include <ros/ros.h>
@@ -109,6 +104,8 @@ void *controlLoop(void *) {
     waitForNextControlLoop(tick, int(rate.expectedCycleTime().toNSec()));
 
   }
+
+  robot.close();
 
 }
 

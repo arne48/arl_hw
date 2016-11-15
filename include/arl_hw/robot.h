@@ -8,6 +8,7 @@
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/robot_hw.h>
 
+#include <arl_hw/datatypes.h>
 #include <arl_hw/communication_device.h>
 #include <arl_hw/raspberry_pi.h>
 #include <arl_hw/dummy.h>

@@ -6,11 +6,12 @@ Dummy::Dummy() {
 Dummy::~Dummy() {
 }
 
-bool Dummy::read() {
-  return true;
+arl_datatypes::device_data Dummy::read() {
+  arl_datatypes::device_data ret;
+  return ret;
 }
 
-bool Dummy::write() {
+bool Dummy::write(arl_datatypes::device_command) {
   return true;
 }
 

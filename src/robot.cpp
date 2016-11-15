@@ -52,7 +52,7 @@ void ARLRobot::read(const ros::Time &time, const ros::Duration &period) {
     return;
   }
 
-  dev->read();
+  arl_datatypes::device_data data = dev->read();
 
   ROS_DEBUG("READ with %f hz", 1 / period.toSec());
 }
@@ -63,7 +63,8 @@ void ARLRobot::write(const ros::Time &time, const ros::Duration &period) {
     return;
   }
 
-  dev->write();
+  arl_datatypes::device_command command;
+  dev->write(command);
 
   ROS_DEBUG("WRITE with %f hz", 1 / period.toSec());
 }

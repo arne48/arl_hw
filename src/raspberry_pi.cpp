@@ -6,15 +6,17 @@ RaspberryPi::RaspberryPi() {
 RaspberryPi::~RaspberryPi() {
 }
 
-bool RaspberryPi::read() {
+arl_datatypes::device_data RaspberryPi::read() {
 
   delayMicroseconds(100);
   digitalWrite(0, HIGH);
 
-  return true;
+  arl_datatypes::device_data ret;
+
+  return ret;
 }
 
-bool RaspberryPi::write() {
+bool RaspberryPi::write(arl_datatypes::device_command command) {
 
   delayMicroseconds(100);
   digitalWrite(0, LOW);

@@ -1,6 +1,7 @@
 #ifndef COMMUNICATION_DEVICE_H
 #define COMMUNICATION_DEVICE_H
 
+#include <arl_hw/datatypes.h>
 
 class CommunicationDevice {
 
@@ -9,9 +10,9 @@ public:
 
   virtual ~CommunicationDevice() {};
 
-  virtual bool read() = 0;
+  virtual arl_datatypes::device_data read() = 0;
 
-  virtual bool write() = 0;
+  virtual bool write(arl_datatypes::device_command) = 0;
 
   virtual bool initialize() = 0;
 
