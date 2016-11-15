@@ -10,6 +10,7 @@
 
 #include <arl_hw/communication_device.h>
 #include <arl_hw/raspberry_pi.h>
+#include <arl_hw/dummy.h>
 #include <arl_interfaces/muscle_interface.h>
 #include <arl_controllers/muscle_controller.h>
 

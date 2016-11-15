@@ -15,7 +15,7 @@ ARLRobot::~ARLRobot() {
     return;
   }
 
-  //dev->close();
+  dev->close();
 }
 
 void ARLRobot::initialize(ros::NodeHandle nh) {
@@ -24,8 +24,11 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
   nh.param<bool>("/arl_hw/using_rpi", using_rpi, false);
 
   if (!using_rpi) {
+
+    dev = new Dummy();
     initialized = true;
-    ROS_WARN("using dummy interface");
+
+    ROS_INFO("Using dummy interface");
 
   } else {
 
@@ -38,7 +41,9 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
 }
 
 void ARLRobot::close() {
-  ROS_INFO("RPi de-initialized");
+  dev->close();
+
+  ROS_INFO("Device uninitialized");
 }
 
 void ARLRobot::read(const ros::Time &time, const ros::Duration &period) {
@@ -47,7 +52,7 @@ void ARLRobot::read(const ros::Time &time, const ros::Duration &period) {
     return;
   }
 
-  //dev->read();
+  dev->read();
 
   ROS_DEBUG("READ with %f hz", 1 / period.toSec());
 }
@@ -58,7 +63,7 @@ void ARLRobot::write(const ros::Time &time, const ros::Duration &period) {
     return;
   }
 
-  //dev->write();
+  dev->write();
 
   ROS_DEBUG("WRITE with %f hz", 1 / period.toSec());
 }
