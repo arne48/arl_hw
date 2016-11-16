@@ -2,7 +2,10 @@
 <launch>
 
   <!-- Driver parameters -->
-  <param name="/arl_hw/using_rpi" value="true" type="bool"/>
+  <rosparam command="load" file="$(find arl_hw)/config/driver.yaml" />
+
+  <!-- Load muscle configuration -->
+  <rosparam command="load" file="$(find arl_controllers)/config/muscle_controller.yaml" />
 
   <!-- Robot Driver -->
   <node pkg="arl_hw" type="arl_driver_node" name="arl_driver_node" />

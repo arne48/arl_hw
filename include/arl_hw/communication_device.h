@@ -10,9 +10,9 @@ public:
 
   virtual ~CommunicationDevice() {};
 
-  virtual arl_datatypes::device_data read() = 0;
+  virtual arl_datatypes::device_data_t read() = 0;
 
-  virtual bool write(arl_datatypes::device_command) = 0;
+  virtual bool write(arl_datatypes::device_command_t) = 0;
 
   virtual bool initialize() = 0;
 

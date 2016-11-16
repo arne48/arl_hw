@@ -62,7 +62,7 @@ void *controlLoop(void *) {
 
 
   //Set update rate with ROS datatype in HZ
-  ros::Rate rate(1000); //HZ
+  ros::Rate rate(1000); //Hz
 
   //Check if RTC is available
   if (clock_gettime(CLOCK_REALTIME, &ts) != 0) {

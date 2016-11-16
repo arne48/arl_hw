@@ -11,9 +11,9 @@ public:
 
   ~Dummy();
 
-  virtual arl_datatypes::device_data read();
+  virtual arl_datatypes::device_data_t read();
 
-  virtual bool write(arl_datatypes::device_command);
+  virtual bool write(arl_datatypes::device_command_t);
 
   virtual bool initialize();
 

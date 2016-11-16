@@ -23,6 +23,8 @@ public:
 
   void initialize(ros::NodeHandle nh);
 
+  void getMuscleDescriptionsFromParameterServer(ros::NodeHandle nh);
+
   void close();
 
   void read(const ros::Time &time, const ros::Duration &period);
