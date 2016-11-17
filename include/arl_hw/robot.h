@@ -15,32 +15,61 @@
 #include <arl_interfaces/muscle_interface.h>
 #include <arl_controllers/muscle_controller.h>
 
+/**
+ * Implementation of Robot Hardware Interface for ARL's pneumatic muscle driven robots
+ */
 class ARLRobot : public hardware_interface::RobotHW {
 public:
+
+  /**
+   * Default Constructor
+   */
   ARLRobot();
 
+  /**
+   * Default Destructor
+   */
   ~ARLRobot();
 
+  /**
+   * After creating instance of robot's hardware the communication device to the hardware needs to be initialized
+   * @param nh NodeHandle of driver's node
+   */
   void initialize(ros::NodeHandle nh);
 
+  /**
+   * Reads all muscle descriptions from parameter server and saves them into internal datastructure of robot interface
+   * @param nh NodeHandle of driver's node
+   */
   void getMuscleDescriptionsFromParameterServer(ros::NodeHandle nh);
 
+  /**
+   * If communication device needs cleanup before shutting down the driver this method should be called
+   */
   void close();
 
+  /**
+   * Read current robot state from hardware
+   * @param time current ROS time
+   * @param period period of last control loop
+   */
   void read(const ros::Time &time, const ros::Duration &period);
 
+  /**
+   * Write current commands to robot's hardware
+   * @param time current ROS time
+   * @param period period of last control loop
+   */
   void write(const ros::Time &time, const ros::Duration &period);
 
 private:
-  arl_interfaces::MuscleInterface muscle_interface;
-  bool initialized;
-  CommunicationDevice *dev;
-  ros::Time last_read_;
-  ros::Time last_write_;
-  std::vector<std::string> names_;
-  std::vector<double> desired_pressures_;
-  std::vector<double> current_pressures_;
-  std::vector<double> tensions_;
+  arl_interfaces::MuscleInterface muscle_interface; /**< MuscleInterface for usage of MuscleController */
+  bool initialized; /**< Saves if robot is already intialized*/
+  CommunicationDevice *dev; /**< Handle for communication interface to robot's hardware */
+  std::vector<std::string> names_; /**< Internal datastructure which contains all muscle's names */
+  std::vector<double> desired_pressures_; /**< Internal datastructure which contains all muscle's desired pressures */
+  std::vector<double> current_pressures_; /**< Internal datastructure which contains all muscle's current pressures */
+  std::vector<double> tensions_; /**< Internal datastructure which contains all muscle's tensions */
 
 };
 

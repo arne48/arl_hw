@@ -11,7 +11,7 @@ arl_datatypes::device_data_t Dummy::read() {
   return ret;
 }
 
-bool Dummy::write(arl_datatypes::device_command_t) {
+bool Dummy::write(arl_datatypes::device_command_t command) {
   return true;
 }
 
