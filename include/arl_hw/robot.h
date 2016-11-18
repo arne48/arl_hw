@@ -27,7 +27,7 @@ public:
   ARLRobot();
 
   /**
-   * Default Destructor
+   * Destructor
    */
   ~ARLRobot();
 

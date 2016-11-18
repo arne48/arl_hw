@@ -18,7 +18,7 @@ public:
   RaspberryPi();
 
   /**
-   * Default Destructor
+   * Destructor
    */
   ~RaspberryPi();
 

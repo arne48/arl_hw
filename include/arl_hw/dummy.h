@@ -17,7 +17,7 @@ public:
   Dummy();
 
   /**
-   * Default Destructor
+   * Destructor
    */
   ~Dummy();
 

@@ -1,0 +1,7 @@
+using_raspberry_pi: false
+
+muscle_list:
+  - name: humerus
+    initial_value: 1.0
+  - name: ulna
+    initial_value: 2.0

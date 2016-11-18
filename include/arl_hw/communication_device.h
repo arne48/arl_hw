@@ -16,7 +16,7 @@ public:
   CommunicationDevice() {};
 
   /**
-   * Default Destructor
+   * Destructor
    */
   virtual ~CommunicationDevice() {};
 
