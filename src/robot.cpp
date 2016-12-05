@@ -72,8 +72,8 @@ void ARLRobot::write(const ros::Time &time, const ros::Duration &period) {
   arl_datatypes::device_command_t command;
   dev->write(command);
 
-  ROS_ERROR("Driver: %s %f",names_[0].c_str(), desired_pressures_[0]);
-  ROS_ERROR("Driver: %s %f",names_[1].c_str(), desired_pressures_[1]);
+  //ROS_ERROR("Driver: %s %f",names_[0].c_str(), desired_pressures_[0]);
+  //ROS_ERROR("Driver: %s %f",names_[1].c_str(), desired_pressures_[1]);
 
   ROS_DEBUG("WRITE with %f hz", 1 / period.toSec());
 }
