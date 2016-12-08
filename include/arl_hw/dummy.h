@@ -2,6 +2,7 @@
 #ifndef DUMMY_H
 #define DUMMY_H
 
+#include <vector>
 #include <arl_hw/communication_device.h>
 
 /**
@@ -25,14 +26,14 @@ public:
    * Dummy read
    * @return allways true
    */
-  virtual arl_datatypes::device_data_t read();
+  virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status);
 
   /**
    * Dummy write
    * @param command
    * @return allways true
    */
-  virtual bool write(arl_datatypes::device_command_t command);
+  virtual bool write(std::vector<arl_datatypes::muscle_command_data_t> &command);
 
   /**
    * Dummy initialize

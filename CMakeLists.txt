@@ -39,7 +39,9 @@ include_directories(
 add_library(arl_robot
         src/robot.cpp
         src/raspberry_pi.cpp
+        src/raspberry_pi_spi.cpp
         src/dummy.cpp
+        src/ad5360.cpp
         )
 
 add_executable(arl_driver_node src/driver.cpp)

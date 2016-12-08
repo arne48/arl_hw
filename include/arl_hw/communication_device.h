@@ -1,6 +1,7 @@
 #ifndef COMMUNICATION_DEVICE_H
 #define COMMUNICATION_DEVICE_H
 
+#include <vector>
 #include <arl_hw/datatypes.h>
 
 /**
@@ -22,16 +23,17 @@ public:
 
   /**
    * Reads current robot state from hardware
-   * @return current state of hardware
+   * @param status output parameter
+   * @return success of command
    */
-  virtual arl_datatypes::device_data_t read() = 0;
+  virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status) = 0;
 
   /**
    * Writes robot command to hardware
    * @param command command to issue to hardware
    * @return success of command
    */
-  virtual bool write(arl_datatypes::device_command_t command) = 0;
+  virtual bool write(std::vector<arl_datatypes::muscle_command_data_t> &command) = 0;
 
   /**
    * Initialize communication device

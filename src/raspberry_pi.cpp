@@ -1,34 +1,27 @@
 #include <arl_hw/raspberry_pi.h>
 
 RaspberryPi::RaspberryPi() {
+  wiringPiSetup();
+
+  _spi = new RaspberryPi_SPI();
+  _adc_vec.push_back(new AD5360(0,5,_spi));
+
 }
 
 RaspberryPi::~RaspberryPi() {
 }
 
-arl_datatypes::device_data_t RaspberryPi::read() {
+bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status) {
 
-  delayMicroseconds(100);
-  digitalWrite(0, HIGH);
-
-  arl_datatypes::device_data_t ret;
-
-  return ret;
+  return true;
 }
 
-bool RaspberryPi::write(arl_datatypes::device_command_t command) {
-
-  delayMicroseconds(100);
-  digitalWrite(0, LOW);
+bool RaspberryPi::write(std::vector<arl_datatypes::muscle_command_data_t> &command) {
 
   return true;
 }
 
 bool RaspberryPi::initialize() {
-
-  wiringPiSetup();
-  pinMode(0, OUTPUT);
-  digitalWrite(0, LOW);
 
   return true;
 }
@@ -36,6 +29,7 @@ bool RaspberryPi::initialize() {
 bool RaspberryPi::close() {
   return true;
 }
+
 
 
 

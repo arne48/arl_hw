@@ -58,7 +58,8 @@ void ARLRobot::read(const ros::Time &time, const ros::Duration &period) {
     return;
   }
 
-  arl_datatypes::device_data_t data = dev->read();
+  std::vector<arl_datatypes::muscle_status_data_t> status;
+  dev->read(status);
 
   ROS_DEBUG("READ with %f hz", 1 / period.toSec());
 }
@@ -69,11 +70,8 @@ void ARLRobot::write(const ros::Time &time, const ros::Duration &period) {
     return;
   }
 
-  arl_datatypes::device_command_t command;
+  std::vector<arl_datatypes::muscle_command_data_t> command;
   dev->write(command);
-
-  //ROS_ERROR("Driver: %s %f",names_[0].c_str(), desired_pressures_[0]);
-  //ROS_ERROR("Driver: %s %f",names_[1].c_str(), desired_pressures_[1]);
 
   ROS_DEBUG("WRITE with %f hz", 1 / period.toSec());
 }

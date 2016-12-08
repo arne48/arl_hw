@@ -27,6 +27,16 @@ namespace arl_datatypes{
     double initial_value;
   };
 
+  struct muscle_status_data_t {
+    double current_pressure;
+    double desired_pressure;
+    double tension;
+  };
+
+  struct muscle_command_data_t {
+    double desired_pressure;
+  };
+
 
 
 

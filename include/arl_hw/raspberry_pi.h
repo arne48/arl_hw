@@ -1,14 +1,16 @@
-
 #ifndef RASPBERRY_PI_H
 #define RASPBERRY_PI_H
 
+#include <vector>
 #include <arl_hw/communication_device.h>
+#include <arl_hw/raspberry_pi_spi.h>
+#include <arl_hw/ad5360.h>
 #include <wiringPi.h>
 
 /**
  * Implementation of CommunicationDevice base class which communicats to hardware using a Raspberry Pi
  */
-class RaspberryPi : public CommunicationDevice {
+class RaspberryPi : public CommunicationDevice{
 
 public:
 
@@ -26,13 +28,13 @@ public:
    * Reads current robot state from hardware on a Raspberry Pi
    * @return current state of hardware
    */
-  virtual arl_datatypes::device_data_t read();
+  virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status);
 
   /**
    * @param command command to issue to hardware on a Raspberry Pi
    * @return success of command
    */
-  virtual bool write(arl_datatypes::device_command_t command);
+  virtual bool write(std::vector<arl_datatypes::muscle_command_data_t> &command);
 
   /**
    * Initialize communication device on a Raspberry Pi
@@ -45,6 +47,13 @@ public:
    * @return success of command
    */
   virtual bool close();
+
+private:
+
+  std::vector<AD5360*> _adc_vec;
+  RaspberryPi_SPI *_spi;
+
+
 
 };
 

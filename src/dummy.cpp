@@ -6,12 +6,11 @@ Dummy::Dummy() {
 Dummy::~Dummy() {
 }
 
-arl_datatypes::device_data_t Dummy::read() {
-  arl_datatypes::device_data_t ret;
-  return ret;
+bool Dummy::read(std::vector<arl_datatypes::muscle_status_data_t> &status) {
+  return true;
 }
 
-bool Dummy::write(arl_datatypes::device_command_t command) {
+bool Dummy::write(std::vector<arl_datatypes::muscle_command_data_t> &command) {
   return true;
 }
 
