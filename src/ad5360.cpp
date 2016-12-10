@@ -9,8 +9,10 @@ AD5360::AD5360(int sync,int ldac, Embedded_SPI *dev) {
   _vref[0] = 3.0;
   _vref[1] = 3.0;
 
-  _dev->setGPIO(_sync, EMBD_SPI_HIGH);
-  _dev->setGPIO(_ldac, EMBD_SPI_HIGH);
+  //_dev->setGPIO(_sync, EMBD_SPI_HIGH);
+
+  //Make registers transparent
+  _dev->setGPIO(_ldac, EMBD_SPI_LOW);
 
 }
 
@@ -95,7 +97,7 @@ double AD5360::getGlobalVref(AD5360_bank_t bank){
 
 void AD5360::writeCommand(unsigned long cmd){
 
-  _dev->setGPIO(_sync, EMBD_SPI_LOW);
+  //_dev->setGPIO(_sync, EMBD_SPI_LOW);
 
   unsigned char data[3];
   data[0] = (cmd >> 16) & 0xFF;
@@ -103,7 +105,7 @@ void AD5360::writeCommand(unsigned long cmd){
   data[2] = cmd & 0xFF;
   _dev->transferSPI(3, data);
 
-  _dev->setGPIO(_sync, EMBD_SPI_HIGH);
+  //_dev->setGPIO(_sync, EMBD_SPI_HIGH);
 
 }
 
