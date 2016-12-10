@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
         hardware_interface
         arl_controllers
         arl_interfaces
+        arl_hw_msgs
         realtime_tools
         roscpp
         )
@@ -22,11 +23,11 @@ find_package(Boost REQUIRED COMPONENTS system thread)
 
 
 catkin_package(
-        #  INCLUDE_DIRS include
-        #  LIBRARIES arl_hw
-        #  CATKIN_DEPENDS control_toolbox controller_manager hardware_interface roscpp
-        #  DEPENDS system_lib
-        )
+        INCLUDE_DIRS include
+        LIBRARIES arl_hw
+        CATKIN_DEPENDS control_toolbox controller_manager hardware_interface roscpp
+#        DEPENDS system_lib
+)
 
 include_directories(
         include
