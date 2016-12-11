@@ -12,7 +12,7 @@ public:
 
   virtual bool setGPIO(int port, bool state);
 
-  virtual bool transferSPI(int data_len, unsigned char data[]);
+  virtual bool transferSPI(int data_len, char data[]);
 
 };
 

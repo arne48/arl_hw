@@ -14,7 +14,7 @@ public:
 
   virtual bool setGPIO(int port, bool state) = 0;
 
-  virtual bool transferSPI(int data_len, unsigned char data[]) = 0;
+  virtual bool transferSPI(int data_len, char data[]) = 0;
 
 };
 

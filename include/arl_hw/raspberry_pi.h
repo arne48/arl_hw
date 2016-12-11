@@ -5,7 +5,6 @@
 #include <arl_hw/communication_device.h>
 #include <arl_hw/raspberry_pi_spi.h>
 #include <arl_hw/ad5360.h>
-#include <wiringPi.h>
 
 /**
  * Implementation of CommunicationDevice base class which communicats to hardware using a Raspberry Pi

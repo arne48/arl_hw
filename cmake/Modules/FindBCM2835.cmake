@@ -1,0 +1,5 @@
+find_library(BCM2835_LIBRARIES NAMES bcm2835)
+find_path(BCM2835_INCLUDE_DIRS NAMES bcm2835.h)
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(bcm2835 DEFAULT_MSG BCM2835_LIBRARIES BCM2835_INCLUDE_DIRS)

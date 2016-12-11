@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
         )
 
 find_package(WiringPi REQUIRED)
+find_package(BCM2835 REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system thread)
@@ -34,6 +35,7 @@ include_directories(
         ${catkin_INCLUDE_DIRS}
         ${Boost_INCLUDE_DIRS}
         ${WIRINGPI_INCLUDE_DIRS}
+        ${BCM2835_INCLUDE_DIRS}
         )
 
 ## Declare a C++ library
@@ -50,6 +52,7 @@ add_executable(arl_driver_node src/driver.cpp)
 target_link_libraries(arl_robot
         ${catkin_LIBRARIES}
         ${WIRINGPI_LIBRARIES}
+        ${BCM2835_LIBRARIES}
         )
 
 target_link_libraries(arl_driver_node

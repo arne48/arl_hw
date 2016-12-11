@@ -103,7 +103,7 @@ void AD5360::writeCommand(unsigned long cmd){
   data[0] = (cmd >> 16) & 0xFF;
   data[1] = (cmd >> 8) & 0xFF;
   data[2] = cmd & 0xFF;
-  _dev->transferSPI(3, data);
+  //_dev->transferSPI(3, data);
 
   //_dev->setGPIO(_sync, EMBD_SPI_HIGH);
 
