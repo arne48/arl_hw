@@ -2,6 +2,18 @@ using_raspberry_pi: true
 
 muscle_list:
   - name: humerus
-    initial_value: 1.0
+    initial_value: 0.0
+    activation_controller_port: 0
+    activation_controller_channel: 7
+    pressure_controller_port: 0
+    pressure_controller_channel: 0
+    tension_controller_port: 0
+    tension_controller_channel: 0
   - name: ulna
-    initial_value: 2.0
+    initial_value: 0.0
+    activation_controller_port: 0
+    activation_controller_channel: 7
+    pressure_controller_port: 0
+    pressure_controller_channel: 0
+    tension_controller_port: 0
+    tension_controller_channel: 0

@@ -76,7 +76,7 @@ void ARLRobot::write(const ros::Time &time, const ros::Duration &period) {
     if (activations_[i] != last_activations_[i]) {
       arl_datatypes::muscle_command_data_t command;
       command.activation = activations_[i];
-      command.controller_port_activation = controller_ports[i].at("dac");
+      command.controller_port_activation = controller_ports[i].at("activation");
       last_activations_[i] = activations_[i];
       command_vec.push_back(command);
     }
@@ -121,9 +121,11 @@ void ARLRobot::getMuscleDescriptionsFromParameterServer(ros::NodeHandle nh) {
       current_pressures_.push_back(0.0);
       tensions_.push_back(0.0);
       activations_.push_back(0.0);
-
-      std::map<std::string, std::pair<int, int> > controllers = {{"dac", {0, 7}}};
-      controller_ports.push_back(controllers);
+      controller_ports.push_back(
+        {{"activation", {muscle_list[i]["activation_controller_port"], muscle_list[i]["activation_controller_channel"]}}});
+      controller_ports.push_back(
+        {{"pressure", {muscle_list[i]["pressure_controller_port"], muscle_list[i]["pressure_controller_channel"]}}});
+      controller_ports.push_back({{"tension", {muscle_list[i]["tension_controller_port"], muscle_list[i]["tension_controller_channel"]}}});
       last_activations_.push_back(0.0);
     }
     catch (...) {

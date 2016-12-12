@@ -35,9 +35,6 @@ RaspberryPi::RaspberryPi() {
   bcm2835_gpio_fsel(RPI_GPIO_P1_18, BCM2835_GPIO_FSEL_OUTP);
   bcm2835_gpio_write(RPI_GPIO_P1_18, LOW);
 
-  //_dac->setNormalized(0,7,-0.5);
-  //_dac->setNormalized(1,7,-0.5);
-
 }
 
 RaspberryPi::~RaspberryPi() {
@@ -46,8 +43,6 @@ RaspberryPi::~RaspberryPi() {
 }
 
 bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status) {
-  //_adc_vec[0]->setVoltage(BANKALL,CHALL,3.0);
-  //_adc_vec[0]->latchDAC();
   return true;
 }
 
