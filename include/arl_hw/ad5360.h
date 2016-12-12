@@ -18,21 +18,19 @@
 class AD5360 {
 public:
 
-  AD5360(int sync, Embedded_SPI *dev);
+  AD5360(Embedded_SPI *dev);
 
-  void writeCommand();
+  void writeCommand(int cs);
 
-  void setVoltage(uint8_t group, uint8_t channel, double voltage);
+  void setVoltage(int cs, uint8_t group, uint8_t channel, double voltage);
 
-  void setNormalized(uint8_t group, uint8_t channel, double value);
+  void setNormalized(int cs, uint8_t group, uint8_t channel, double value);
 
   void buildDataCommandHeader(uint8_t group, uint8_t channel);
 
   void buildDataCommandValue(double voltage);
 
 private:
-
-  int _sync;
 
   Embedded_SPI *_dev;
 

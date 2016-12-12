@@ -8,7 +8,7 @@ RaspberryPi::RaspberryPi() {
   }
 
   _spi = new RaspberryPi_SPI();
-  _dac = new AD5360(RPI_GPIO_P1_24, _spi);
+  _dac = new AD5360(_spi);
 
 
   //Chip-Selects
@@ -48,7 +48,8 @@ bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status)
 
 bool RaspberryPi::write(std::vector<arl_datatypes::muscle_command_data_t> &command_vec) {
   for (arl_datatypes::muscle_command_data_t command : command_vec) {
-    _dac->setNormalized((uint8_t) gpios[command.controller_port_activation.first], (uint8_t) command.controller_port_activation.second,
+    _dac->setNormalized(gpios[command.controller_port_activation.first], (uint8_t) command.controller_port_activation.second / (uint8_t) 8,
+                        (uint8_t) command.controller_port_activation.second % (uint8_t) 8,
                         command.activation);
   }
   return true;

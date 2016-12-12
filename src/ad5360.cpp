@@ -1,33 +1,30 @@
 #include <arl_hw/ad5360.h>
 
-AD5360::AD5360(int sync, Embedded_SPI *dev) {
-
+AD5360::AD5360(Embedded_SPI *dev) {
   _dev = dev;
-  _sync = sync;
-
 }
 
 
-void AD5360::setVoltage(uint8_t group, uint8_t channel, double voltage) {
+void AD5360::setVoltage(int cs, uint8_t group, uint8_t channel, double voltage) {
   buildDataCommandHeader(group, channel);
   buildDataCommandValue(voltage);
-  writeCommand();
+  writeCommand(cs);
 }
 
-void AD5360::setNormalized(uint8_t group, uint8_t channel, double value) {
+void AD5360::setNormalized(int cs, uint8_t group, uint8_t channel, double value) {
   double voltage = value / (1 / (AD5360_REF_VOLTAGE * 2));
   buildDataCommandHeader(group, channel);
   buildDataCommandValue(voltage);
-  writeCommand();
+  writeCommand(cs);
 }
 
-void AD5360::writeCommand() {
+void AD5360::writeCommand(int cs) {
 
   char data[3];
   data[0] = _spi_tx_buffer[0];
   data[1] = _spi_tx_buffer[1];
   data[2] = _spi_tx_buffer[2];
-  _dev->transferSPI(_sync, 3, data);
+  _dev->transferSPI(cs, 3, data);
 
 }
 
