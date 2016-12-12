@@ -12,9 +12,7 @@ public:
 
   virtual ~Embedded_SPI(){};
 
-  virtual bool setGPIO(int port, bool state) = 0;
-
-  virtual bool transferSPI(int data_len, char data[]) = 0;
+  virtual bool transferSPI(int cs, int data_len, char data[]) = 0;
 
 };
 

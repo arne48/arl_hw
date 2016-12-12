@@ -4,17 +4,39 @@
 
 RaspberryPi::RaspberryPi() {
 
-    if (!bcm2835_init()) {
-      ROS_ERROR("bcm2835_init failed. Are you running as root??");
-    }
+  if (!bcm2835_init()) {
+    ROS_ERROR("bcm2835_init failed. Are you running as root??");
+  }
 
   _spi = new RaspberryPi_SPI();
-  //_adc_vec.push_back(new AD5360(0,5,_spi));
 
-  //_adc_vec[0]->setVoltage(BANKALL,CHALL,-3.0);
 
-  char data[3] = {0xC0,0xC0,0x00};
-  _spi->transferSPI(3, data);
+  //Chip-Selects
+  bcm2835_gpio_fsel(RPI_GPIO_P1_24, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_fsel(RPI_GPIO_P1_26, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_fsel(RPI_V2_GPIO_P1_32, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_fsel(RPI_V2_GPIO_P1_36, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_fsel(RPI_GPIO_P1_07, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_fsel(RPI_GPIO_P1_11, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_fsel(RPI_GPIO_P1_13, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_fsel(RPI_GPIO_P1_15, BCM2835_GPIO_FSEL_OUTP);
+
+
+  bcm2835_gpio_write(RPI_GPIO_P1_24, HIGH);
+  bcm2835_gpio_write(RPI_GPIO_P1_26, HIGH);
+  bcm2835_gpio_write(RPI_V2_GPIO_P1_32, HIGH);
+  bcm2835_gpio_write(RPI_V2_GPIO_P1_36, HIGH);
+  bcm2835_gpio_write(RPI_GPIO_P1_07, HIGH);
+  bcm2835_gpio_write(RPI_GPIO_P1_11, HIGH);
+  bcm2835_gpio_write(RPI_GPIO_P1_13, HIGH);
+  bcm2835_gpio_write(RPI_GPIO_P1_15, HIGH);
+
+  //Latch
+  bcm2835_gpio_fsel(RPI_GPIO_P1_18, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_write(RPI_GPIO_P1_18, LOW);
+
+
+
 }
 
 RaspberryPi::~RaspberryPi() {
@@ -29,8 +51,8 @@ bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status)
 }
 
 bool RaspberryPi::write(std::vector<arl_datatypes::muscle_command_data_t> &command) {
-  //_adc_vec[0]->setVoltage(BANKALL,CHALL,1.0);
-  //_adc_vec[0]->latchDAC();
+  char data[3] = {(char)0xC0, (char)0xC0, (char)0x00};
+  _spi->transferSPI(RPI_GPIO_P1_24, 3, data);
   return true;
 }
 

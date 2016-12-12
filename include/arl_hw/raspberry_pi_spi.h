@@ -10,9 +10,7 @@ public:
 
   ~RaspberryPi_SPI();
 
-  virtual bool setGPIO(int port, bool state);
-
-  virtual bool transferSPI(int data_len, char data[]);
+  virtual bool transferSPI(int cs, int data_len, char data[]);
 
 };
 
