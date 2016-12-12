@@ -36,8 +36,8 @@ RaspberryPi::RaspberryPi() {
   bcm2835_gpio_fsel(RPI_GPIO_P1_18, BCM2835_GPIO_FSEL_OUTP);
   bcm2835_gpio_write(RPI_GPIO_P1_18, LOW);
 
-  _dac->setNormalized(0,7,-0.5);
-  _dac->setNormalized(1,7,-0.5);
+  _dac->setNormalized(0,7,-0.25);
+  _dac->setNormalized(1,7,-0.25);
 
 }
 
