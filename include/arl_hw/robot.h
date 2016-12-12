@@ -71,7 +71,9 @@ private:
   std::vector<double> current_pressures_; /**< Internal datastructure which contains all muscle's current pressures */
   std::vector<double> tensions_; /**< Internal datastructure which contains all muscle's tensions */
   std::vector<double> activations_; /**< Internal datastructure which contains all normalized muscle's activation values */
-  std::vector<std::map<std::string,std::pair<int,int> > > controller_ports;
+  std::vector<std::pair<int,int> > activation_controllers_;
+  std::vector<std::pair<int,int> > pressure_controllers_;
+  std::vector<std::pair<int,int> > tension_controllers_;
 
   std::vector<double> last_activations_;
 

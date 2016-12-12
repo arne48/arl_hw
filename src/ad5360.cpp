@@ -29,7 +29,6 @@ void AD5360::writeCommand() {
   data[2] = _spi_tx_buffer[2];
   _dev->transferSPI(_sync, 3, data);
 
-
 }
 
 void AD5360::buildDataCommandHeader(uint8_t group, uint8_t channel) {
