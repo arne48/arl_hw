@@ -75,9 +75,9 @@ void ARLRobot::write(const ros::Time &time, const ros::Duration &period) {
   for (int i = 0; i < names_.size(); i++) {
     if (activations_[i] != last_activations_[i]) {
       arl_datatypes::muscle_command_data_t command;
-      command.activation = desired_pressures_[i];//activations_[i];
+      command.activation = activations_[i];
       command.controller_port_activation = controller_ports[i].at("dac");
-      last_activations_[i] = desired_pressures_[i];//activations_[i];
+      last_activations_[i] = activations_[i];
       command_vec.push_back(command);
     }
   }
