@@ -26,14 +26,14 @@ public:
    * @param status output parameter
    * @return success of command
    */
-  virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status) = 0;
+  virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status_vec) = 0;
 
   /**
    * Writes robot command to hardware
    * @param command command to issue to hardware
    * @return success of command
    */
-  virtual bool write(std::vector<arl_datatypes::muscle_command_data_t> &command) = 0;
+  virtual bool write(std::vector<arl_datatypes::muscle_command_data_t> &command_vec) = 0;
 
   /**
    * Initialize communication device

@@ -1,11 +1,10 @@
 #include <arl_hw/raspberry_pi.h>
 #include <ros/ros.h>
-#include <bcm2835.h>
 
 RaspberryPi::RaspberryPi() {
 
   if (!bcm2835_init()) {
-    ROS_ERROR("bcm2835_init failed. Are you running as root??");
+    ROS_ERROR("bcm2835_init failed.");
   }
 
   _spi = new RaspberryPi_SPI();
@@ -36,8 +35,8 @@ RaspberryPi::RaspberryPi() {
   bcm2835_gpio_fsel(RPI_GPIO_P1_18, BCM2835_GPIO_FSEL_OUTP);
   bcm2835_gpio_write(RPI_GPIO_P1_18, LOW);
 
-  _dac->setNormalized(0,7,-0.5);
-  _dac->setNormalized(1,7,-0.5);
+  //_dac->setNormalized(0,7,-0.5);
+  //_dac->setNormalized(1,7,-0.5);
 
 }
 
@@ -52,9 +51,11 @@ bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status)
   return true;
 }
 
-bool RaspberryPi::write(std::vector<arl_datatypes::muscle_command_data_t> &command) {
-  //char data[3] = {(char)0xC0, (char)0xC0, (char)0x00};
-  //_spi->transferSPI(RPI_GPIO_P1_24, 3, data);
+bool RaspberryPi::write(std::vector<arl_datatypes::muscle_command_data_t> &command_vec) {
+  for (arl_datatypes::muscle_command_data_t command : command_vec) {
+    _dac->setNormalized((uint8_t) gpios[command.controller_port_activation.first], (uint8_t) command.controller_port_activation.second,
+                        command.activation);
+  }
   return true;
 }
 

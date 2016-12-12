@@ -25,16 +25,21 @@ namespace arl_datatypes{
   struct muscle_description_t {
     std::string name;
     double initial_value;
+    std::pair<int, int> controller_port_activation;
+    std::pair<int, int> controller_port_pressure;
+    std::pair<int, int> controller_port_tension;
   };
 
   struct muscle_status_data_t {
+    std::pair<int, int> controller_port_pressure;
+    std::pair<int, int> controller_port_tension;
     double current_pressure;
-    double desired_pressure;
     double tension;
   };
 
   struct muscle_command_data_t {
-    double desired_pressure;
+    std::pair<int, int> controller_port_activation;
+    double activation;
   };
 
 
