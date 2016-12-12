@@ -44,6 +44,19 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
 
   registerInterface(&muscle_interface);
 
+  
+
+  //Set all controllers to zero activation
+  std::vector<arl_datatypes::muscle_command_data_t> command_vec;
+  for (int i = 0; i < names_.size(); i++) {
+    arl_datatypes::muscle_command_data_t command;
+    command.activation = 0.0;
+    command.controller_port_activation = {0,7};//controller_ports[i].at("activation");
+    command_vec.push_back(command);
+  }
+  dev->write(command_vec);
+  
+
 }
 
 void ARLRobot::close() {
@@ -76,7 +89,7 @@ void ARLRobot::write(const ros::Time &time, const ros::Duration &period) {
     if (activations_[i] != last_activations_[i]) {
       arl_datatypes::muscle_command_data_t command;
       command.activation = activations_[i];
-      command.controller_port_activation = controller_ports[i].at("dac");
+      command.controller_port_activation = {0,7};//controller_ports[i].at("activation");
       last_activations_[i] = activations_[i];
       command_vec.push_back(command);
     }
@@ -129,5 +142,6 @@ void ARLRobot::getMuscleDescriptionsFromParameterServer(ros::NodeHandle nh) {
     catch (...) {
       ROS_ERROR("Unable to parse muscle information");
     }
+
   }
 }

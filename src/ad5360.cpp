@@ -51,17 +51,18 @@ void AD5360::buildDataCommandValue(double voltage) {
     uint16_t command_data = pow(2, 16) -1;
     _spi_tx_buffer[1] = (uint8_t) ((command_data & 0xFF00) >> 8);
     _spi_tx_buffer[2] = (uint8_t) (command_data & 0x00FF);
+  } else { 
+
+    uint16_t command_data = pow(2, 16) / 2;
+    uint16_t value = fabs(voltage) / ((AD5360_REF_VOLTAGE * 2) / pow(2, 15));
+
+    if (voltage > 0) {
+      command_data += value;
+    } else {
+      command_data -= value;
+    }
+
+    _spi_tx_buffer[1] = (uint8_t) ((command_data & 0xFF00) >> 8);
+    _spi_tx_buffer[2] = (uint8_t) (command_data & 0x00FF);
   }
-
-  uint16_t command_data = pow(2, 16) / 2;
-  uint16_t value = fabs(voltage) / ((AD5360_REF_VOLTAGE * 2) / pow(2, 15));
-
-  if (voltage > 0) {
-    command_data += value;
-  } else {
-    command_data -= value;
-  }
-
-  _spi_tx_buffer[1] = (uint8_t) ((command_data & 0xFF00) >> 8);
-  _spi_tx_buffer[2] = (uint8_t) (command_data & 0x00FF);
 }
