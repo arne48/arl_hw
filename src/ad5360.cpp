@@ -1,15 +1,21 @@
 #include <arl_hw/ad5360.h>
 
-AD5360::AD5360(int sync,int ldac, Embedded_SPI *dev) {
+AD5360::AD5360(int sync, Embedded_SPI *dev) {
 
   _dev = dev;
   _sync = sync;
-  _ldac = ldac;
 
 }
 
 
 void AD5360::setVoltage(uint8_t group, uint8_t channel, double voltage) {
+  buildDataCommandHeader(group, channel);
+  buildDataCommandValue(voltage);
+  writeCommand();
+}
+
+void AD5360::setNormalized(uint8_t group, uint8_t channel, double value) {
+  double voltage = value / (1 / (AD5360_REF_VOLTAGE * 2));
   buildDataCommandHeader(group, channel);
   buildDataCommandValue(voltage);
   writeCommand();

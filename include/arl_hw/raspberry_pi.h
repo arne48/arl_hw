@@ -49,7 +49,7 @@ public:
 
 private:
 
-  std::vector<AD5360*> _adc_vec;
+  AD5360 *_dac;
   RaspberryPi_SPI *_spi;
 
 

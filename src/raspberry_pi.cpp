@@ -9,6 +9,7 @@ RaspberryPi::RaspberryPi() {
   }
 
   _spi = new RaspberryPi_SPI();
+  _dac = new AD5360(RPI_GPIO_P1_24, _spi);
 
 
   //Chip-Selects
@@ -35,7 +36,8 @@ RaspberryPi::RaspberryPi() {
   bcm2835_gpio_fsel(RPI_GPIO_P1_18, BCM2835_GPIO_FSEL_OUTP);
   bcm2835_gpio_write(RPI_GPIO_P1_18, LOW);
 
-
+  _dac->setNormalized(0,7,-0.5);
+  _dac->setNormalized(1,7,-0.5);
 
 }
 
@@ -51,8 +53,8 @@ bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status)
 }
 
 bool RaspberryPi::write(std::vector<arl_datatypes::muscle_command_data_t> &command) {
-  char data[3] = {(char)0xC0, (char)0xC0, (char)0x00};
-  _spi->transferSPI(RPI_GPIO_P1_24, 3, data);
+  //char data[3] = {(char)0xC0, (char)0xC0, (char)0x00};
+  //_spi->transferSPI(RPI_GPIO_P1_24, 3, data);
   return true;
 }
 
