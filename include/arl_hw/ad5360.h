@@ -1,7 +1,3 @@
-/*
- * Thanks to JQIamo and their repo AD536x-arduino
- */
-
 #ifndef AD5360_h
 #define AD5360_h
 

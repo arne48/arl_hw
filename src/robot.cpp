@@ -37,8 +37,8 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
   getMuscleDescriptionsFromParameterServer(nh);
 
 
-  for(int i=0; i < names_.size(); i++){
-    arl_interfaces::MuscleHandle muscle_handle(names_[i], &desired_pressures_[i], &current_pressures_[i], &tensions_[i]);
+  for (int i = 0; i < names_.size(); i++) {
+    arl_interfaces::MuscleHandle muscle_handle(names_[i], &desired_pressures_[i], &current_pressures_[i], &tensions_[i], &activations_[i]);
     muscle_interface.registerHandle(muscle_handle);
   }
 
@@ -70,13 +70,23 @@ void ARLRobot::write(const ros::Time &time, const ros::Duration &period) {
     return;
   }
 
-  std::vector<arl_datatypes::muscle_command_data_t> command;
-  dev->write(command);
+  std::vector<arl_datatypes::muscle_command_data_t> command_vec;
+
+  for (int i = 0; i < names_.size(); i++) {
+    if (activations_[i] != last_activations_[i]) {
+      arl_datatypes::muscle_command_data_t command;
+      command.activation = desired_pressures_[i];//activations_[i];
+      command.controller_port_activation = controller_ports[i].at("dac");
+      last_activations_[i] = desired_pressures_[i];//activations_[i];
+      command_vec.push_back(command);
+    }
+  }
+
+  dev->write(command_vec);
 
   ROS_DEBUG("WRITE with %f hz", 1 / period.toSec());
 }
 
-//FIXME loading from parameter server into datastructure not working
 void ARLRobot::getMuscleDescriptionsFromParameterServer(ros::NodeHandle nh) {
 
   ROS_DEBUG("Reading muscle descriptions");
@@ -110,6 +120,11 @@ void ARLRobot::getMuscleDescriptionsFromParameterServer(ros::NodeHandle nh) {
       desired_pressures_.push_back(initial_value);
       current_pressures_.push_back(0.0);
       tensions_.push_back(0.0);
+      activations_.push_back(0.0);
+
+      std::map<std::string, std::pair<int, int> > controllers = {{"dac", {0, 7}}};
+      controller_ports.push_back(controllers);
+      last_activations_.push_back(0.0);
     }
     catch (...) {
       ROS_ERROR("Unable to parse muscle information");

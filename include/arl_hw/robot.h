@@ -70,6 +70,10 @@ private:
   std::vector<double> desired_pressures_; /**< Internal datastructure which contains all muscle's desired pressures */
   std::vector<double> current_pressures_; /**< Internal datastructure which contains all muscle's current pressures */
   std::vector<double> tensions_; /**< Internal datastructure which contains all muscle's tensions */
+  std::vector<double> activations_; /**< Internal datastructure which contains all normalized muscle's activation values */
+  std::vector<std::map<std::string,std::pair<int,int> > > controller_ports;
+
+  std::vector<double> last_activations_;
 
 };
 

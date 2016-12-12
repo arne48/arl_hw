@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(arl_hw)
 
+set(CMAKE_CXX_STANDARD 14)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules/")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -O0")
 set(DCMAKE_BUILD_TYPE Debug)

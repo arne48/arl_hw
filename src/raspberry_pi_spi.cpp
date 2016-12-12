@@ -5,18 +5,13 @@
 RaspberryPi_SPI::RaspberryPi_SPI() {
 
   if (!bcm2835_spi_begin()) {
-    ROS_ERROR("bcm2835_spi_begin failed. Are you running as root??");
+    ROS_ERROR("bcm2835_spi_begin failed.");
   }
   bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);
   bcm2835_spi_setDataMode(BCM2835_SPI_MODE1);
   bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_8);
   bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
   bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS_NONE, LOW);
-
-  //1100 0000 1100 0000 0000 0000
-
-
-  //char data[3] = {0xC0,0x00,0x00};
 
 };
 
