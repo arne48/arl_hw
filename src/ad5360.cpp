@@ -1,4 +1,5 @@
 #include <arl_hw/ad5360.h>
+#include <ros/ros.h>
 
 AD5360::AD5360(Embedded_SPI *dev) {
   _dev = dev;
@@ -6,12 +7,14 @@ AD5360::AD5360(Embedded_SPI *dev) {
 
 
 void AD5360::setVoltage(int cs, uint8_t group, uint8_t channel, double voltage) {
+  ROS_DEBUG("AD5360: Using GPIO %d, Channel %d, Group %d", cs, channel, group);
   buildDataCommandHeader(group, channel);
   buildDataCommandValue(voltage);
   writeCommand(cs);
 }
 
 void AD5360::setNormalized(int cs, uint8_t group, uint8_t channel, double value) {
+  ROS_DEBUG("AD5360: Using GPIO %d, Channel %d, Group %d", cs, channel, group);
   double voltage = value / (1 / (AD5360_REF_VOLTAGE * 2));
   buildDataCommandHeader(group, channel);
   buildDataCommandValue(voltage);

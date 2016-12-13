@@ -1,7 +1,15 @@
 using_raspberry_pi: true
 
 muscle_list:
-  - name: humerus
+  - name: humerus0
+    initial_value: 0.0
+    activation_controller_port: 0
+    activation_controller_channel: 15
+    pressure_controller_port: 0
+    pressure_controller_channel: 0
+    tension_controller_port: 0
+    tension_controller_channel: 0
+  - name: ulna0
     initial_value: 0.0
     activation_controller_port: 0
     activation_controller_channel: 7
@@ -9,9 +17,49 @@ muscle_list:
     pressure_controller_channel: 0
     tension_controller_port: 0
     tension_controller_channel: 0
-  - name: ulna
+  - name: humerus1
     initial_value: 0.0
-    activation_controller_port: 0
+    activation_controller_port: 1
+    activation_controller_channel: 15
+    pressure_controller_port: 0
+    pressure_controller_channel: 0
+    tension_controller_port: 0
+    tension_controller_channel: 0
+  - name: ulna1
+    initial_value: 0.0
+    activation_controller_port: 1
+    activation_controller_channel: 7
+    pressure_controller_port: 0
+    pressure_controller_channel: 0
+    tension_controller_port: 0
+    tension_controller_channel: 0
+  - name: humerus2
+    initial_value: 0.0
+    activation_controller_port: 2
+    activation_controller_channel: 15
+    pressure_controller_port: 0
+    pressure_controller_channel: 0
+    tension_controller_port: 0
+    tension_controller_channel: 0
+  - name: ulna2
+    initial_value: 0.0
+    activation_controller_port: 2
+    activation_controller_channel: 7
+    pressure_controller_port: 0
+    pressure_controller_channel: 0
+    tension_controller_port: 0
+    tension_controller_channel: 0
+  - name: humerus3
+    initial_value: 0.0
+    activation_controller_port: 3
+    activation_controller_channel: 15
+    pressure_controller_port: 0
+    pressure_controller_channel: 0
+    tension_controller_port: 0
+    tension_controller_channel: 0
+  - name: ulna3
+    initial_value: 0.0
+    activation_controller_port: 3
     activation_controller_channel: 7
     pressure_controller_port: 0
     pressure_controller_channel: 0
