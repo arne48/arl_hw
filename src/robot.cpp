@@ -16,7 +16,7 @@ ARLRobot::~ARLRobot() {
 
 void ARLRobot::initialize(ros::NodeHandle nh) {
 
-  bool using_rpi;
+  bool using_rpi = false;
   nh.param<bool>("/using_raspberry_pi", using_rpi, false);
 
   if (!using_rpi) {

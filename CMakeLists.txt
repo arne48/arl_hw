@@ -10,6 +10,7 @@ set(DCMAKE_BUILD_TYPE Debug)
 find_package(catkin REQUIRED COMPONENTS
         control_toolbox
         controller_manager
+        diagnostic_updater
         hardware_interface
         arl_controllers
         arl_interfaces
@@ -49,7 +50,7 @@ add_library(arl_robot
         src/ad5360.cpp
         )
 
-add_executable(arl_driver_node src/driver.cpp)
+add_executable(arl_driver_node src/driver.cpp src/rt_history.cpp)
 
 target_link_libraries(arl_robot
         ${catkin_LIBRARIES}

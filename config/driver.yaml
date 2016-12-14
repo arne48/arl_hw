@@ -1,3 +1,7 @@
+min_acceptable_rt_loop_frequency: 1000.0
+
+publish_every_rt_jitter : false
+
 using_raspberry_pi: true
 
 muscle_list:
