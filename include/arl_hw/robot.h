@@ -71,10 +71,9 @@ private:
   std::vector<double> current_pressures_; /**< Internal datastructure which contains all muscle's current pressures */
   std::vector<double> tensions_; /**< Internal datastructure which contains all muscle's tensions */
   std::vector<double> activations_; /**< Internal datastructure which contains all normalized muscle's activation values */
-  std::vector<std::pair<int,int> > activation_controllers_;
-  std::vector<std::pair<int,int> > pressure_controllers_;
-  std::vector<std::pair<int,int> > tension_controllers_;
-
+  std::vector<std::pair<int,int> > activation_controllers_; /**< Internal datastructure which contains the address (Controller Port[Chip-Select Id] : Channel on Controller) for every muscle's activation controller*/
+  std::vector<std::pair<int,int> > pressure_controllers_; /**< Internal datastructure which contains the address (Controller Port[Chip-Select Id] : Channel on Controller) for every muscle's pressure controller*/
+  std::vector<std::pair<int,int> > tension_controllers_; /**< Internal datastructure which contains the address (Controller Port[Chip-Select Id] : Channel on Controller) for every muscle's tension controller*/
   std::vector<double> last_activations_;
 
 };

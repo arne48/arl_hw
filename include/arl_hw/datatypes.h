@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace arl_datatypes{
+namespace arl_datatypes {
 
   /**
    * Conventional structure of hardware state read from implementations of ARL communication device interface
@@ -30,6 +30,9 @@ namespace arl_datatypes{
     std::pair<int, int> controller_port_tension;
   };
 
+  /**
+   * Conventional structure for returning the current state of the muscles
+   */
   struct muscle_status_data_t {
     std::pair<int, int> controller_port_pressure;
     std::pair<int, int> controller_port_tension;
@@ -41,8 +44,6 @@ namespace arl_datatypes{
     std::pair<int, int> controller_port_activation;
     double activation;
   };
-
-
 
 
 }
