@@ -39,11 +39,19 @@ to keep the implementation of the communication protocols out of the RobotHW int
 The next lines will explain the content and usage of this package's  config and launch files.
 
 ### Config Files
-* driver.yaml
-    * using_raspberry_pi = bool <false> 
-    This parameter switches the usage of the Raspberry Pi implementation to communicate with the hardware.
-    * muscle_list\[\{name = string, initial_value = double \},..\]
-    This describes all muscles controlled by this driver and also allows to set an initial pressure value.
+* **driver.yaml**
+    * *min_acceptable_rt_loop_frequency* = double | lowest frequency of realtime loop controller before a warning is raised
+    * *publish_every_rt_jitter* = bool | publish jitter for every loop with loop's frequency
+    * *using_raspberry_pi* = bool | wether using plattform implementation for Raspberry Pi 3
+    * *muscle_list\[\{\},..\]*
+    	* name = string | unique name of muscle
+    	* initial_value = double | pressure to set muscle to startup
+    	* activation_controller_port = int | chip-select id of activation controller channel on controller \[0-7\]
+    	* activation_controller_channel = int | channel on controller \[0-15\]
+    	* pressure_controller_port = int | chip-select id of pressure controller \[0-7\]
+    	* pressure_controller_channel = int | channel on controller \[0-15\]
+    	* tension_controller_port = int | chip-select id of tension controller \[0-7\]
+    	* tension_controller_channel = int | channel on controller \[0-15\]
 
 ### Launch Files
 * arl_robot_driver.launch
