@@ -45,7 +45,7 @@ The next lines will explain the content and usage of this package's  config and 
     * *using_raspberry_pi* = bool | wether using plattform implementation for Raspberry Pi 3
     * *muscle_list\[\{\},..\]*
     	* name = string | unique name of muscle
-    	* initial_value = double | pressure to set muscle to startup
+    	* initial_value = double | pressure to set muscle to on startup
     	* activation_controller_port = int | chip-select id of activation controller channel on controller \[0-7\]
     	* activation_controller_channel = int | channel on controller \[0-15\]
     	* pressure_controller_port = int | chip-select id of pressure controller \[0-7\]
