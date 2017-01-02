@@ -14,6 +14,9 @@
 #define AD5360_MODE_WRITE_DAC_GAIN 0b01000000
 #define AD5360_MODE_WRITE_SPECIAL_FUNCTION 0b00000000
 
+#define AD5360_DEFAULT_GAIN 0xFFFF
+#define AD5360_DEFAULT_OFFSET 0x8000
+
 /**
  * Represents the AD5360 Digital Analog Converter of Analog Devices.
  * Provides functionalities so set output voltage based on a 3V reference voltage
@@ -49,11 +52,23 @@ public:
    */
   void setNormalized(int cs, uint8_t group, uint8_t channel, double value);
 
+  void setGain(int cs, uint8_t group, uint8_t channel, uint16_t gain);
+
+  void setOffset(int cs, uint8_t group, uint8_t channel, uint16_t offset);
+
+  void reset(int cs, uint8_t group, uint8_t channel);
+
 private:
 
   void buildDataCommandHeader(uint8_t group, uint8_t channel);
 
+  void buildGainCommandHeader(uint8_t group, uint8_t channel);
+
+  void buildOffsetCommandHeader(uint8_t group, uint8_t channel);
+
   void buildDataCommandValue(double voltage);
+
+  void buildCalibrationCommandValue(uint16_t value);
 
   void writeCommand(int cs);
 

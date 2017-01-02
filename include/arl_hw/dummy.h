@@ -47,6 +47,11 @@ public:
    */
   virtual bool close();
 
+  /**
+   * Resets muscle and blows off air
+   */
+  virtual void emergency_halt(std::pair<int, int> muscle);
+
 };
 
 #endif // DUMMY_H

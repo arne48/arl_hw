@@ -55,6 +55,11 @@ public:
    */
   virtual bool close() = 0;
 
+  /**
+   * Resets muscle and blows off air
+   */
+  virtual void emergency_halt(std::pair<int, int> muscle) = 0;
+
 };
 
 #endif // COMMUNICATION_DEVICE_H

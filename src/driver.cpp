@@ -47,10 +47,10 @@ static struct {
   double overrun_read;
   double overrun_write;
   double overrun_cm;
-
-  bool rt_loop_not_making_timing;
   double halt_rt_loop_frequency;
   double rt_loop_frequency;
+  bool rt_loop_not_making_timing;
+  bool emergency_halt_engaged;
 } driver_stats;
 
 static void publishDiagnostics(realtime_tools::RealtimePublisher<diagnostic_msgs::DiagnosticArray> &publisher) {
@@ -117,6 +117,10 @@ static void publishDiagnostics(realtime_tools::RealtimePublisher<diagnostic_msgs
       status.mergeSummaryf(status.ERROR, "Halting, realtime loop only ran at %.4f Hz", driver_stats.halt_rt_loop_frequency);
     }
 
+    if (driver_stats.emergency_halt_engaged) {
+      status.mergeSummaryf(status.WARN, "Emergency Halt Engaged");
+    }
+
     statuses.push_back(status);
     publisher.msg_.status = statuses;
     publisher.msg_.header.stamp = ros::Time::now();
@@ -157,6 +161,7 @@ void waitForNextControlLoop(struct timespec tick, int sampling_ns) {
   clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tick, NULL);
 }
 
+//TODO REFACTOR TOO LONG, TOO CONFUSING
 void *controlLoop(void *) {
 
   double last_published, last_loop_start, last_rt_monitor_time;
@@ -168,13 +173,6 @@ void *controlLoop(void *) {
 
   ARLRobot robot;
   robot.initialize(nh);
-
-  // Realtime loop should be running at least 1000Hz
-  double min_acceptable_rt_loop_frequency = 1000.0;
-  nh.param<double>("/min_acceptable_rt_loop_frequency", min_acceptable_rt_loop_frequency, 1000.0);
-
-  bool publish_rt_jitter = false;
-  nh.param<bool>("/publish_every_rt_jitter", publish_rt_jitter, false);
 
   controller_manager::ControllerManager cm(&robot, nh);
 
@@ -218,61 +216,90 @@ void *controlLoop(void *) {
   last_loop_start = get_now();
   while (nh.ok()) {
 
-    // Track how long the actual loop takes
-    double this_loop_start = get_now();
-    driver_stats.loop_acc(this_loop_start - last_loop_start);
-    last_loop_start = this_loop_start;
+    // Check for Emergency Halt
+    driver_stats.emergency_halt_engaged = robot.emergency_halt;
 
-    // Get the time / period
-    if (!clock_gettime(CLOCK_REALTIME, &ts)) {
-      now.sec = ts.tv_sec;
-      now.nsec = ts.tv_nsec;
-      period = now - last;
-      last = now;
-    } else {
-      ROS_FATAL("Failed to poll real-time clock!");
-      break;
-    }
+    double start;
+    double after_read;
+    double after_cm;
+    double after_write;
 
-    //Main update
-    double start = get_now();
-    robot.read(now, period);
-    double after_read = get_now();
-    cm.update(now, period);
-    double after_cm = get_now();
-    robot.write(now, period);
-    double after_write = get_now();
+    if (driver_stats.emergency_halt_engaged) {
+      start = get_now();
+      after_read = start;
+      after_cm = start;
+      after_write = start;
 
-    //Accumulate section's durations of update cycle
-    driver_stats.cm_acc(after_cm - after_read);
-    driver_stats.write_acc(after_write - start);
-    driver_stats.read_acc(after_write - after_cm);
+      robot.executeEmergencyHalt();
 
-    double end = get_now();
-    if ((end - last_published) > 1.0) {
-      publishDiagnostics(publisher);
-      last_published = end;
-    }
-
-
-    // Realtime loop should run about 1000Hz.
-    // Missing timing on a control cycles usually causes a controller glitch and actuators to jerk.
-    // When realtime loop misses a lot of cycles controllers will perform poorly and may cause robot to shake.
-    ++rt_cycle_count;
-    if ((start - last_rt_monitor_time) > rt_loop_monitor_period) {
-      // Calculate new average rt loop frequency
-      double rt_loop_frequency = double(rt_cycle_count) / rt_loop_monitor_period;
-
-      // Use last X samples of frequency when deciding whether or not to halt
-      rt_loop_history.sample(rt_loop_frequency);
-      double avg_rt_loop_frequency = rt_loop_history.average();
-      if (avg_rt_loop_frequency < min_acceptable_rt_loop_frequency) {
-        driver_stats.halt_rt_loop_frequency = avg_rt_loop_frequency;
-        driver_stats.rt_loop_not_making_timing = true;
+      double end = get_now();
+      if ((end - last_published) > 1.0) {
+        publishDiagnostics(publisher);
+        last_published = end;
       }
-      driver_stats.rt_loop_frequency = avg_rt_loop_frequency;
-      rt_cycle_count = 0;
-      last_rt_monitor_time = start;
+
+    } else {
+
+      // Track how long the actual loop takes
+      double this_loop_start = get_now();
+      driver_stats.loop_acc(this_loop_start - last_loop_start);
+      last_loop_start = this_loop_start;
+
+      // Get the time / period
+      if (!clock_gettime(CLOCK_REALTIME, &ts)) {
+        now.sec = ts.tv_sec;
+        now.nsec = ts.tv_nsec;
+        period = now - last;
+        last = now;
+      } else {
+        ROS_FATAL("Failed to poll real-time clock!");
+        break;
+      }
+
+      //Main update
+      start = get_now();
+
+      robot.read(now, period);
+      after_read = get_now();
+
+      cm.update(now, period);
+      after_cm = get_now();
+
+      robot.write(now, period);
+      after_write = get_now();
+
+      //Accumulate section's durations of update cycle
+      driver_stats.cm_acc(after_cm - after_read);
+      driver_stats.write_acc(after_write - start);
+      driver_stats.read_acc(after_write - after_cm);
+
+      double end = get_now();
+      if ((end - last_published) > 1.0) {
+        publishDiagnostics(publisher);
+        last_published = end;
+      }
+
+
+      // Realtime loop should run about 1000Hz.
+      // Missing timing on a control cycles usually causes a controller glitch and actuators to jerk.
+      // When realtime loop misses a lot of cycles controllers will perform poorly and may cause robot to shake.
+      ++rt_cycle_count;
+      if ((start - last_rt_monitor_time) > rt_loop_monitor_period) {
+        // Calculate new average rt loop frequency
+        double rt_loop_frequency = double(rt_cycle_count) / rt_loop_monitor_period;
+
+        // Use last X samples of frequency when deciding whether or not to halt
+        rt_loop_history.sample(rt_loop_frequency);
+        double avg_rt_loop_frequency = rt_loop_history.average();
+        if (avg_rt_loop_frequency < robot.driver_config.min_acceptable_rt_loop_frequency
+            && robot.driver_config.halt_on_slow_rt_loop) {
+          driver_stats.halt_rt_loop_frequency = avg_rt_loop_frequency;
+          driver_stats.rt_loop_not_making_timing = true;
+        }
+        driver_stats.rt_loop_frequency = avg_rt_loop_frequency;
+        rt_cycle_count = 0;
+        last_rt_monitor_time = start;
+      }
     }
 
     // Compute end of next period
@@ -296,6 +323,7 @@ void *controlLoop(void *) {
         driver_stats.last_overrun = 1000;
         driver_stats.last_severe_overrun = 1000;
       }
+
       // check for overruns
       if (driver_stats.recent_overruns > 10)
         driver_stats.last_severe_overrun = 0;
@@ -319,7 +347,7 @@ void *controlLoop(void *) {
     driver_stats.jitter_acc(jitter);
 
     // Publish realtime loops statistics
-    if (publish_rt_jitter && rtpublisher) {
+    if (robot.driver_config.publish_every_rt_jitter && rtpublisher) {
       if (rtpublisher->trylock()) {
         rtpublisher->msg_.data = jitter;
         rtpublisher->unlockAndPublish();

@@ -16,25 +16,19 @@ ARLRobot::~ARLRobot() {
 
 void ARLRobot::initialize(ros::NodeHandle nh) {
 
-  bool using_rpi = false;
-  nh.param<bool>("/using_raspberry_pi", using_rpi, false);
+  if (driver_config.using_raspberry_pi) {
 
-  if (!using_rpi) {
+    dev = new RaspberryPi();
+    initialized = true;
+    ROS_INFO("RPi initialized");
+  } else {
 
     dev = new Dummy();
     initialized = true;
-
     ROS_INFO("Using dummy interface");
-
-  } else {
-
-    dev = new RaspberryPi();
-
-    initialized = true;
-    ROS_INFO("RPi initialized");
   }
 
-  getMuscleDescriptionsFromParameterServer(nh);
+  getConfigurationFromParameterServer(nh);
 
 
   for (int i = 0; i < names_.size(); i++) {
@@ -43,8 +37,6 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
   }
 
   registerInterface(&muscle_interface);
-
-  
 
   //Set all controllers to zero activation
   std::vector<arl_datatypes::muscle_command_data_t> command_vec;
@@ -55,8 +47,8 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
     command_vec.push_back(command);
   }
   dev->write(command_vec);
-  
 
+  emergency_halt = false;
 }
 
 void ARLRobot::close() {
@@ -100,9 +92,18 @@ void ARLRobot::write(const ros::Time &time, const ros::Duration &period) {
   ROS_DEBUG("WRITE with %f hz", 1 / period.toSec());
 }
 
-void ARLRobot::getMuscleDescriptionsFromParameterServer(ros::NodeHandle nh) {
+void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
 
-  ROS_DEBUG("Reading muscle descriptions");
+  ROS_DEBUG("Reading configuration");
+
+  nh.param<bool>("/using_raspberry_pi", driver_config.using_raspberry_pi, false);
+
+  nh.param<bool>("/publish_every_rt_jitter", driver_config.publish_every_rt_jitter, false);
+
+  nh.param<bool>("/halt_on_slow_rt_loop", driver_config.halt_on_slow_rt_loop, false);
+
+  nh.param<double>("/min_acceptable_rt_loop_frequency", driver_config.min_acceptable_rt_loop_frequency, 1000.0);
+
 
   XmlRpc::XmlRpcValue muscle_list;
   nh.getParam("/muscle_list", muscle_list);
@@ -146,5 +147,11 @@ void ARLRobot::getMuscleDescriptionsFromParameterServer(ros::NodeHandle nh) {
       ROS_ERROR("Unable to parse muscle information");
     }
 
+  }
+}
+
+void ARLRobot::executeEmergencyHalt() {
+  for (int i = 0; i < names_.size(); i++) {
+    dev->emergency_halt(activation_controllers_[i]);
   }
 }

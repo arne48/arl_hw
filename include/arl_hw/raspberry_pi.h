@@ -48,13 +48,18 @@ public:
    */
   virtual bool close();
 
+  /**
+   * Resets muscle and blows off air
+   */
+  virtual void emergency_halt(std::pair<int, int> muscle);
+
 private:
 
   AD5360 *_dac;
   RaspberryPi_SPI *_spi;
 
-  int gpios[8] = {RPI_GPIO_P1_24, RPI_GPIO_P1_26, RPI_V2_GPIO_P1_32, RPI_V2_GPIO_P1_36, RPI_GPIO_P1_07, RPI_GPIO_P1_11, RPI_GPIO_P1_13,
-                       RPI_GPIO_P1_15};
+  int gpios[8] = {RPI_GPIO_P1_24, RPI_GPIO_P1_26, RPI_V2_GPIO_P1_32, RPI_V2_GPIO_P1_36,
+                  RPI_GPIO_P1_07, RPI_GPIO_P1_11, RPI_GPIO_P1_13, RPI_GPIO_P1_15};
 
 
 };

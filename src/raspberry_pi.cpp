@@ -64,6 +64,10 @@ bool RaspberryPi::close() {
   return true;
 }
 
+void RaspberryPi::emergency_halt(std::pair<int, int> muscle) {
+  _dac->reset(gpios[muscle.first], (uint8_t) muscle.second / (uint8_t) 8, (uint8_t) muscle.second % (uint8_t) 8);
+}
+
 
 
 

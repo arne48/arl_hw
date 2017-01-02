@@ -22,6 +22,10 @@ bool Dummy::close() {
   return true;
 }
 
+void Dummy::emergency_halt(std::pair<int, int> muscle) {
+
+}
+
 
 
 
