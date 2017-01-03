@@ -15,19 +15,17 @@ ARLRobot::~ARLRobot() {
 
 void ARLRobot::initialize(ros::NodeHandle nh) {
 
-  if (driver_config.using_raspberry_pi) {
+  getConfigurationFromParameterServer(nh);
 
+  if (driver_config.using_raspberry_pi) {
     dev = new RaspberryPi();
     initialized = true;
     ROS_INFO("RPi initialized");
   } else {
-
     dev = new Dummy();
     initialized = true;
     ROS_INFO("Using dummy interface");
   }
-
-  getConfigurationFromParameterServer(nh);
 
 
   for (int i = 0; i < names_.size(); i++) {
@@ -65,7 +63,7 @@ void ARLRobot::read(const ros::Time &time, const ros::Duration &period) {
   std::vector<arl_datatypes::muscle_status_data_t> status;
   dev->read(status);
 
-  ROS_DEBUG("READ with %f hz", 1 / period.toSec());
+  //ROS_DEBUG("READ with %f hz", 1 / period.toSec());
 }
 
 void ARLRobot::write(const ros::Time &time, const ros::Duration &period) {
@@ -88,7 +86,7 @@ void ARLRobot::write(const ros::Time &time, const ros::Duration &period) {
 
   dev->write(command_vec);
 
-  ROS_DEBUG("WRITE with %f hz", 1 / period.toSec());
+  //ROS_DEBUG("WRITE with %f hz", 1 / period.toSec());
 }
 
 void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
