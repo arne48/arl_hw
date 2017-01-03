@@ -56,7 +56,6 @@ bool RaspberryPi::write(std::vector<arl_datatypes::muscle_command_data_t> &comma
 }
 
 bool RaspberryPi::initialize() {
-
   return true;
 }
 
@@ -65,6 +64,9 @@ bool RaspberryPi::close() {
 }
 
 void RaspberryPi::emergency_halt(std::pair<int, int> muscle) {
+  _dac->setVoltage(gpios[muscle.first], (uint8_t) muscle.second / (uint8_t) 8, (uint8_t) muscle.second % (uint8_t) 8, BLOW_OFF);
+}
+void RaspberryPi::reset_muscle(std::pair<int, int> muscle) {
   _dac->reset(gpios[muscle.first], (uint8_t) muscle.second / (uint8_t) 8, (uint8_t) muscle.second % (uint8_t) 8);
 }
 

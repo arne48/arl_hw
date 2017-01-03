@@ -2,7 +2,6 @@
 
 ARLRobot::ARLRobot() {
   initialized = false;
-
 }
 
 ARLRobot::~ARLRobot() {
@@ -151,6 +150,12 @@ void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
 }
 
 void ARLRobot::executeEmergencyHalt() {
+  for (int i = 0; i < names_.size(); i++) {
+    dev->emergency_halt(activation_controllers_[i]);
+  }
+}
+
+void ARLRobot::resetMuscles() {
   for (int i = 0; i < names_.size(); i++) {
     dev->emergency_halt(activation_controllers_[i]);
   }

@@ -56,9 +56,14 @@ public:
   virtual bool close() = 0;
 
   /**
-   * Resets muscle and blows off air
+   * Blows off air from muscle
    */
   virtual void emergency_halt(std::pair<int, int> muscle) = 0;
+
+  /**
+ * Resets muscle and blows off air
+ */
+  virtual void reset_muscle(std::pair<int, int> muscle) = 0;
 
 };
 

@@ -26,6 +26,10 @@ void Dummy::emergency_halt(std::pair<int, int> muscle) {
 
 }
 
+void Dummy::reset_muscle(std::pair<int, int> muscle) {
+
+}
+
 
 
 

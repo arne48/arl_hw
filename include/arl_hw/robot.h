@@ -72,6 +72,8 @@ public:
 
   void executeEmergencyHalt();
 
+  void resetMuscles();
+
   config driver_config;
   bool emergency_halt;
 

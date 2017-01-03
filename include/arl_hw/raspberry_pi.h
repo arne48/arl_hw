@@ -7,6 +7,8 @@
 #include <bcm2835.h>
 #include <arl_hw/ad5360.h>
 
+#define BLOW_OFF 0.0
+
 /**
  * Implementation of CommunicationDevice base class which communicats to hardware using a Raspberry Pi
  */
@@ -49,9 +51,14 @@ public:
   virtual bool close();
 
   /**
-   * Resets muscle and blows off air
+   * Blows off air from muscle
    */
   virtual void emergency_halt(std::pair<int, int> muscle);
+
+  /**
+ * Resets muscle and blows off air
+ */
+  virtual void reset_muscle(std::pair<int, int> muscle);
 
 private:
 

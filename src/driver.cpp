@@ -9,6 +9,8 @@
 #include <arl_hw/rt_history.h>
 #include <arl_hw/driver_utils.h>
 #include <controller_manager/controller_manager.h>
+#include <std_srvs/Trigger.h>
+#include <std_srvs/SetBool.h>
 
 #define CLOCK_PRIO 0
 #define CONTROL_PRIO 0
@@ -20,6 +22,8 @@ static pthread_attr_t controlThreadAttr;
 struct timespec ts = {0, 0};
 struct timespec tick;
 
+ARLRobot robot;
+
 //TODO REFACTOR TOO LONG, TOO CONFUSING
 void *controlLoop(void *) {
 
@@ -30,8 +34,6 @@ void *controlLoop(void *) {
   driver_utils::statistics_t driver_stats;
 
   ros::NodeHandle nh;
-
-  ARLRobot robot;
   robot.initialize(nh);
 
   controller_manager::ControllerManager cm(&robot, nh);
@@ -74,6 +76,7 @@ void *controlLoop(void *) {
   last_published = driver_utils::get_now();
   last_rt_monitor_time = driver_utils::get_now();
   last_loop_start = driver_utils::get_now();
+
   while (nh.ok()) {
 
     // Check for Emergency Halt
@@ -85,6 +88,7 @@ void *controlLoop(void *) {
     double after_write;
 
     if (driver_stats.emergency_halt_engaged) {
+      ROS_WARN("Halted");
       start = driver_utils::get_now();
       after_read = start;
       after_cm = start;
@@ -99,7 +103,7 @@ void *controlLoop(void *) {
       }
 
     } else {
-
+      ROS_WARN("Running");
       // Track how long the actual loop takes
       double this_loop_start = driver_utils::get_now();
       driver_stats.loop_acc(this_loop_start - last_loop_start);
@@ -151,11 +155,13 @@ void *controlLoop(void *) {
         // Use last X samples of frequency when deciding whether or not to halt
         rt_loop_history.sample(rt_loop_frequency);
         double avg_rt_loop_frequency = rt_loop_history.average();
+
         if (avg_rt_loop_frequency < robot.driver_config.min_acceptable_rt_loop_frequency
             && robot.driver_config.halt_on_slow_rt_loop) {
           driver_stats.halt_rt_loop_frequency = avg_rt_loop_frequency;
           driver_stats.rt_loop_not_making_timing = true;
         }
+
         driver_stats.rt_loop_frequency = avg_rt_loop_frequency;
         rt_cycle_count = 0;
         last_rt_monitor_time = start;
@@ -219,6 +225,18 @@ void *controlLoop(void *) {
 
 }
 
+bool resetMusclesService(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &resp)  {
+  robot.resetMuscles();
+  resp.success = true;
+  return true;
+}
+
+bool emergencyHaltService(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &resp)  {
+  robot.emergency_halt = req.data;
+  resp.success = true;
+  return true;
+}
+
 int main(int argc, char **argv) {
 
   // Keep the kernel from swapping us out
@@ -229,7 +247,10 @@ int main(int argc, char **argv) {
 
   //Initialize ROS communication
   ros::init(argc, argv, "arl_driver_node");
+  ros::NodeHandle nh;
 
+  ros::ServiceServer reset = nh.advertiseService("/reset_muscles", resetMusclesService);
+  ros::ServiceServer halt = nh.advertiseService("/emergency_halt", emergencyHaltService);
 
   // Catch attempts to quit
   signal(SIGTERM, driver_utils::terminationHandler);
