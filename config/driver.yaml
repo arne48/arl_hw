@@ -1,10 +1,10 @@
-min_acceptable_rt_loop_frequency: 100.0
+min_acceptable_rt_loop_frequency: 990.0
 
 halt_on_slow_rt_loop: false
 
 publish_every_rt_jitter: false
 
-using_raspberry_pi: false
+using_raspberry_pi: true
 
 muscle_list:
   - name: humerus0
