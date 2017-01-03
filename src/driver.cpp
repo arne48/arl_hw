@@ -18,7 +18,6 @@
 
 static pthread_t controlThread;
 static pthread_attr_t controlThreadAttr;
-
 struct timespec ts = {0, 0};
 struct timespec tick;
 
@@ -88,7 +87,6 @@ void *controlLoop(void *) {
     double after_write;
 
     if (driver_stats.emergency_stop_engaged) {
-      ROS_WARN("Halted");
       start = driver_utils::get_now();
       after_read = start;
       after_cm = start;
@@ -103,7 +101,6 @@ void *controlLoop(void *) {
       }
 
     } else {
-      ROS_WARN("Running");
       // Track how long the actual loop takes
       double this_loop_start = driver_utils::get_now();
       driver_stats.loop_acc(this_loop_start - last_loop_start);
@@ -174,36 +171,7 @@ void *controlLoop(void *) {
     int period_int = int(rate.expectedCycleTime().toNSec());
     driver_utils::timespecInc(&tick, period_int);
 
-    struct timespec before;
-    clock_gettime(CLOCK_REALTIME, &before);
-    if ((before.tv_sec + double(before.tv_nsec) / NSEC_PER_SECOND) > (tick.tv_sec + double(tick.tv_nsec) / NSEC_PER_SECOND)) {
-      // Total amount of time the loop took to run
-      driver_stats.overrun_loop_sec = (before.tv_sec + double(before.tv_nsec) / NSEC_PER_SECOND) -
-                                      (tick.tv_sec + double(tick.tv_nsec) / NSEC_PER_SECOND);
-
-      // We overran, snap to next "period"
-      tick.tv_sec = before.tv_sec;
-      tick.tv_nsec = (before.tv_nsec / period_int) * period_int;
-      driver_utils::timespecInc(&tick, period_int);
-
-      // initialize overruns
-      if (driver_stats.overruns == 0) {
-        driver_stats.last_overrun = 1000;
-        driver_stats.last_severe_overrun = 1000;
-      }
-
-      // check for overruns
-      if (driver_stats.recent_overruns > 10) {
-        driver_stats.last_severe_overrun = 0;
-      }
-      driver_stats.last_overrun = 0;
-
-      driver_stats.overruns++;
-      driver_stats.recent_overruns++;
-      driver_stats.overrun_read = after_read - start;
-      driver_stats.overrun_cm = after_cm - after_read;
-      driver_stats.overrun_write = after_write - after_cm;
-    }
+    driver_stats = driver_utils::checkOverrun(driver_stats, start, after_read, after_cm, after_write, period_int);
 
     //Wait for the loop to start and maintain fixed rate
     driver_utils::waitForNextControlLoop(tick, int(rate.expectedCycleTime().toNSec()));
@@ -253,11 +221,6 @@ int main(int argc, char **argv) {
 
   ros::ServiceServer reset = nh.advertiseService("/reset_muscles", resetMusclesService);
   ros::ServiceServer halt = nh.advertiseService("/emergency_stop", emergencyHaltService);
-
-  // Catch attempts to quit
-  signal(SIGTERM, driver_utils::terminationHandler);
-  signal(SIGINT, driver_utils::terminationHandler);
-  signal(SIGHUP, driver_utils::terminationHandler);
 
   //Start thread
   int rv;

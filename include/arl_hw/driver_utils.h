@@ -21,7 +21,7 @@ using namespace boost::accumulators;
 
 namespace driver_utils {
 
-  struct statistics_t{
+  struct statistics_t {
     accumulator_set<double, stats<tag::max, tag::mean> > read_acc;
     accumulator_set<double, stats<tag::max, tag::mean> > write_acc;
     accumulator_set<double, stats<tag::max, tag::mean> > cm_acc;
@@ -42,10 +42,16 @@ namespace driver_utils {
   };
 
   void publishDiagnostics(realtime_tools::RealtimePublisher<diagnostic_msgs::DiagnosticArray> &publisher, statistics_t driver_stats);
+
   double get_now();
-  void terminationHandler(int signal);
+
   void timespecInc(struct timespec *tick, int ns);
+
   void waitForNextControlLoop(struct timespec tick, int sampling_ns);
+
+  driver_utils::statistics_t &
+  checkOverrun(driver_utils::statistics_t &driver_stats, double start, double after_read, double after_cm, double after_write,
+               int period_int);
 }
 
 #endif //ARL_HW_DRIVER_UTILS_H

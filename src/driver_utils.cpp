@@ -77,15 +77,10 @@ namespace driver_utils {
     }
   }
 
-
   double get_now() {
     struct timespec n;
     clock_gettime(CLOCK_MONOTONIC, &n);
     return double(n.tv_nsec) / NSEC_PER_SECOND + n.tv_sec;
-  }
-
-  void terminationHandler(int signal) {
-    ROS_INFO("Received Signal %d", signal);
   }
 
   void timespecInc(struct timespec *tick, int ns) {
@@ -109,4 +104,44 @@ namespace driver_utils {
 
     clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tick, NULL);
   }
+
+  driver_utils::statistics_t &
+  checkOverrun(driver_utils::statistics_t &driver_stats, double start, double after_read, double after_cm, double after_write,
+               int period_int) {
+    struct timespec before;
+    struct timespec ts = {0, 0};
+    struct timespec tick;
+
+    clock_gettime(CLOCK_REALTIME, &before);
+    if ((before.tv_sec + double(before.tv_nsec) / NSEC_PER_SECOND) > (tick.tv_sec + double(tick.tv_nsec) / NSEC_PER_SECOND)) {
+      // Total amount of time the loop took to run
+      driver_stats.overrun_loop_sec = (before.tv_sec + double(before.tv_nsec) / NSEC_PER_SECOND) -
+                                      (tick.tv_sec + double(tick.tv_nsec) / NSEC_PER_SECOND);
+
+      // We overran, snap to next "period"
+      tick.tv_sec = before.tv_sec;
+      tick.tv_nsec = (before.tv_nsec / period_int) * period_int;
+      driver_utils::timespecInc(&tick, period_int);
+
+      // initialize overruns
+      if (driver_stats.overruns == 0) {
+        driver_stats.last_overrun = 1000;
+        driver_stats.last_severe_overrun = 1000;
+      }
+
+      // check for overruns
+      if (driver_stats.recent_overruns > 10) {
+        driver_stats.last_severe_overrun = 0;
+      }
+      driver_stats.last_overrun = 0;
+
+      driver_stats.overruns++;
+      driver_stats.recent_overruns++;
+      driver_stats.overrun_read = after_read - start;
+      driver_stats.overrun_cm = after_cm - after_read;
+      driver_stats.overrun_write = after_write - after_cm;
+    }
+    return driver_stats;
+  }
+
 }
