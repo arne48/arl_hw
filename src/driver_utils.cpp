@@ -105,7 +105,7 @@ namespace driver_utils {
     clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tick, NULL);
   }
 
-  statistics_t &
+  void
   checkOverrun(statistics_t &driver_stats, double start, double after_read, double after_cm, double after_write,
                int period_int, struct timespec &tick) {
     struct timespec before;
@@ -139,7 +139,7 @@ namespace driver_utils {
       driver_stats.overrun_cm = after_cm - after_read;
       driver_stats.overrun_write = after_write - after_cm;
     }
-    return driver_stats;
+
   }
 
 }

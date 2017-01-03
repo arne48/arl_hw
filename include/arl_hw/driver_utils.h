@@ -49,7 +49,7 @@ namespace driver_utils {
 
   void waitForNextControlLoop(struct timespec tick, int sampling_ns);
 
-  statistics_t &
+  void
   checkOverrun(statistics_t &driver_stats, double start, double after_read, double after_cm, double after_write,
                int period_int, struct timespec &tick);
 }

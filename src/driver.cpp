@@ -171,7 +171,7 @@ void *controlLoop(void *) {
     int period_int = int(rate.expectedCycleTime().toNSec());
     driver_utils::timespecInc(&tick, period_int);
 
-    driver_stats = driver_utils::checkOverrun(driver_stats, start, after_read, after_cm, after_write, period_int, tick);
+    driver_utils::checkOverrun(driver_stats, start, after_read, after_cm, after_write, period_int, tick);
 
     //Wait for the loop to start and maintain fixed rate
     driver_utils::waitForNextControlLoop(tick, int(rate.expectedCycleTime().toNSec()));
