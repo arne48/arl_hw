@@ -2,14 +2,14 @@
 
 namespace driver_utils {
 
-  void publishDiagnostics(realtime_tools::RealtimePublisher<diagnostic_msgs::DiagnosticArray> &publisher, statistics_t driver_stats) {
+  void publishDiagnostics(realtime_tools::RealtimePublisher<diagnostic_msgs::DiagnosticArray> &publisher, statistics_t &driver_stats) {
     if (publisher.trylock()) {
       accumulator_set<double, stats<tag::max, tag::mean> > zero;
       std::vector<diagnostic_msgs::DiagnosticStatus> statuses;
       diagnostic_updater::DiagnosticStatusWrapper status;
 
       static double max_read = 0, max_write = 0, max_cm = 0, max_loop = 0, max_jitter = 0;
-      double avg_read, avg_write, avg_cm, avg_loop, avg_jitter;
+      double avg_read = 0, avg_write = 0, avg_cm = 0, avg_loop = 0, avg_jitter = 0;
 
       avg_read = extract_result<tag::mean>(driver_stats.read_acc);
       avg_write = extract_result<tag::mean>(driver_stats.write_acc);
@@ -105,12 +105,10 @@ namespace driver_utils {
     clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tick, NULL);
   }
 
-  driver_utils::statistics_t &
-  checkOverrun(driver_utils::statistics_t &driver_stats, double start, double after_read, double after_cm, double after_write,
-               int period_int) {
+  statistics_t &
+  checkOverrun(statistics_t &driver_stats, double start, double after_read, double after_cm, double after_write,
+               int period_int, struct timespec &tick) {
     struct timespec before;
-    struct timespec ts = {0, 0};
-    struct timespec tick;
 
     clock_gettime(CLOCK_REALTIME, &before);
     if ((before.tv_sec + double(before.tv_nsec) / NSEC_PER_SECOND) > (tick.tv_sec + double(tick.tv_nsec) / NSEC_PER_SECOND)) {

@@ -41,7 +41,7 @@ namespace driver_utils {
     bool emergency_stop_engaged;
   };
 
-  void publishDiagnostics(realtime_tools::RealtimePublisher<diagnostic_msgs::DiagnosticArray> &publisher, statistics_t driver_stats);
+  void publishDiagnostics(realtime_tools::RealtimePublisher<diagnostic_msgs::DiagnosticArray> &publisher, statistics_t &driver_stats);
 
   double get_now();
 
@@ -49,9 +49,9 @@ namespace driver_utils {
 
   void waitForNextControlLoop(struct timespec tick, int sampling_ns);
 
-  driver_utils::statistics_t &
-  checkOverrun(driver_utils::statistics_t &driver_stats, double start, double after_read, double after_cm, double after_write,
-               int period_int);
+  statistics_t &
+  checkOverrun(statistics_t &driver_stats, double start, double after_read, double after_cm, double after_write,
+               int period_int, struct timespec &tick);
 }
 
 #endif //ARL_HW_DRIVER_UTILS_H
