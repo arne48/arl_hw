@@ -142,4 +142,34 @@ namespace driver_utils {
 
   }
 
+  void
+  checkSevereRTMiss(double *last_rt_monitor_time, unsigned int *rt_cycle_count, double rt_loop_monitor_period,
+                    RTLoopHistory &rt_loop_history,
+                    driver_utils::statistics_t &driver_stats, double start, ARLRobot &robot) {
+
+    // Realtime loop should run about 1000Hz.
+    // Missing timing on a control cycles usually causes a controller glitch and actuators to jerk.
+    // When realtime loop misses a lot of cycles controllers will perform poorly and may cause robot to shake.
+
+    ++*rt_cycle_count;
+    if ((start - *last_rt_monitor_time) > rt_loop_monitor_period) {
+      // Calculate new average rt loop frequency
+      double rt_loop_frequency = double(*rt_cycle_count) / rt_loop_monitor_period;
+
+      // Use last X samples of frequency when deciding whether or not to halt
+      rt_loop_history.sample(rt_loop_frequency);
+      double avg_rt_loop_frequency = rt_loop_history.average();
+
+      if (avg_rt_loop_frequency < robot.driver_config.min_acceptable_rt_loop_frequency
+          && robot.driver_config.halt_on_slow_rt_loop) {
+        driver_stats.halt_rt_loop_frequency = avg_rt_loop_frequency;
+        driver_stats.rt_loop_not_making_timing = true;
+      }
+
+      driver_stats.rt_loop_frequency = avg_rt_loop_frequency;
+      *rt_cycle_count = 0;
+      *last_rt_monitor_time = start;
+    }
+  }
+
 }

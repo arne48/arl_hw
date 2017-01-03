@@ -14,6 +14,9 @@
 #include <boost/accumulators/statistics/max.hpp>
 #include <boost/accumulators/statistics/mean.hpp>
 
+#include <arl_hw/rt_history.h>
+#include <arl_hw/robot.h>
+
 #define NSEC_PER_SECOND 1e+9
 #define USEC_PER_SECOND 1e6
 
@@ -52,6 +55,11 @@ namespace driver_utils {
   void
   checkOverrun(statistics_t &driver_stats, double start, double after_read, double after_cm, double after_write,
                int period_int, struct timespec &tick);
+
+  void
+  checkSevereRTMiss(double *last_rt_monitor_time, unsigned int *rt_cycle_count, double rt_loop_monitor_period,
+                    RTLoopHistory &rt_loop_history,
+                    driver_utils::statistics_t &driver_stats, double start, ARLRobot &robot);
 }
 
 #endif //ARL_HW_DRIVER_UTILS_H
