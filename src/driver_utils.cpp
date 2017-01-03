@@ -66,8 +66,8 @@ namespace driver_utils {
         status.mergeSummaryf(status.ERROR, "Halting, realtime loop only ran at %.4f Hz", driver_stats.halt_rt_loop_frequency);
       }
 
-      if (driver_stats.emergency_halt_engaged) {
-        status.mergeSummaryf(status.WARN, "Emergency Halt Engaged");
+      if (driver_stats.emergency_stop_engaged) {
+        status.mergeSummaryf(status.WARN, "Emergency Stop Engaged");
       }
 
       statuses.push_back(status);

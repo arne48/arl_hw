@@ -38,7 +38,7 @@ namespace driver_utils {
     double halt_rt_loop_frequency;
     double rt_loop_frequency;
     bool rt_loop_not_making_timing;
-    bool emergency_halt_engaged;
+    bool emergency_stop_engaged;
   };
 
   void publishDiagnostics(realtime_tools::RealtimePublisher<diagnostic_msgs::DiagnosticArray> &publisher, statistics_t driver_stats);

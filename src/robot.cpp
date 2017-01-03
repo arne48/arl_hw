@@ -47,7 +47,7 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
   }
   dev->write(command_vec);
 
-  emergency_halt = false;
+  emergency_stop = false;
 }
 
 void ARLRobot::close() {
@@ -149,14 +149,14 @@ void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
   }
 }
 
-void ARLRobot::executeEmergencyHalt() {
+void ARLRobot::executeEmergencyStop() {
   for (int i = 0; i < names_.size(); i++) {
-    dev->emergency_halt(activation_controllers_[i]);
+    dev->emergency_stop(activation_controllers_[i]);
   }
 }
 
 void ARLRobot::resetMuscles() {
   for (int i = 0; i < names_.size(); i++) {
-    dev->emergency_halt(activation_controllers_[i]);
+    dev->emergency_stop(activation_controllers_[i]);
   }
 }

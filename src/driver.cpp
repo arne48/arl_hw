@@ -80,21 +80,21 @@ void *controlLoop(void *) {
   while (nh.ok()) {
 
     // Check for Emergency Halt
-    driver_stats.emergency_halt_engaged = robot.emergency_halt;
+    driver_stats.emergency_stop_engaged = robot.emergency_stop;
 
     double start;
     double after_read;
     double after_cm;
     double after_write;
 
-    if (driver_stats.emergency_halt_engaged) {
+    if (driver_stats.emergency_stop_engaged) {
       ROS_WARN("Halted");
       start = driver_utils::get_now();
       after_read = start;
       after_cm = start;
       after_write = start;
 
-      robot.executeEmergencyHalt();
+      robot.executeEmergencyStop();
 
       double end = driver_utils::get_now();
       if ((end - last_published) > 1.0) {
@@ -129,7 +129,9 @@ void *controlLoop(void *) {
       cm.update(now, period);
       after_cm = driver_utils::get_now();
 
-      robot.write(now, period);
+      if (!driver_stats.rt_loop_not_making_timing) {
+        robot.write(now, period);
+      }
       after_write = driver_utils::get_now();
 
       //Accumulate section's durations of update cycle
@@ -215,8 +217,8 @@ void *controlLoop(void *) {
     driver_stats.jitter_acc(jitter);
     // Publish realtime loops current jitter
     if (robot.driver_config.publish_every_rt_jitter && rtpublisher && rtpublisher->trylock()) {
-        rtpublisher->msg_.data = jitter;
-        rtpublisher->unlockAndPublish();
+      rtpublisher->msg_.data = jitter;
+      rtpublisher->unlockAndPublish();
     }
   }
 
@@ -225,14 +227,14 @@ void *controlLoop(void *) {
 
 }
 
-bool resetMusclesService(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &resp)  {
+bool resetMusclesService(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &resp) {
   robot.resetMuscles();
   resp.success = true;
   return true;
 }
 
-bool emergencyHaltService(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &resp)  {
-  robot.emergency_halt = req.data;
+bool emergencyHaltService(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &resp) {
+  robot.emergency_stop = req.data;
   resp.success = true;
   return true;
 }
@@ -250,7 +252,7 @@ int main(int argc, char **argv) {
   ros::NodeHandle nh;
 
   ros::ServiceServer reset = nh.advertiseService("/reset_muscles", resetMusclesService);
-  ros::ServiceServer halt = nh.advertiseService("/emergency_halt", emergencyHaltService);
+  ros::ServiceServer halt = nh.advertiseService("/emergency_stop", emergencyHaltService);
 
   // Catch attempts to quit
   signal(SIGTERM, driver_utils::terminationHandler);

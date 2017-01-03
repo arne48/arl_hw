@@ -63,7 +63,7 @@ bool RaspberryPi::close() {
   return true;
 }
 
-void RaspberryPi::emergency_halt(std::pair<int, int> muscle) {
+void RaspberryPi::emergency_stop(std::pair<int, int> muscle) {
   _dac->setVoltage(gpios[muscle.first], (uint8_t) muscle.second / (uint8_t) 8, (uint8_t) muscle.second % (uint8_t) 8, BLOW_OFF);
 }
 void RaspberryPi::reset_muscle(std::pair<int, int> muscle) {

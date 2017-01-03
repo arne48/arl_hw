@@ -50,7 +50,7 @@ public:
   /**
    * Blows off air from muscle
    */
-  virtual void emergency_halt(std::pair<int, int> muscle);
+  virtual void emergency_stop(std::pair<int, int> muscle);
 
   /**
  * Resets muscle and blows off air

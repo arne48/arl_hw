@@ -70,12 +70,12 @@ public:
    */
   void write(const ros::Time &time, const ros::Duration &period);
 
-  void executeEmergencyHalt();
+  void executeEmergencyStop();
 
   void resetMuscles();
 
   config driver_config;
-  bool emergency_halt;
+  bool emergency_stop;
 
 private:
   arl_interfaces::MuscleInterface muscle_interface; /**< MuscleInterface for usage of MuscleController */
