@@ -1,6 +1,6 @@
 min_acceptable_rt_loop_frequency: 990.0
 
-halt_on_slow_rt_loop: false
+halt_on_slow_rt_loop: true
 
 publish_every_rt_jitter: false
 
