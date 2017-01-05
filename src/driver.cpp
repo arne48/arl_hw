@@ -132,9 +132,9 @@ void *controlLoop(void *) {
       after_write = driver_utils::get_now();
 
       //Accumulate section's durations of update cycle
+      driver_stats.read_acc(after_read - start);
       driver_stats.cm_acc(after_cm - after_read);
-      driver_stats.write_acc(after_write - start);
-      driver_stats.read_acc(after_write - after_cm);
+      driver_stats.write_acc(after_write - after_cm);
 
       double end = driver_utils::get_now();
       if ((end - last_published) > 1.0) {
