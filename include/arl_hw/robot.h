@@ -16,6 +16,9 @@
 #include <arl_interfaces/muscle_interface.h>
 #include <arl_controllers/muscle_controller.h>
 
+#include <set>
+#include <vector>
+
 /**
  * Implementation of Robot Hardware Interface for ARL's pneumatic muscle driven robots
  */
@@ -74,6 +77,8 @@ public:
 
   void resetMuscles();
 
+  void resetMuscle(std::string name);
+
   config driver_config;
   bool emergency_stop;
 
@@ -89,7 +94,10 @@ private:
   std::vector<std::pair<int, int> > activation_controllers_; /**< Internal datastructure which contains the address (Controller Port[Chip-Select Id] : Channel on Controller) for every muscle's activation controller*/
   std::vector<std::pair<int,int> > pressure_controllers_; /**< Internal datastructure which contains the address (Controller Port[Chip-Select Id] : Channel on Controller) for every muscle's pressure controller*/
   std::vector<std::pair<int,int> > tension_controllers_; /**< Internal datastructure which contains the address (Controller Port[Chip-Select Id] : Channel on Controller) for every muscle's tension controller*/
-  std::vector<double> last_activations_;
+  std::vector<double> last_activations_; /**< Internal datastructure last activation values to prevent wasting time on setting the same value multiple times */
+
+  std::set<int> pressure_ports; /**< Internal datastructure to store pressure controller ids as unique set */
+  std::set<int> tension_ports; /**< Internal datastructure to store tension controller ids as unique set */
 
 };
 

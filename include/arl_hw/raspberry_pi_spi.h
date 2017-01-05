@@ -30,6 +30,8 @@ public:
    */
   virtual bool transferSPI(int cs, int data_len, char data[]);
 
+  virtual void setSCLKDivider(int divider);
+
 };
 
 

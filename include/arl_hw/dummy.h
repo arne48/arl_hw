@@ -26,7 +26,8 @@ public:
    * Dummy read
    * @return allways true
    */
-  virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status);
+  virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status, std::vector<std::pair<int, int> > pressure_controllers,
+                    std::vector<std::pair<int, int> > tension_controllers);
 
   /**
    * Dummy write

@@ -6,6 +6,7 @@
 #include <arl_hw/raspberry_pi_spi.h>
 #include <bcm2835.h>
 #include <arl_hw/ad5360.h>
+#include <arl_hw/ad7616.h>
 
 #define BLOW_OFF 0.0
 
@@ -30,7 +31,8 @@ public:
    * Reads current robot state from hardware on a Raspberry Pi
    * @return current state of hardware
    */
-  virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status_vec);
+  virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status_vec, std::vector<std::pair<int, int> > pressure_controllers,
+                    std::vector<std::pair<int, int> > tension_controllers);
 
   /**
    * @param command command to issue to hardware on a Raspberry Pi
@@ -63,6 +65,7 @@ public:
 private:
 
   AD5360 *_dac;
+  AD7616 *_adc;
   RaspberryPi_SPI *_spi;
 
   int gpios[8] = {RPI_GPIO_P1_24, RPI_GPIO_P1_26, RPI_V2_GPIO_P1_32, RPI_V2_GPIO_P1_36,

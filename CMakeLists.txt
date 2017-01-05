@@ -53,6 +53,7 @@ add_library(arl_robot
         src/raspberry_pi_spi.cpp
         src/dummy.cpp
         src/ad5360.cpp
+        src/ad7616.cpp
         )
 
 add_executable(arl_driver_node src/driver.cpp src/driver_utils.cpp src/rt_history.cpp)

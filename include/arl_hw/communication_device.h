@@ -2,6 +2,7 @@
 #define COMMUNICATION_DEVICE_H
 
 #include <vector>
+#include <set>
 #include <arl_hw/datatypes.h>
 
 /**
@@ -34,7 +35,8 @@ public:
    * @param status_vec output parameter
    * @return success of command
    */
-  virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status_vec) = 0;
+  virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status_vec, std::vector<std::pair<int, int> > pressure_controllers,
+                    std::vector<std::pair<int, int> > tension_controllers) = 0;
 
   /**
    * Writes robot command to hardware

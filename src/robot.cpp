@@ -61,7 +61,7 @@ void ARLRobot::read(const ros::Time &time, const ros::Duration &period) {
   }
 
   std::vector<arl_datatypes::muscle_status_data_t> status;
-  dev->read(status);
+  dev->read(status, pressure_controllers_, tension_controllers_);
 
   //ROS_DEBUG("READ with %f hz", 1 / period.toSec());
 }
@@ -137,6 +137,8 @@ void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
       pressure_controllers_.push_back({muscle_list[i]["pressure_controller_port"], muscle_list[i]["pressure_controller_channel"]});
       tension_controllers_.push_back({muscle_list[i]["tension_controller_port"], muscle_list[i]["tension_controller_channel"]});
 
+      pressure_ports.insert(muscle_list[i]["pressure_controller_port"]);
+      tension_ports.insert(muscle_list[i]["tension_controller_port"]);
 
       last_activations_.push_back(0.0);
     }
@@ -150,11 +152,25 @@ void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
 void ARLRobot::executeEmergencyStop() {
   for (unsigned int i = 0; i < names_.size(); i++) {
     dev->emergency_stop(activation_controllers_[i]);
+    desired_pressures_[i] = 0.0;
+    activations_[i] = 0.0;
   }
 }
 
 void ARLRobot::resetMuscles() {
   for (unsigned int i = 0; i < names_.size(); i++) {
-    dev->emergency_stop(activation_controllers_[i]);
+    dev->reset_muscle(activation_controllers_[i]);
+    desired_pressures_[i] = 0.0;
+    activations_[i] = 0.0;
+  }
+}
+
+void ARLRobot::resetMuscle(std::string name) {
+  for (unsigned int i = 0; i < names_.size(); i++) {
+    if(names_[i] == name){
+      dev->reset_muscle(activation_controllers_[i]);
+      desired_pressures_[i] = 0.0;
+      activations_[i] = 0.0;
+    }
   }
 }

@@ -18,10 +18,8 @@
 
 static pthread_t controlThread;
 static pthread_attr_t controlThreadAttr;
-
 ARLRobot robot;
 
-//TODO REFACTOR TOO LONG, TOO CONFUSING
 void *controlLoop(void *) {
   struct timespec ts = {0, 0};
   struct timespec tick;
@@ -33,8 +31,8 @@ void *controlLoop(void *) {
   driver_utils::statistics_t driver_stats;
 
   ros::NodeHandle nh;
-  robot.initialize(nh);
 
+  robot.initialize(nh);
   controller_manager::ControllerManager cm(&robot, nh);
 
   realtime_tools::RealtimePublisher<diagnostic_msgs::DiagnosticArray> publisher(nh, "/diagnostics", 2);
@@ -93,6 +91,7 @@ void *controlLoop(void *) {
       after_write = start;
 
       robot.executeEmergencyStop();
+      cm.update(now, period);
 
       double end = driver_utils::get_now();
       if ((end - last_published) > 1.0) {
@@ -126,9 +125,10 @@ void *controlLoop(void *) {
       cm.update(now, period);
       after_cm = driver_utils::get_now();
 
-      if (!driver_stats.rt_loop_not_making_timing) {
+      //Just write new data to muscle controllers as long as the rt loop is stable
+      //if (!driver_stats.rt_loop_not_making_timing) {
         robot.write(now, period);
-      }
+      //}
       after_write = driver_utils::get_now();
 
       //Accumulate section's durations of update cycle
@@ -159,11 +159,10 @@ void *controlLoop(void *) {
     struct timespec after;
     clock_gettime(CLOCK_REALTIME, &after);
     double jitter = (after.tv_sec - tick.tv_sec + double(after.tv_nsec - tick.tv_nsec) / NSEC_PER_SECOND);
-
-
     driver_stats.jitter_acc(jitter);
+
     // Publish realtime loops current jitter
-    if (robot.driver_config.publish_every_rt_jitter && rtpublisher && rtpublisher->trylock()) {
+    if (robot.driver_config.publish_every_rt_jitter && rtpublisher->trylock()) {
       rtpublisher->msg_.data = jitter;
       rtpublisher->unlockAndPublish();
     }
@@ -176,13 +175,11 @@ void *controlLoop(void *) {
 
 bool resetMusclesService(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &resp) {
   robot.resetMuscles();
-  resp.success = true;
   return true;
 }
 
-bool emergencyHaltService(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &resp) {
+bool emergencyStopService(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &resp) {
   robot.emergency_stop = req.data;
-  resp.success = true;
   return true;
 }
 
@@ -199,7 +196,7 @@ int main(int argc, char **argv) {
   ros::NodeHandle nh;
 
   ros::ServiceServer reset = nh.advertiseService("/reset_muscles", resetMusclesService);
-  ros::ServiceServer halt = nh.advertiseService("/emergency_stop", emergencyHaltService);
+  ros::ServiceServer halt = nh.advertiseService("/emergency_stop", emergencyStopService);
 
   //Start thread
   int rv;
