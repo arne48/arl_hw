@@ -30,7 +30,7 @@ bool Dummy::read(std::vector<arl_datatypes::muscle_status_data_t> &status, std::
   for (unsigned int i = 0; i < pressure_controllers.size(); i++) {
     status.push_back(
       //force wrong order to test correct checking in calling function (robot->read())
-      {pressure_controllers[(i-1)%pressure_controllers.size()], tension_controllers[(i-1)%pressure_controllers.size()], double(i), double(i)});
+      {pressure_controllers[(i-1)%pressure_controllers.size()], tension_controllers[(i-1)%pressure_controllers.size()],100, 0.5});
   }
 
   return true;
