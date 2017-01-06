@@ -45,6 +45,8 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
   }
   dev->write(command_vec);
 
+  status.reserve(names_.size());
+
   emergency_stop = false;
 }
 
@@ -60,8 +62,28 @@ void ARLRobot::read(const ros::Time &time, const ros::Duration &period) {
     return;
   }
 
-  std::vector<arl_datatypes::muscle_status_data_t> status;
   dev->read(status, pressure_controllers_, tension_controllers_);
+
+  /* Status of controllers should be in the same order as in the internal
+   * datastructure. To ensure this the address (controller port & channel)
+   * of the pressure controller of each muscle is used as identifier.
+   * If this check fails the address is searched in the remaining muscles.
+   */
+  if(status.size() == names_.size()){
+    for (int i = 0; i < status.size(); i++) {
+      int size = pressure_controllers_.size();
+      for (int j = 0; j < size; j++) {
+        int guessed_id = (i + j) % size;
+        if (pressure_controllers_[guessed_id].first == status[i].controller_port_pressure.first &&
+            pressure_controllers_[guessed_id].second == status[i].controller_port_pressure.second) {
+          current_pressures_[i] = status[i].current_pressure;
+          tensions_[i] = status[i].tension;
+        }
+      }
+    }
+  } else {
+    ROS_ERROR("%d muscles are registered on robot but the status of %d were read from hardware", int(names_.size()), int(status.size()));
+  }
 
   //ROS_DEBUG("READ with %f hz", 1 / period.toSec());
 }
@@ -167,7 +189,7 @@ void ARLRobot::resetMuscles() {
 
 void ARLRobot::resetMuscle(std::string name) {
   for (unsigned int i = 0; i < names_.size(); i++) {
-    if(names_[i] == name){
+    if (names_[i] == name) {
       dev->reset_muscle(activation_controllers_[i]);
       desired_pressures_[i] = 0.0;
       activations_[i] = 0.0;

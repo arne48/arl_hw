@@ -126,9 +126,9 @@ void *controlLoop(void *) {
       after_cm = driver_utils::get_now();
 
       //Just write new data to muscle controllers as long as the rt loop is stable
-      //if (!driver_stats.rt_loop_not_making_timing) {
+      if (!driver_stats.rt_loop_not_making_timing) {
         robot.write(now, period);
-      //}
+      }
       after_write = driver_utils::get_now();
 
       //Accumulate section's durations of update cycle

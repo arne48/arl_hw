@@ -98,6 +98,7 @@ private:
 
   std::set<int> pressure_ports; /**< Internal datastructure to store pressure controller ids as unique set */
   std::set<int> tension_ports; /**< Internal datastructure to store tension controller ids as unique set */
+  std::vector<arl_datatypes::muscle_status_data_t> status;
 
 };
 
