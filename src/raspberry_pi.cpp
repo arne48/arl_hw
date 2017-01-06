@@ -74,7 +74,7 @@ bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status,
    */
 
   status.clear();
-  for (int i = 0; i < pressure_controllers.size(); i++) {
+  for (unsigned int i = 0; i < pressure_controllers.size(); i++) {
     status.push_back({pressure_controllers[i], tension_controllers[i],
                       storage[pressure_controllers[i].first][pressure_controllers[i].second], /*TENSIONS*/ 0.0});
   }

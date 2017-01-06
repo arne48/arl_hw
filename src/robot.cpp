@@ -70,9 +70,9 @@ void ARLRobot::read(const ros::Time &time, const ros::Duration &period) {
    * If this check fails the address is searched in the remaining muscles.
    */
   if(status.size() == names_.size()){
-    for (int i = 0; i < status.size(); i++) {
-      int size = pressure_controllers_.size();
-      for (int j = 0; j < size; j++) {
+    for (unsigned int i = 0; i < status.size(); i++) {
+      unsigned int size = pressure_controllers_.size();
+      for (unsigned int j = 0; j < size; j++) {
         int guessed_id = (i + j) % size;
         if (pressure_controllers_[guessed_id].first == status[i].controller_port_pressure.first &&
             pressure_controllers_[guessed_id].second == status[i].controller_port_pressure.second) {

@@ -19,7 +19,6 @@ bool Dummy::read(std::vector<arl_datatypes::muscle_status_data_t> &status, std::
 
   std::map<int, uint32_t[16]> storage;
   for (auto const &entity : pressure_ports) {
-    int i = entity.first;
     for (int channel : entity.second) {
       uint32_t read_data = 0b10000000000000001000000000000000;
       storage[entity.first][channel] = (uint16_t) ((read_data & 0xFFFF0000) >> 16);
@@ -28,9 +27,10 @@ bool Dummy::read(std::vector<arl_datatypes::muscle_status_data_t> &status, std::
   }
 
   status.clear();
-  for (int i = 0; i < pressure_controllers.size(); i++) {
+  for (unsigned int i = 0; i < pressure_controllers.size(); i++) {
     status.push_back(
-      {pressure_controllers[i], tension_controllers[i], storage[pressure_controllers[i].first][pressure_controllers[i].second], 0.0});
+      //force wrong order to test correct checking in calling function (robot->read())
+      {pressure_controllers[(i-1)%pressure_controllers.size()], tension_controllers[(i-1)%pressure_controllers.size()], double(i), double(i)});
   }
 
   return true;
