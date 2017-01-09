@@ -54,6 +54,7 @@ add_library(arl_robot
         src/dummy.cpp
         src/ad5360.cpp
         src/ad7616.cpp
+        src/ad7730.cpp
         )
 
 add_executable(arl_driver_node src/driver.cpp src/driver_utils.cpp src/rt_history.cpp)

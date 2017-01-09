@@ -2,11 +2,14 @@
 #define RASPBERRY_PI_H
 
 #include <vector>
+#include <map>
 #include <arl_hw/communication_device.h>
 #include <arl_hw/raspberry_pi_spi.h>
 #include <bcm2835.h>
 #include <arl_hw/ad5360.h>
 #include <arl_hw/ad7616.h>
+#include <arl_hw/ad7730.h>
+
 
 #define BLOW_OFF 0.0
 
@@ -44,7 +47,8 @@ public:
    * Initialize communication device on a Raspberry Pi
    * @return success of command
    */
-  virtual bool initialize();
+  virtual bool initialize(std::vector<std::pair<int, int> > pressure_controllers,
+                          std::vector<std::pair<int, int> > tension_controllers);
 
   /**
    * Cleanup and close communication device on a Raspberry Pi
@@ -64,11 +68,17 @@ public:
 
 private:
 
+  AD7730 *_lcell;
+  uint8_t _lcell_buffer[32];
+
   AD5360 *_dac;
   AD7616 *_adc;
   RaspberryPi_SPI *_spi;
 
-  int gpios[8] = {RPI_GPIO_P1_24, RPI_GPIO_P1_26, RPI_V2_GPIO_P1_32, RPI_V2_GPIO_P1_36,
+  std::map<int, std::set<int>> _pressure_ports;
+  std::map<int, std::set<int>> _tension_ports;
+
+  int _gpios[8] = {RPI_GPIO_P1_24, RPI_GPIO_P1_26, RPI_V2_GPIO_P1_32, RPI_V2_GPIO_P1_36,
                   RPI_GPIO_P1_07, RPI_GPIO_P1_11, RPI_GPIO_P1_13, RPI_GPIO_P1_15};
 
 

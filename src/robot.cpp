@@ -27,6 +27,8 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
     ROS_INFO("Using dummy interface");
   }
 
+  dev->initialize(pressure_controllers_, tension_controllers_);
+
 
   for (unsigned int i = 0; i < names_.size(); i++) {
     arl_interfaces::MuscleHandle muscle_handle(names_[i], &desired_pressures_[i], &current_pressures_[i], &tensions_[i], &activations_[i]);
@@ -76,8 +78,9 @@ void ARLRobot::read(const ros::Time &time, const ros::Duration &period) {
         int guessed_id = (i + j) % size;
         if (pressure_controllers_[guessed_id].first == status[i].controller_port_pressure.first &&
             pressure_controllers_[guessed_id].second == status[i].controller_port_pressure.second) {
-          current_pressures_[i] = status[i].current_pressure;
-          tensions_[i] = status[i].tension;
+          current_pressures_[guessed_id] = status[i].current_pressure;
+          tensions_[guessed_id] = status[i].tension;
+          break;
         }
       }
     }

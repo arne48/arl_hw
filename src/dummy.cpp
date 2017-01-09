@@ -16,6 +16,10 @@ bool Dummy::read(std::vector<arl_datatypes::muscle_status_data_t> &status, std::
   for (std::pair<int, int> controller : pressure_controllers) {
     pressure_ports[controller.first].insert(controller.second % 8);
   }
+  std::map<int, std::set<int>> tension_ports;
+  for (std::pair<int, int> controller : tension_controllers) {
+    tension_ports[controller.first].insert(controller.second);
+  }
 
   std::map<int, uint32_t[16]> storage;
   for (auto const &entity : pressure_ports) {
@@ -26,11 +30,22 @@ bool Dummy::read(std::vector<arl_datatypes::muscle_status_data_t> &status, std::
     }
   }
 
+  std::map<int, uint16_t[16]> tension_storage;
+  uint16_t _lcell_buffer[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+  for (auto const &entity : tension_ports) {
+    for (int channel : entity.second) {
+      tension_storage[entity.first][channel] = _lcell_buffer[channel];
+    }
+  }
+
   status.clear();
   for (unsigned int i = 0; i < pressure_controllers.size(); i++) {
     status.push_back(
       //force wrong order to test correct checking in calling function (robot->read())
-      {pressure_controllers[(i-1)%pressure_controllers.size()], tension_controllers[(i-1)%pressure_controllers.size()],100, 0.5});
+      {pressure_controllers[(i - 1) % pressure_controllers.size()], tension_controllers[(i - 1) % pressure_controllers.size()], i,
+      tension_storage[tension_controllers[(i - 1) % pressure_controllers.size()].first][tension_controllers[(i - 1) % pressure_controllers.size()].second]});
+      //{pressure_controllers[i], tension_controllers[i], i,
+      //tension_storage[tension_controllers[i].first][tension_controllers[i].second]});
   }
 
   return true;
@@ -40,7 +55,8 @@ bool Dummy::write(std::vector<arl_datatypes::muscle_command_data_t> &command) {
   return true;
 }
 
-bool Dummy::initialize() {
+bool Dummy::initialize(std::vector<std::pair<int, int> > pressure_controllers,
+                       std::vector<std::pair<int, int> > tension_controllers) {
   return true;
 }
 

@@ -49,7 +49,8 @@ public:
    * Initialize communication device
    * @return success of command
    */
-  virtual bool initialize() = 0;
+  virtual bool initialize(std::vector<std::pair<int, int> > pressure_controllers,
+                          std::vector<std::pair<int, int> > tension_controllers) = 0;
 
   /**
    * Cleanup to close communication device

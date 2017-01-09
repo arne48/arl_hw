@@ -40,7 +40,8 @@ public:
    * Dummy initialize
    * @return allways true
    */
-  virtual bool initialize();
+  virtual bool initialize(std::vector<std::pair<int, int> > pressure_controllers,
+                          std::vector<std::pair<int, int> > tension_controllers);
 
   /**
    * Dummy close
