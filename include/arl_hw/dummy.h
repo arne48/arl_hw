@@ -9,9 +9,7 @@
  * Dummy implementation of CommunicationDevice base class which doesn't execute real communication
  */
 class Dummy : public CommunicationDevice {
-
 public:
-
   /**
    * Default Constructor
    */
@@ -51,12 +49,14 @@ public:
 
   /**
    * Blows off air from muscle
+   * @param muscle
    */
   virtual void emergency_stop(std::pair<int, int> muscle);
 
   /**
- * Resets muscle and blows off air
- */
+   * Resets muscle and blows off air
+   * @param muscle
+   */
   virtual void reset_muscle(std::pair<int, int> muscle);
 
 };

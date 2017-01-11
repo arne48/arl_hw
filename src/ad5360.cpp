@@ -5,7 +5,6 @@ AD5360::AD5360(Embedded_SPI *dev) {
   _dev = dev;
 }
 
-
 void AD5360::setVoltage(int cs, uint8_t group, uint8_t channel, double voltage) {
   ROS_DEBUG("AD5360: Using GPIO %d, Channel %d, Group %d for setting voltage of %f", cs, channel, group, voltage);
   buildDataCommandHeader(group, channel);
@@ -15,9 +14,8 @@ void AD5360::setVoltage(int cs, uint8_t group, uint8_t channel, double voltage) 
 
 void AD5360::setNormalized(int cs, uint8_t group, uint8_t channel, double value) {
   ROS_DEBUG("AD5360: Using GPIO %d, Channel %d, Group %d for setting normalized value of %f", cs, channel, group, value);
-  double voltage = value / (1 / (AD5360_REF_VOLTAGE * 2));
   buildDataCommandHeader(group, channel);
-  buildDataCommandValue(voltage);
+  buildDataCommandValue(map(value, -1, 1, (AD5360_REF_VOLTAGE * 2) * -1, (AD5360_REF_VOLTAGE * 2)));
   writeCommand(cs);
 }
 
@@ -99,4 +97,8 @@ void AD5360::buildDataCommandValue(double voltage) {
 void AD5360::buildCalibrationCommandValue(uint16_t value) {
   _spi_tx_buffer[1] = (uint8_t) ((value & 0xFF00) >> 8);
   _spi_tx_buffer[2] = (uint8_t) (value & 0x00FF);
+}
+
+double AD5360::map(double x, double in_min, double in_max, double out_min, double out_max){
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }

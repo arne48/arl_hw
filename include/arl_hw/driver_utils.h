@@ -24,6 +24,9 @@ using namespace boost::accumulators;
 
 namespace driver_utils {
 
+  /**
+   * Datastructure to store statistical information about the driver performance
+   */
   struct statistics_t {
     accumulator_set<double, stats<tag::max, tag::mean> > read_acc;
     accumulator_set<double, stats<tag::max, tag::mean> > write_acc;
@@ -44,18 +47,58 @@ namespace driver_utils {
     bool emergency_stop_engaged;
   };
 
+  /**
+   * Publishes diagnostic message based on driver statistics
+   * @param publisher
+   * @param driver_stats
+   */
   void publishDiagnostics(realtime_tools::RealtimePublisher<diagnostic_msgs::DiagnosticArray> &publisher, statistics_t &driver_stats);
 
+  /**
+   * Returns combined value of us clock time and ns clock time
+   * @return
+   */
   double get_now();
 
-  void timespecInc(struct timespec *tick, int ns);
+  /**
+   * Increases a time structure by a certain amount of nanoseconds
+   * @param tick
+   * @param ns
+   */
+  void timespecInc(struct timespec *timestamp, int ns);
 
-  void waitForNextControlLoop(struct timespec tick, int sampling_ns);
+  /**
+   * Suspends the the calling thread to lock on loop frequency goal
+   * @param tick
+   * @param sampling_ns
+   */
+  void waitForNextControlLoop(struct timespec timestamp, int sampling_ns);
 
+  /**
+   * Checks if a loop took more time than it is due to it
+   * @param driver_stats
+   * @param start
+   * @param after_read
+   * @param after_cm
+   * @param after_write
+   * @param period_int
+   * @param time
+   */
   void
   checkOverrun(statistics_t &driver_stats, double start, double after_read, double after_cm, double after_write,
-               int period_int, struct timespec &tick);
+               int period_int, struct timespec &timestamp);
 
+  /**
+   * Checks if a frequency miss was so severe that that driver needs to be halted.
+   * In case of severe miss stops sets flag to halt driver from execution.
+   * @param last_rt_monitor_time
+   * @param rt_cycle_count
+   * @param rt_loop_monitor_period
+   * @param rt_loop_history
+   * @param driver_stats
+   * @param start
+   * @param robot
+   */
   void
   checkSevereRTMiss(double *last_rt_monitor_time, unsigned int *rt_cycle_count, double rt_loop_monitor_period,
                     RTLoopHistory &rt_loop_history,

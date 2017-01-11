@@ -7,7 +7,6 @@
  * collected inside of the controller's loop.
  */
 class RTLoopHistory {
-
 public:
   /**
    * Constructor

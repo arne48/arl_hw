@@ -21,11 +21,10 @@
  * Represents the AD5360 Digital Analog Converter of Analog Devices.
  * Provides functionalities so set output voltage based on a 3V reference voltage
  * and a convenience function to set a normalized activation between -1 and 1 over
- * the full voltage span.
+ * the positive voltage span [e.g. 0-10V].
  */
 class AD5360 {
 public:
-
   /**
    * Constructor
    * @param dev interface to use the platform's SPI bus
@@ -52,13 +51,35 @@ public:
    */
   void setNormalized(int cs, uint8_t group, uint8_t channel, double value);
 
+  /**
+   * Sets the trim gain of the specified channel
+   * @param cs chip-select id of DAC
+   * @param group group on which the controlled output is localized
+   * @param channel channel in group of controlled output
+   * @param gain
+   */
   void setGain(int cs, uint8_t group, uint8_t channel, uint16_t gain);
 
+  /**
+   * Sets the offset which is applied to the dac value - voltage mapping
+   * @param cs chip-select id of DAC
+   * @param group group on which the controlled output is localized
+   * @param channel channel in group of controlled output
+   * @param offset
+   */
   void setOffset(int cs, uint8_t group, uint8_t channel, uint16_t offset);
 
+  /**
+   * Resets the offset and gain of a channel back to it's default values
+   * @param cs chip-select id of DAC
+   * @param group group on which the controlled output is localized
+   * @param channel channel in group of controlled output
+   */
   void reset(int cs, uint8_t group, uint8_t channel);
 
 private:
+  Embedded_SPI *_dev;
+  uint8_t _spi_tx_buffer[AD5360_SPI_TX_BUFFER_LEN];
 
   void buildDataCommandHeader(uint8_t group, uint8_t channel);
 
@@ -72,9 +93,7 @@ private:
 
   void writeCommand(int cs);
 
-  Embedded_SPI *_dev;
-
-  uint8_t _spi_tx_buffer[AD5360_SPI_TX_BUFFER_LEN];
+  double map(double x, double in_min, double in_max, double out_min, double out_max);
 
 };
 

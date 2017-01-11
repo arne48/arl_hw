@@ -13,10 +13,17 @@ public:
    */
   AD7616(Embedded_SPI *dev);
 
-  uint32_t getMeasurementPair(int cs, uint8_t channel);
+  /**
+   * Issues a measurement of a certain channel pair [VAx & VBx]
+   * @param cs cs chip-select id of ADC
+   * @param channel_pair the channel-pair to get a measurement from
+   * @return
+   */
+  uint32_t getMeasurementPair(int cs, uint8_t channel_pair);
 
 private:
   Embedded_SPI *_dev;
+
 };
 
 

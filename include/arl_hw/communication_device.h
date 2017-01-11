@@ -13,15 +13,13 @@
  * It is assumed that every controller has 16 channels which are numbered 0-15.
  * The remapping of this to the eventual division into several banks or groups e.g. [0-15 (A0-7:0-7 ; B0-7:8-15)]
  * has to be performed by the implementation of this interface.
- * Also the mapping of the Chip-Select ids (0-7) to their actual values for the used hardware has to be
+ * Also the mapping of the Chip-Select ids (0-15) to their actual values for the used hardware has to be
  * done by the implementing class.
  */
 class CommunicationDevice {
-
 public:
-
   /**
-   * Default Contructor
+   * Default Constructor
    */
   CommunicationDevice() {};
 
@@ -33,6 +31,8 @@ public:
   /**
    * Reads current robot state from hardware
    * @param status_vec output parameter
+   * @param pressure_controllers
+   * @param tension_controllers
    * @return success of command
    */
   virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status_vec, std::vector<std::pair<int, int> > pressure_controllers,
@@ -47,6 +47,8 @@ public:
 
   /**
    * Initialize communication device
+   * @param pressure_controllers
+   * @param tension_controllers
    * @return success of command
    */
   virtual bool initialize(std::vector<std::pair<int, int> > pressure_controllers,
@@ -58,14 +60,17 @@ public:
    */
   virtual bool close() = 0;
 
+
   /**
    * Blows off air from muscle
+   * @param muscle port of muscle to stop
    */
   virtual void emergency_stop(std::pair<int, int> muscle) = 0;
 
   /**
- * Resets muscle and blows off air
- */
+   * Resets muscle and blows off air
+   * @param muscle
+   */
   virtual void reset_muscle(std::pair<int, int> muscle) = 0;
 
 };

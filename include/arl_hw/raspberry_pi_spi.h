@@ -7,7 +7,6 @@
  * Implementation of the embedded SPI interface
  */
 class RaspberryPi_SPI : public Embedded_SPI {
-
 public:
   /**
    * Default Constructor
@@ -30,6 +29,10 @@ public:
    */
   virtual bool transferSPI(int cs, int data_len, char data[]);
 
+  /**
+   * Sets the clock prescaler of SPI device
+   * @param divider
+   */
   virtual void setSCLKDivider(int divider);
 
 };

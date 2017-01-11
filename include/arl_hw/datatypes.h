@@ -4,7 +4,6 @@
 #include <string>
 
 namespace arl_datatypes {
-
   /**
    * Conventional structure of hardware state read from implementations of ARL communication device interface
    */
@@ -40,6 +39,9 @@ namespace arl_datatypes {
     double tension;
   };
 
+  /**
+   * Conventional structure for passing a muscle activation command combined with it's controller port
+   */
   struct muscle_command_data_t {
     std::pair<int, int> controller_port_activation;
     double activation;

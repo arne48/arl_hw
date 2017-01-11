@@ -83,43 +83,43 @@ namespace driver_utils {
     return double(n.tv_nsec) / NSEC_PER_SECOND + n.tv_sec;
   }
 
-  void timespecInc(struct timespec *tick, int ns) {
-    tick->tv_nsec += ns;
-    while (tick->tv_nsec >= 1e9) {
-      tick->tv_nsec -= 1e9;
-      tick->tv_sec++;
+  void timespecInc(struct timespec *timestamp, int ns) {
+    timestamp->tv_nsec += ns;
+    while (timestamp->tv_nsec >= 1e9) {
+      timestamp->tv_nsec -= 1e9;
+      timestamp->tv_sec++;
     }
   }
 
-  void waitForNextControlLoop(struct timespec tick, int sampling_ns) {
+  void waitForNextControlLoop(struct timespec timestamp, int sampling_ns) {
 
-    timespecInc(&tick, sampling_ns);
+    timespecInc(&timestamp, sampling_ns);
 
     struct timespec before;
     clock_gettime(CLOCK_REALTIME, &before);
 
-    tick.tv_sec = before.tv_sec;
-    tick.tv_nsec = (before.tv_nsec / sampling_ns) * sampling_ns;
-    timespecInc(&tick, sampling_ns);
+    timestamp.tv_sec = before.tv_sec;
+    timestamp.tv_nsec = (before.tv_nsec / sampling_ns) * sampling_ns;
+    timespecInc(&timestamp, sampling_ns);
 
-    clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tick, NULL);
+    clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &timestamp, NULL);
   }
 
   void
   checkOverrun(statistics_t &driver_stats, double start, double after_read, double after_cm, double after_write,
-               int period_int, struct timespec &tick) {
+               int period_int, struct timespec &timestamp) {
     struct timespec before;
 
     clock_gettime(CLOCK_REALTIME, &before);
-    if ((before.tv_sec + double(before.tv_nsec) / NSEC_PER_SECOND) > (tick.tv_sec + double(tick.tv_nsec) / NSEC_PER_SECOND)) {
+    if ((before.tv_sec + double(before.tv_nsec) / NSEC_PER_SECOND) > (timestamp.tv_sec + double(timestamp.tv_nsec) / NSEC_PER_SECOND)) {
       // Total amount of time the loop took to run
       driver_stats.overrun_loop_sec = (before.tv_sec + double(before.tv_nsec) / NSEC_PER_SECOND) -
-                                      (tick.tv_sec + double(tick.tv_nsec) / NSEC_PER_SECOND);
+                                      (timestamp.tv_sec + double(timestamp.tv_nsec) / NSEC_PER_SECOND);
 
       // We overran, snap to next "period"
-      tick.tv_sec = before.tv_sec;
-      tick.tv_nsec = (before.tv_nsec / period_int) * period_int;
-      driver_utils::timespecInc(&tick, period_int);
+      timestamp.tv_sec = before.tv_sec;
+      timestamp.tv_nsec = (before.tv_nsec / period_int) * period_int;
+      driver_utils::timespecInc(&timestamp, period_int);
 
       // initialize overruns
       if (driver_stats.overruns == 0) {

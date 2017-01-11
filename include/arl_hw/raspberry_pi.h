@@ -17,9 +17,7 @@
  * Implementation of CommunicationDevice base class which communicats to hardware using a Raspberry Pi
  */
 class RaspberryPi : public CommunicationDevice {
-
 public:
-
   /**
    * Default Constructor
    */
@@ -58,16 +56,17 @@ public:
 
   /**
    * Blows off air from muscle
+   * @param muscle
    */
   virtual void emergency_stop(std::pair<int, int> muscle);
 
   /**
- * Resets muscle and blows off air
- */
+   * Resets muscle and blows off air
+   * @param muscle
+   */
   virtual void reset_muscle(std::pair<int, int> muscle);
 
 private:
-
   AD7730 *_lcell;
   uint8_t _lcell_buffer[32];
 
@@ -80,7 +79,6 @@ private:
 
   int _gpios[8] = {RPI_GPIO_P1_24, RPI_GPIO_P1_26, RPI_V2_GPIO_P1_32, RPI_V2_GPIO_P1_36,
                   RPI_GPIO_P1_07, RPI_GPIO_P1_11, RPI_GPIO_P1_13, RPI_GPIO_P1_15};
-
 
 };
 

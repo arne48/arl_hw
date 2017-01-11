@@ -57,6 +57,23 @@ bool Dummy::write(std::vector<arl_datatypes::muscle_command_data_t> &command) {
 
 bool Dummy::initialize(std::vector<std::pair<int, int> > pressure_controllers,
                        std::vector<std::pair<int, int> > tension_controllers) {
+
+  std::map<int, std::set<int>> tension_ports;
+  for (std::pair<int, int> controller : tension_controllers) {
+    tension_ports[controller.first].insert(controller.second);
+  }
+
+  for (auto const &entity : tension_ports) {
+    uint16_t mask = 0;
+    for (int channel : entity.second) {
+      if (channel < 1) {
+        mask = mask | (uint16_t) 1;
+      } else {
+        mask = mask | ((uint16_t) 1 << channel);
+      }
+    }
+  }
+
   return true;
 }
 

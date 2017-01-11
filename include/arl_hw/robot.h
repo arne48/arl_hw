@@ -32,6 +32,9 @@ public:
     double min_acceptable_rt_loop_frequency;
   };
 
+  config driver_config;
+  bool emergency_stop;
+
   /**
    * Default Constructor
    */
@@ -73,14 +76,21 @@ public:
    */
   void write(const ros::Time &time, const ros::Duration &period);
 
+  /**
+   * Blows of air of all registered muscles
+   */
   void executeEmergencyStop();
 
+  /**
+   * Resets muscles to their default configurations and blows of air from them
+   */
   void resetMuscles();
 
+  /**
+   * Resets a specific muscle
+   * @param name
+   */
   void resetMuscle(std::string name);
-
-  config driver_config;
-  bool emergency_stop;
 
 private:
   arl_interfaces::MuscleInterface muscle_interface; /**< MuscleInterface for usage of MuscleController */
@@ -95,10 +105,9 @@ private:
   std::vector<std::pair<int,int> > pressure_controllers_; /**< Internal datastructure which contains the address (Controller Port[Chip-Select Id] : Channel on Controller) for every muscle's pressure controller*/
   std::vector<std::pair<int,int> > tension_controllers_; /**< Internal datastructure which contains the address (Controller Port[Chip-Select Id] : Channel on Controller) for every muscle's tension controller*/
   std::vector<double> last_activations_; /**< Internal datastructure last activation values to prevent wasting time on setting the same value multiple times */
-
   std::set<int> pressure_ports; /**< Internal datastructure to store pressure controller ids as unique set */
   std::set<int> tension_ports; /**< Internal datastructure to store tension controller ids as unique set */
-  std::vector<arl_datatypes::muscle_status_data_t> status;
+  std::vector<arl_datatypes::muscle_status_data_t> status; /**< Internal datastructure to store the status of registered muscles */
 
 };
 
