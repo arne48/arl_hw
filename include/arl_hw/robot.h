@@ -12,6 +12,7 @@
 #include <arl_hw/datatypes.h>
 #include <arl_hw/communication_device.h>
 #include <arl_hw/raspberry_pi.h>
+#include <arl_hw/jetson_tx1.h>
 #include <arl_hw/dummy.h>
 #include <arl_interfaces/muscle_interface.h>
 #include <arl_controllers/muscle_controller.h>
@@ -27,6 +28,7 @@ public:
 
   struct config{
     bool using_raspberry_pi;
+    bool using_jetson_tx1;
     bool halt_on_slow_rt_loop;
     bool publish_every_rt_jitter;
     double min_acceptable_rt_loop_frequency;

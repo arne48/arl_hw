@@ -21,7 +21,12 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
     dev = new RaspberryPi();
     initialized = true;
     ROS_INFO("RPi initialized");
-  } else {
+  } else if(driver_config.using_jetson_tx1) {
+    dev = new JetsonTX1;
+    initialized = true;
+    ROS_INFO("NVIDIA Jetson TX1 initialized");
+  }
+  else {
     dev = new Dummy();
     initialized = true;
     ROS_INFO("Using dummy interface");
@@ -119,6 +124,8 @@ void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
   ROS_DEBUG("Reading configuration");
 
   nh.param<bool>("/using_raspberry_pi", driver_config.using_raspberry_pi, false);
+
+  nh.param<bool>("/using_jetson_tx1", driver_config.using_jetson_tx1, false);
 
   nh.param<bool>("/publish_every_rt_jitter", driver_config.publish_every_rt_jitter, false);
 

@@ -51,6 +51,9 @@ add_library(arl_robot
         src/robot.cpp
         src/raspberry_pi.cpp
         src/raspberry_pi_spi.cpp
+        src/jetson_tx1.cpp
+        src/jetson_tx1_spi.cpp
+        src/jetson_tx1_gpio.cpp
         src/dummy.cpp
         src/ad5360.cpp
         src/ad7616.cpp
