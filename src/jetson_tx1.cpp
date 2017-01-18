@@ -1,7 +1,6 @@
 #include "arl_hw/jetson_tx1.h"
 #include <ros/ros.h>
 
-//FIXME implementation for two multiplexer board
 JetsonTX1::JetsonTX1() {
 
   _gpio = new JetsonTX1_GPIO();
@@ -22,12 +21,12 @@ JetsonTX1::JetsonTX1() {
     _gpio->setState(_multiplexer_address_bus[i], JetsonTX1_GPIO::gpio_state::ON);
   }
 
-  //Latch
-  //_gpio->initGPIO(184);
-  //_gpio->setMode(184, JetsonTX1_GPIO::gpio_mode::OUTPUT);
-  //_gpio->setState(184, JetsonTX1_GPIO::gpio_state::OFF);
+  //DAC-Latch
+  _gpio->initGPIO(184);
+  _gpio->setMode(184, JetsonTX1_GPIO::gpio_mode::OUTPUT);
+  _gpio->setState(184, JetsonTX1_GPIO::gpio_state::OFF);
 
-  //Convst
+  //ADC-Convst
   _gpio->initGPIO(187);
   _gpio->setMode(187, JetsonTX1_GPIO::gpio_mode::OUTPUT);
   _gpio->setState(187, JetsonTX1_GPIO::gpio_state::OFF);
@@ -42,14 +41,13 @@ JetsonTX1::~JetsonTX1() {
   delete _spi;
 }
 
-//FIXME also in RPi do readings need to be mapped?????
 bool JetsonTX1::read(std::vector<arl_datatypes::muscle_status_data_t> &status, std::vector<std::pair<int, int> > pressure_controllers,
                        std::vector<std::pair<int, int> > tension_controllers) {
 
   std::map<int, uint16_t[16]> pressure_storage;
   for (auto const &entity : _pressure_ports) {
     for (int channel : entity.second) {
-      uint32_t read_data = _adc->getMeasurementPair(entity.first, channel);
+      uint32_t read_data = _adc->getMeasurementPair(_multiplexer_mapping[entity.first], channel);
       pressure_storage[entity.first][channel] = (uint16_t) ((read_data & 0xFFFF0000) >> 16);
       pressure_storage[entity.first][channel + 8] = (uint16_t) (read_data & 0x0000FFFF);
     }
@@ -57,7 +55,7 @@ bool JetsonTX1::read(std::vector<arl_datatypes::muscle_status_data_t> &status, s
 
   std::map<int, uint16_t[16]> tension_storage;
   for (auto const &entity : _tension_ports) {
-    _lcell->readData(entity.first, _lcell_buffer);
+    _lcell->readData(_multiplexer_mapping[entity.first], _lcell_buffer);
     for (int channel : entity.second) {
       tension_storage[entity.first][channel] = (uint16_t) 0 | _lcell_buffer[channel * 2] << 8 | _lcell_buffer[(channel * 2) + 1];
     }
@@ -104,7 +102,7 @@ bool JetsonTX1::initialize(std::vector<std::pair<int, int> > pressure_controller
         mask = mask | ((uint16_t) 1 << channel);
       }
     }
-    _lcell->setActiveChannelsByMask(entity.first, mask);
+    _lcell->setActiveChannelsByMask(_multiplexer_mapping[entity.first], mask);
   }
 
   return true;

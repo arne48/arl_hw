@@ -31,11 +31,11 @@ RaspberryPi::RaspberryPi() {
   bcm2835_gpio_write(RPI_GPIO_P1_13, HIGH);
   bcm2835_gpio_write(RPI_GPIO_P1_15, HIGH);
 
-  //Latch
+  //DAC-Latch
   bcm2835_gpio_fsel(RPI_GPIO_P1_18, BCM2835_GPIO_FSEL_OUTP);
   bcm2835_gpio_write(RPI_GPIO_P1_18, LOW);
 
-  //Convst
+  //ADC-Convst
   bcm2835_gpio_fsel(RPI_GPIO_P1_16, BCM2835_GPIO_FSEL_OUTP);
   bcm2835_gpio_write(RPI_GPIO_P1_16, LOW);
 
@@ -54,7 +54,7 @@ bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status,
   std::map<int, uint16_t[16]> pressure_storage;
   for (auto const &entity : _pressure_ports) {
     for (int channel : entity.second) {
-      uint32_t read_data = _adc->getMeasurementPair(entity.first, channel);
+      uint32_t read_data = _adc->getMeasurementPair(_gpios[entity.first], channel);
       pressure_storage[entity.first][channel] = (uint16_t) ((read_data & 0xFFFF0000) >> 16);
       pressure_storage[entity.first][channel + 8] = (uint16_t) (read_data & 0x0000FFFF);
     }
@@ -62,7 +62,7 @@ bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status,
 
   std::map<int, uint16_t[16]> tension_storage;
   for (auto const &entity : _tension_ports) {
-    _lcell->readData(entity.first, _lcell_buffer);
+    _lcell->readData(_gpios[entity.first], _lcell_buffer);
     for (int channel : entity.second) {
       tension_storage[entity.first][channel] = (uint16_t) 0 | _lcell_buffer[channel * 2] << 8 | _lcell_buffer[(channel * 2) + 1];
     }
@@ -109,7 +109,7 @@ bool RaspberryPi::initialize(std::vector<std::pair<int, int> > pressure_controll
         mask = mask | ((uint16_t) 1 << channel);
       }
     }
-    _lcell->setActiveChannelsByMask(entity.first, mask);
+    _lcell->setActiveChannelsByMask(_gpios[entity.first], mask);
   }
 
   return true;

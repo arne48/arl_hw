@@ -6,6 +6,8 @@ publish_every_rt_jitter: false
 
 using_raspberry_pi: true
 
+using_jetson_tx1: false
+
 muscle_list:
   - name: r_pectoralis_major
     initial_value: 0.0
