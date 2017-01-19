@@ -38,9 +38,22 @@ public:
    */
   virtual void setSCLKDivider(int divider);
 
+  /**
+   * Sets the addresses just to access the multiplexer plus it's latch and enable signal
+   * @param bus_addresses
+   * @param address_length
+   * @param enable
+   * @param latch
+   */
+  void setMultiplexerBusAddresses(int *bus_addresses, int address_length, int enable, int latch);
+
 private:
   JetsonTX1_GPIO *_gpio;
 
+  int *_multiplexer_address_bus;
+  int _address_length;
+  int _enable;
+  int _latch;
 
 };
 

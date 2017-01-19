@@ -78,8 +78,14 @@ private:
   std::map<int, std::set<int>> _pressure_ports;
   std::map<int, std::set<int>> _tension_ports;
 
-  int _multiplexer_mapping[16] = {7, 6, 4, 1, 13, 10, 9, 8, 5, 3, 2, 0, 15, 14, 12, 11};
+  int _multiplexer_mapping[16] = {13, 12, 14, 11, 5, 1, 2, 0, 15, 9, 8, 10, 7, 6, 4, 3};
   int _multiplexer_address_bus[4] = {36, 37, 38, 63};
+  int _address_length = 4;
+  int _enable = 184;
+  int _latch = 187;
+
+  int _dac_latch = 186;
+  int _adc_conversion_start = 219;
 
 };
 

@@ -16,6 +16,7 @@ class JetsonTX1_GPIO {
 public:
   enum gpio_mode { INPUT = 0, OUTPUT = 1 };
   enum gpio_state { OFF = 0, ON = 1 };
+
   /**
    * Default Constructor
    */
@@ -34,7 +35,9 @@ public:
 
   bool setState(int gpio_num, gpio_state state);
 
-  bool setCSByMultiplexerAddress(int address);
+  bool setCSByMultiplexerAddress(int address, int *bus_addresses, int address_length, int enable, int latch);
+
+  bool resetCSByMultiplexer(int enable);
 
   gpio_state readState(int gpio_num);
 
