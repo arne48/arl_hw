@@ -1,6 +1,16 @@
 #ifndef ARL_HW_JETSON_TX1_SPI_H
 #define ARL_HW_JETSON_TX1_SPI_H
 
+#include <stdint.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <getopt.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <linux/types.h>
+#include <linux/spi/spidev.h>
+
 #include <arl_hw/embedded_spi.h>
 #include <arl_hw/jetson_tx1_gpio.h>
 
@@ -9,6 +19,24 @@
  */
 class JetsonTX1_SPI : public Embedded_SPI  {
 public:
+
+  struct spi_config_t {
+    const char *device;
+    uint8_t mode;
+    uint8_t bits;
+    uint32_t speed;
+    uint16_t delay;
+  };
+
+  struct spi_ioc_transfer_t {
+    unsigned long tx_buf;
+    unsigned long rx_buf;
+    uint32_t len;
+    uint16_t delay_usecs;
+    uint32_t speed_hz;
+    uint8_t bits_per_word;
+  };
+
   /**
    * Default Constructor
    */
@@ -55,6 +83,9 @@ private:
   int _enable;
   int _latch;
 
+  int _spi_descriptor;
+  spi_config_t _spi_config;
+  spi_ioc_transfer _spi_ioc_transfer;
 };
 
 
