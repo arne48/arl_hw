@@ -22,6 +22,15 @@ RaspberryPi::RaspberryPi() {
   bcm2835_gpio_fsel(RPI_GPIO_P1_13, BCM2835_GPIO_FSEL_OUTP);
   bcm2835_gpio_fsel(RPI_GPIO_P1_15, BCM2835_GPIO_FSEL_OUTP);
 
+  bcm2835_gpio_fsel(RPI_V2_GPIO_P1_31, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_fsel(RPI_V2_GPIO_P1_33, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_fsel(RPI_V2_GPIO_P1_35, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_fsel(RPI_V2_GPIO_P1_37, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_fsel(RPI_GPIO_P1_03, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_fsel(RPI_GPIO_P1_05, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_fsel(RPI_GPIO_P1_08, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_fsel(RPI_GPIO_P1_10, BCM2835_GPIO_FSEL_OUTP);
+
   bcm2835_gpio_write(RPI_GPIO_P1_24, HIGH);
   bcm2835_gpio_write(RPI_GPIO_P1_26, HIGH);
   bcm2835_gpio_write(RPI_V2_GPIO_P1_32, HIGH);
@@ -31,13 +40,22 @@ RaspberryPi::RaspberryPi() {
   bcm2835_gpio_write(RPI_GPIO_P1_13, HIGH);
   bcm2835_gpio_write(RPI_GPIO_P1_15, HIGH);
 
+  bcm2835_gpio_write(RPI_V2_GPIO_P1_31, HIGH);
+  bcm2835_gpio_write(RPI_V2_GPIO_P1_33, HIGH);
+  bcm2835_gpio_write(RPI_V2_GPIO_P1_35, HIGH);
+  bcm2835_gpio_write(RPI_V2_GPIO_P1_37, HIGH);
+  bcm2835_gpio_write(RPI_GPIO_P1_03, HIGH);
+  bcm2835_gpio_write(RPI_GPIO_P1_05, HIGH);
+  bcm2835_gpio_write(RPI_GPIO_P1_08, HIGH);
+  bcm2835_gpio_write(RPI_GPIO_P1_10, HIGH);
+
   //DAC-Latch
   bcm2835_gpio_fsel(RPI_GPIO_P1_18, BCM2835_GPIO_FSEL_OUTP);
   bcm2835_gpio_write(RPI_GPIO_P1_18, LOW);
 
   //ADC-Convst
   bcm2835_gpio_fsel(RPI_GPIO_P1_16, BCM2835_GPIO_FSEL_OUTP);
-  bcm2835_gpio_write(RPI_GPIO_P1_16, LOW);
+  bcm2835_gpio_write(RPI_GPIO_P1_16, HIGH);
 
 }
 
@@ -60,6 +78,7 @@ bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status,
     }
   }
 
+  //FIXME
   std::map<int, uint16_t[16]> tension_storage;
   for (auto const &entity : _tension_ports) {
     _lcell->readData(_gpios[entity.first], _lcell_buffer);

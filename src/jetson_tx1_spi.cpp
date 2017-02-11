@@ -57,6 +57,11 @@ bool JetsonTX1_SPI::transferSPI(int cs, int data_len, char data[]) {
   return true;
 }
 
+bool JetsonTX1_SPI::transferSPI(int cs, int data_len, char data_tx[], char data_rx[]){
+ return true;
+}
+
+
 void JetsonTX1_SPI::setSCLKDivider(int divider) {
 }
 

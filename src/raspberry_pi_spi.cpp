@@ -26,6 +26,13 @@ bool RaspberryPi_SPI::transferSPI(int cs, int data_len, char data[]) {
   return true;
 }
 
+bool RaspberryPi_SPI::transferSPI(int cs, int data_len, char data_tx[], char data_rx[]) {
+  bcm2835_gpio_write(cs, LOW);
+  bcm2835_spi_transfernb(data_tx, data_rx, data_len);
+  bcm2835_gpio_write(cs, HIGH);
+  return true;
+}
+
 void RaspberryPi_SPI::setSCLKDivider(int divider) {
   bcm2835_spi_setClockDivider(divider);
 }
