@@ -77,8 +77,13 @@ private:
   std::map<int, std::set<int>> _pressure_ports;
   std::map<int, std::set<int>> _tension_ports;
 
-  int _gpios[8] = {RPI_GPIO_P1_24, RPI_GPIO_P1_26, RPI_V2_GPIO_P1_32, RPI_V2_GPIO_P1_36,
-                  RPI_GPIO_P1_07, RPI_GPIO_P1_11, RPI_GPIO_P1_13, RPI_GPIO_P1_15};
+  int _gpios[16] = {RPI_GPIO_P1_24, RPI_GPIO_P1_26, RPI_V2_GPIO_P1_32, RPI_V2_GPIO_P1_36, RPI_GPIO_P1_07,
+                    RPI_GPIO_P1_11, RPI_GPIO_P1_13, RPI_GPIO_P1_15, RPI_V2_GPIO_P1_31, RPI_V2_GPIO_P1_33,
+                    RPI_V2_GPIO_P1_35, RPI_V2_GPIO_P1_37, RPI_GPIO_P1_03, RPI_GPIO_P1_05, RPI_GPIO_P1_08,
+                    RPI_GPIO_P1_10};
+
+  uint8_t _dac_latch_port = RPI_GPIO_P1_18;
+  uint8_t _adc_conversion_port = RPI_GPIO_P1_16;
 
 };
 

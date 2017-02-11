@@ -5,14 +5,11 @@ JetsonTX1::JetsonTX1() {
 
   _gpio = new JetsonTX1_GPIO();
   _spi = new JetsonTX1_SPI(_gpio);
+  _spi->setMultiplexerBusAddresses(_multiplexer_address_bus, _address_length, _enable, _latch);
+
   _dac = new AD5360(_spi);
   _adc = new AD7616(_spi);
   _lcell = new AD7730(_spi);
-
-  //Multiplexer enable
-  _gpio->initGPIO(219);
-  _gpio->setMode(219, JetsonTX1_GPIO::gpio_mode::OUTPUT);
-  _gpio->setState(219, JetsonTX1_GPIO::gpio_state::ON);
 
   //Multiplexer address bus
   for(int i=0; i < 4; i++){
@@ -22,14 +19,14 @@ JetsonTX1::JetsonTX1() {
   }
 
   //DAC-Latch
-  _gpio->initGPIO(184);
-  _gpio->setMode(184, JetsonTX1_GPIO::gpio_mode::OUTPUT);
-  _gpio->setState(184, JetsonTX1_GPIO::gpio_state::OFF);
+  _gpio->initGPIO(_dac_latch);
+  _gpio->setMode(_dac_latch, JetsonTX1_GPIO::gpio_mode::OUTPUT);
+  _gpio->setState(_dac_latch, JetsonTX1_GPIO::gpio_state::OFF);
 
   //ADC-Convst
-  _gpio->initGPIO(187);
-  _gpio->setMode(187, JetsonTX1_GPIO::gpio_mode::OUTPUT);
-  _gpio->setState(187, JetsonTX1_GPIO::gpio_state::OFF);
+  _gpio->initGPIO(_adc_conversion_start);
+  _gpio->setMode(_adc_conversion_start, JetsonTX1_GPIO::gpio_mode::OUTPUT);
+  _gpio->setState(_adc_conversion_start, JetsonTX1_GPIO::gpio_state::OFF);
 
 }
 

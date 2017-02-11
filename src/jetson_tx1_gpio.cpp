@@ -111,7 +111,24 @@ JetsonTX1_GPIO::gpio_state JetsonTX1_GPIO::readState(int gpio_num) {
 
 }
 
-bool JetsonTX1_GPIO::setCSByMultiplexerAddress(int address){
+bool JetsonTX1_GPIO::setCSByMultiplexerAddress(int address, int *bus_addresses, int address_length, int enable, int latch){
+  setState(latch, JetsonTX1_GPIO::gpio_state::ON);
 
+  for(int i=0; i < address_length; i++){
+    if(address & (1 << i)){
+      setState(bus_addresses[0], JetsonTX1_GPIO::gpio_state::ON);
+    } else {
+      setState(bus_addresses[0], JetsonTX1_GPIO::gpio_state::OFF);
+    }
+  }
+
+  setState(latch, JetsonTX1_GPIO::gpio_state::OFF);
+  setState(enable, JetsonTX1_GPIO::gpio_state::OFF);
+
+  return true;
+}
+
+bool JetsonTX1_GPIO::resetCSByMultiplexer(int enable){
+  setState(enable, JetsonTX1_GPIO::gpio_state::ON);
   return true;
 }

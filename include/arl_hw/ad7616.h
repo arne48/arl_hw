@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdint.h>
 #include <arl_hw/embedded_spi.h>
+#include <bcm2835.h>
 
 class AD7616 {
 public:
@@ -23,6 +24,12 @@ public:
 
 private:
   Embedded_SPI *_dev;
+  void prepareChannel(uint8_t channel, int cs);
+
+  char _rx_buffer[4] = {0,0,0,0};
+  char _tx_buffer[4] = {0,0,0,0};
+  char _channel_select_command[4] = {(char)0x86, (char)0x00, (char)0x86, (char)0x00};
+
 
 };
 
