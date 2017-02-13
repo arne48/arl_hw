@@ -68,7 +68,7 @@ public:
 
 private:
   AD7730 *_lcell;
-  uint8_t _lcell_buffer[32];
+  uint8_t _lcell_buffer[64];
 
   AD5360 *_dac;
   AD7616 *_adc;

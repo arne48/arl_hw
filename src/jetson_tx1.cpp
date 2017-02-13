@@ -54,7 +54,7 @@ bool JetsonTX1::read(std::vector<arl_datatypes::muscle_status_data_t> &status, s
   for (auto const &entity : _tension_ports) {
     _lcell->readData(_multiplexer_mapping[entity.first], _lcell_buffer);
     for (int channel : entity.second) {
-      tension_storage[entity.first][channel] = (uint16_t) 0 | _lcell_buffer[channel * 2] << 8 | _lcell_buffer[(channel * 2) + 1];
+      tension_storage[entity.first][channel] = _lcell_buffer[ 3 * channel];
     }
   }
 
@@ -88,18 +88,6 @@ bool JetsonTX1::initialize(std::vector<std::pair<int, int> > pressure_controller
 
   for (std::pair<int, int> controller : tension_controllers) {
     _tension_ports[controller.first].insert(controller.second);
-  }
-
-  for (auto const &entity : _tension_ports) {
-    uint16_t mask = 0;
-    for (int channel : entity.second) {
-      if (channel < 1) {
-        mask = mask | (uint16_t) 1;
-      } else {
-        mask = mask | ((uint16_t) 1 << channel);
-      }
-    }
-    _lcell->setActiveChannelsByMask(_multiplexer_mapping[entity.first], mask);
   }
 
   return true;
