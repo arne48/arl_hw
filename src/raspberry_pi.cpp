@@ -68,22 +68,13 @@ RaspberryPi::~RaspberryPi() {
 
 bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status, std::vector<std::pair<int, int> > pressure_controllers,
                        std::vector<std::pair<int, int> > tension_controllers) {
-/*
+
   std::map<int, uint16_t[16]> pressure_storage;
   for (auto const &entity : _pressure_ports) {
     for (int channel : entity.second) {
       uint32_t read_data = _adc->getMeasurementPair(_gpios[entity.first], channel);
       pressure_storage[entity.first][channel] = (uint16_t) ((read_data & 0xFFFF0000) >> 16);
       pressure_storage[entity.first][channel + 8] = (uint16_t) (read_data & 0x0000FFFF);
-    }
-  }*/
-
-  std::map<int, uint16_t[16]> pressure_storage;
-  for (auto const &entity : _pressure_ports) {
-    uint16_t data[16];
-    _adc->getAllMeasurements(_gpios[entity.first], data);
-    for(uint8_t idx = 0; idx < 16; idx++) {
-      pressure_storage[entity.first][idx] = data[idx];
     }
   }
 
@@ -125,18 +116,6 @@ bool RaspberryPi::initialize(std::vector<std::pair<int, int> > pressure_controll
 
   for (std::pair<int, int> controller : tension_controllers) {
     _tension_ports[controller.first].insert(controller.second);
-  }
-
-  //Setting up routine
-  uint16_t dummy_buff[16];
-  for(auto const &entity : _pressure_ports){
-    _adc->setupSequencer(entity.first);
-  }
-  for(auto const &entity : _pressure_ports){
-    _adc->getAllMeasurements(entity.first, dummy_buff);
-  }
-  for(auto const &entity : _pressure_ports){
-    _adc->setupSequencer(entity.first);
   }
 
   return true;
