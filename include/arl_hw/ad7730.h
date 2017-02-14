@@ -41,10 +41,6 @@ private:
   uint8_t spi_tx_buffer_[AD7730_SPI_TX_BUFFER_LEN];
   char spi_rx_buffer_[AD7730_SPI_RX_BUFFER_LEN];
 
-  void clearBuffer();
-
-  void writeCommand(int cs);
-
 };
 
 

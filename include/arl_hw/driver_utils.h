@@ -84,9 +84,8 @@ namespace driver_utils {
    * @param period_int
    * @param time
    */
-  void
-  checkOverrun(statistics_t &driver_stats, double start, double after_read, double after_cm, double after_write,
-               int period_int, struct timespec &timestamp);
+  void checkOverrun(statistics_t &driver_stats, double start, double after_read, double after_cm, double after_write,
+                    int period_int, struct timespec &timestamp);
 
   /**
    * Checks if a frequency miss was so severe that that driver needs to be halted.
@@ -99,10 +98,9 @@ namespace driver_utils {
    * @param start
    * @param robot
    */
-  void
-  checkSevereRTMiss(double *last_rt_monitor_time, unsigned int *rt_cycle_count, double rt_loop_monitor_period,
-                    RTLoopHistory &rt_loop_history,
-                    driver_utils::statistics_t &driver_stats, double start, ARLRobot &robot);
+  void checkSevereRTMiss(double *last_rt_monitor_time, unsigned int *rt_cycle_count, double rt_loop_monitor_period,
+                         RTLoopHistory &rt_loop_history,
+                         driver_utils::statistics_t &driver_stats, double start, ARLRobot &robot);
 }
 
 #endif //ARL_HW_DRIVER_UTILS_H
