@@ -42,7 +42,7 @@ public:
 
   /**
    * Sets the clock prescaler of SPI device
-   * @param divider
+   * @param divider value to set the frequency divider to
    */
   virtual void setSCLKDivider(int divider);
 

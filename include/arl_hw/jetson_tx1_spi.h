@@ -73,16 +73,16 @@ public:
 
   /**
    * Sets the clock prescaler of SPI device
-   * @param divider
+   * @param divider value to set the frequency divider to
    */
   virtual void setSCLKDivider(int divider);
 
   /**
    * Sets the addresses just to access the multiplexer plus it's latch and enable signal
-   * @param bus_addresses
-   * @param address_length
-   * @param enable
-   * @param latch
+   * @param bus_addresses a pointer to an array of gpio numbers representing the address LSB first
+   * @param address_length length of the address
+   * @param enable gpio number connected to the multiplexer's enable signal
+   * @param latch gpio number connected to the multiplexer's latch signal
    */
   void setMultiplexerBusAddresses(int *bus_addresses, int address_length, int enable, int latch);
 
