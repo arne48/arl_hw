@@ -78,12 +78,17 @@ bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status,
     }
   }
 
-  std::map<int, uint16_t[16]> tension_storage;
+
+  _spi->setSCLKDivider(32);
+  std::map<int, uint32_t[16]> tension_storage;
   for (auto const &entity : _tension_ports) {
     _lcell->readData(_gpios[entity.first], _lcell_buffer);
     for (int channel : entity.second) {
-      tension_storage[entity.first][channel] = _lcell_buffer[ 3 * channel];
+
+      tension_storage[entity.first][channel] =
+        _lcell_buffer[(3 * channel)] << 16 | _lcell_buffer[(3 * channel) + 1] << 8 | _lcell_buffer[(3 * channel) + 2];
     }
+
   }
 
   status.clear();
@@ -93,6 +98,7 @@ bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status,
                       tension_storage[tension_controllers[i].first][tension_controllers[i].second]});
   }
 
+  _spi->setSCLKDivider(16);
   return true;
 }
 
