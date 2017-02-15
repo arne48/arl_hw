@@ -33,13 +33,14 @@ public:
    * @param cs chip-select id of load cell board
    * @param data data-buffer
    */
-  void readData(int cs, uint8_t* data);
+  void readData(int cs, uint8_t *data);
 
 
 private:
   Embedded_SPI *dev_;
   uint8_t spi_tx_buffer_[AD7730_SPI_TX_BUFFER_LEN];
   char spi_rx_buffer_[AD7730_SPI_RX_BUFFER_LEN];
+  char tx_command_buffer_[AD7730_SPI_RX_BUFFER_LEN];
 
 };
 
