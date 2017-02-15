@@ -2,7 +2,7 @@
 #define ARL_HW_EMBEDDED_SPI_H
 
 /**
- * Interface class for accessing the SPI bus of a arbitrary platform
+ * Interface class for accessing the SPI bus of an arbitrary platform
  */
 class Embedded_SPI {
 public:
