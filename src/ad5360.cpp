@@ -15,7 +15,7 @@ void AD5360::setVoltage(int cs, uint8_t group, uint8_t channel, double voltage) 
 void AD5360::setNormalized(int cs, uint8_t group, uint8_t channel, double value) {
   ROS_DEBUG("AD5360: Using GPIO %d, Channel %d, Group %d for setting normalized value of %f", cs, channel, group, value);
   buildDataCommandHeader(group, channel);
-  buildDataCommandValue(map(value, -1, 1, (AD5360_REF_VOLTAGE * 2) * -1, (AD5360_REF_VOLTAGE * 2)));
+  buildDataCommandValue(map(value, -1, 1, 0, (AD5360_REF_VOLTAGE * 2)));
   writeCommand(cs);
 }
 

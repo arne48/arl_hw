@@ -42,11 +42,11 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
 
   registerInterface(&muscle_interface);
 
-  //Set all controllers to zero activation
+  //Set all controllers to blow-off activation
   std::vector<arl_datatypes::muscle_command_data_t> command_vec;
   for (unsigned int i = 0; i < names_.size(); i++) {
     arl_datatypes::muscle_command_data_t command;
-    command.activation = 0.0;
+    command.activation = -1.0;
     command.controller_port_activation = activation_controllers_[i];
     command_vec.push_back(command);
   }
@@ -163,7 +163,7 @@ void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
       desired_pressures_.push_back(initial_value);
       current_pressures_.push_back(0.0);
       tensions_.push_back(0.0);
-      activations_.push_back(0.0);
+      activations_.push_back(-1.0);
 
       activation_controllers_.push_back({muscle_list[i]["activation_controller_port"], muscle_list[i]["activation_controller_channel"]});
       pressure_controllers_.push_back({muscle_list[i]["pressure_controller_port"], muscle_list[i]["pressure_controller_channel"]});
@@ -185,7 +185,7 @@ void ARLRobot::executeEmergencyStop() {
   for (unsigned int i = 0; i < names_.size(); i++) {
     dev->emergency_stop(activation_controllers_[i]);
     desired_pressures_[i] = 0.0;
-    activations_[i] = 0.0;
+    activations_[i] = -1.0;
   }
 }
 
@@ -193,7 +193,7 @@ void ARLRobot::resetMuscles() {
   for (unsigned int i = 0; i < names_.size(); i++) {
     dev->reset_muscle(activation_controllers_[i]);
     desired_pressures_[i] = 0.0;
-    activations_[i] = 0.0;
+    activations_[i] = -1.0;
   }
 }
 
@@ -202,7 +202,7 @@ void ARLRobot::resetMuscle(std::string name) {
     if (names_[i] == name) {
       dev->reset_muscle(activation_controllers_[i]);
       desired_pressures_[i] = 0.0;
-      activations_[i] = 0.0;
+      activations_[i] = -1.0;
     }
   }
 }
