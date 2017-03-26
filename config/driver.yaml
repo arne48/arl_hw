@@ -123,8 +123,8 @@ muscle_list:
     tension_controller_channel: 13
   - name: muscle_15
     initial_value: 0.0
-    activation_controller_port: 2
-    activation_controller_channel: 14
+    activation_controller_port: 0
+    activation_controller_channel: 12
     pressure_controller_port: 7
     pressure_controller_channel: 14
     tension_controller_port: 4
@@ -233,3 +233,27 @@ muscle_list:
     pressure_controller_channel: 11
     tension_controller_port: 5
     tension_controller_channel: 11
+  - name: muscle_29
+    initial_value: 0.0
+    activation_controller_port: 0
+    activation_controller_channel: 13
+    pressure_controller_port: 6
+    pressure_controller_channel: 13
+    tension_controller_port: 5
+    tension_controller_channel: 13
+  - name: muscle_30
+    initial_value: 0.0
+    activation_controller_port: 0
+    activation_controller_channel: 14
+    pressure_controller_port: 6
+    pressure_controller_channel: 14
+    tension_controller_port: 5
+    tension_controller_channel: 14
+  - name: muscle_31
+    initial_value: 0.0
+    activation_controller_port: 0
+    activation_controller_channel: 15
+    pressure_controller_port: 6
+    pressure_controller_channel: 15
+    tension_controller_port: 5
+    tension_controller_channel: 15
