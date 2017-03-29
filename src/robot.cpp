@@ -71,9 +71,9 @@ void ARLRobot::read(const ros::Time &time, const ros::Duration &period) {
 
   dev->read(status, pressure_controllers_, tension_controllers_);
 
-  /* Status of controllers should be in the same order as in the internal
+  /* States of controllers should be in the same order as in the internal
    * datastructure. To ensure this the address (controller port & channel)
-   * of the pressure controller of each muscle is used as identifier.
+   * of the pressure controller of each muscle are used as identifier.
    * If this check fails the address is searched in the remaining muscles.
    */
   if(status.size() == names_.size()){

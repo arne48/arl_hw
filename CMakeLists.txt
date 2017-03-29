@@ -24,7 +24,8 @@ find_package(catkin REQUIRED COMPONENTS
         std_srvs
         )
 
-find_package(WiringPi REQUIRED)
+#Replaced by BCM2835
+#find_package(WiringPi REQUIRED)
 find_package(BCM2835 REQUIRED)
 find_package (Threads REQUIRED)
 
@@ -36,14 +37,14 @@ catkin_package(
         INCLUDE_DIRS include
         LIBRARIES arl_hw
         CATKIN_DEPENDS control_toolbox controller_manager hardware_interface roscpp
-#        DEPENDS system_lib
+#       DEPENDS system_lib
 )
 
 include_directories(
         include
         ${catkin_INCLUDE_DIRS}
         ${Boost_INCLUDE_DIRS}
-        ${WIRINGPI_INCLUDE_DIRS}
+#       ${WIRINGPI_INCLUDE_DIRS}
         ${BCM2835_INCLUDE_DIRS}
         )
 
@@ -63,7 +64,7 @@ add_library(arl_robot
 
 target_link_libraries(arl_robot
         ${catkin_LIBRARIES}
-        ${WIRINGPI_LIBRARIES}
+#       ${WIRINGPI_LIBRARIES}
         ${BCM2835_LIBRARIES}
         )
 
@@ -92,10 +93,10 @@ target_link_libraries(test_rpi_bcm2835
         ${BCM2835_LIBRARIES}
         )
 
-add_executable(test_rpi_wiringpi tests/rpi_wiringpi_test.cpp)
+#add_executable(test_rpi_wiringpi tests/rpi_wiringpi_test.cpp)
 
-target_link_libraries(test_rpi_wiringpi
-        ${catkin_LIBRARIES}
-        ${WIRINGPI_LIBRARIES}
-        Threads::Threads
-        )
+#target_link_libraries(test_rpi_wiringpi
+#        ${catkin_LIBRARIES}
+#        ${WIRINGPI_LIBRARIES}
+#        Threads::Threads
+#        )
