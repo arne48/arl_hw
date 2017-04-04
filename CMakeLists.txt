@@ -77,11 +77,6 @@ target_link_libraries(arl_driver_node
         ${Boost_LIBRARIES}
         )
 
-set(SUDO_COMMAND sudo)
-add_custom_command(TARGET arl_driver_node POST_BUILD
-                COMMAND ${SUDO_COMMAND} setcap cap_ipc_lock,cap_sys_nice,cap_sys_rawio,cap_sys_resource+ep $<TARGET_FILE:arl_driver_node>)
-
-
 ##test files
 
 add_executable(test_jetson_tx1 tests/jetson_tx1_test.cpp)
