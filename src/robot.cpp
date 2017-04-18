@@ -116,13 +116,13 @@ void ARLRobot::write(const ros::Time &time, const ros::Duration &period) {
   std::vector<arl_datatypes::muscle_command_data_t> command_vec;
 
   for (unsigned int i = 0; i < names_.size(); i++) {
-    if (activations_[i] != last_activations_[i]) {
+    //if (activations_[i] != last_activations_[i]) {
       arl_datatypes::muscle_command_data_t command;
       command.activation = activations_[i];
       command.controller_port_activation = activation_controllers_[i];
-      last_activations_[i] = activations_[i];
+      //last_activations_[i] = activations_[i];
       command_vec.push_back(command);
-    }
+    //}
   }
 
   dev->write(command_vec);
