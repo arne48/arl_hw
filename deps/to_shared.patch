@@ -1,0 +1,39 @@
+diff -ru a/configure.ac b/configure.ac
+--- a/configure.ac	2017-02-03 10:59:49.000000000 +0900
++++ b/configure.ac	2017-05-27 20:47:32.770172000 +0900
+@@ -7,17 +7,9 @@
+ dnl Dont forget to update  BCM2835_VERSION and .tar.gz in bcm2835.h
+ dnl and the zip file.
+ AC_INIT([bcm2835], [1.52], [mikem@airspayce.com])
+-
+-AM_CONFIG_HEADER(config.h)
+ AM_INIT_AUTOMAKE()
++AM_CONFIG_HEADER(config.h)
++LT_INIT
+ AC_CHECK_LIB([rt], [clock_gettime])
+-AC_CHECK_PROGS([DOXYGEN], [doxygen])
+-if test -z "$DOXYGEN";
+-   then AC_MSG_WARN([Doxygen not found - continuing without Doxygen support])
+-fi
+-AC_PROG_RANLIB
+ AC_PROG_CC
+-AC_CONFIG_MACRO_DIR([m4])
+-AM_CONDITIONAL([HAVE_DOXYGEN], [test -n "$DOXYGEN"])
+-AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([doc/Doxyfile])])
+-AC_OUTPUT(Makefile src/Makefile doc/Makefile)
++AC_OUTPUT(src/Makefile)
+diff -ru a/src/Makefile.am b/src/Makefile.am
+--- a/src/Makefile.am	2015-03-09 07:09:53.000000000 +0900
++++ b/src/Makefile.am	2017-05-27 20:45:49.537720000 +0900
+@@ -1,9 +1,5 @@
+-lib_LIBRARIES = libbcm2835.a
+-libbcm2835_a_SOURCES = bcm2835.c
++lib_LTLIBRARIES = libbcm2835.la
++libbcm2835_la_SOURCES = bcm2835.c
+ include_HEADERS = bcm2835.h
+-check_PROGRAMS = test
+-test_SOURCES = test.c
+-test_LDADD = ./libbcm2835.a
+-TESTS = $(check_PROGRAMS)
+ CLEANFILES = *~
+ 
