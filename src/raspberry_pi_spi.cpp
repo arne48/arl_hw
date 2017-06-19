@@ -9,7 +9,7 @@ RaspberryPi_SPI::RaspberryPi_SPI() {
   }
   bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);
   bcm2835_spi_setDataMode(BCM2835_SPI_MODE1);
-  bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_16);
+  bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_32);
   bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
   bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS_NONE, LOW);
 
