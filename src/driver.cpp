@@ -14,7 +14,7 @@
 
 #define CLOCK_PRIO 0
 #define CONTROL_PRIO 0
-#define RATE 1000 //Hz
+#define RATE 500 //Hz
 
 static pthread_t controlThread;
 static pthread_attr_t controlThreadAttr;
