@@ -20,20 +20,23 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
   if (driver_config.platform == "raspberry_pi") {
     dev = new RaspberryPi();
     initialized = true;
-    ROS_INFO("RPi initialized");
+    ROS_INFO("RaspberryPi initialized");
   } else if(driver_config.platform == "jetson_tx1") {
-    dev = new JetsonTX1;
+    dev = new JetsonTX1();
     initialized = true;
     ROS_INFO("NVIDIA Jetson TX1 initialized");
+  }else if(driver_config.platform == "tinkerboard") {
+    dev = new TinkerBoard();
+    initialized = true;
+    ROS_INFO("Asus TinkerBoard initialized");
   } else if(driver_config.platform == "dummy") {
     dev = new Dummy();
     initialized = true;
-    ROS_INFO("Using dummy interface");
-  }
-  else {
+    ROS_INFO("Using Dummy interface");
+  } else {
     dev = new Dummy();
     initialized = true;
-    ROS_INFO("Using dummy interface");
+    ROS_INFO("Using Dummy interface");
   }
 
   dev->initialize(pressure_controllers_, tension_controllers_);
