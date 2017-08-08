@@ -5,6 +5,11 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules/")
 
+OPTION(BUILD_RPI "Build with Raspberry Pi 3 support" ON)
+OPTION(BUILD_TX1 "Build with Jetson TX1 support" ON)
+OPTION(BUILD_LINUX_PLATFORM "Build with Linux spidev and sysfs support" ON)
+OPTION(BUILD_TINKERBOARD "Build with Asus Tinkerboard support" ON)
+
 ##Uncomment for Debug Build
 #set(DCMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -O0 -g")
@@ -48,21 +53,46 @@ include_directories(
         ${BCM2835_INCLUDE_DIRS}
         )
 
-## Declare a C++ library
-add_library(arl_robot
+SET(SOURCES
         src/robot.cpp
-        src/raspberry_pi.cpp
-        src/raspberry_pi_spi.cpp
-        src/jetson_tx1.cpp
-        src/jetson_tx1_spi.cpp
-        src/jetson_tx1_gpio.cpp
-        src/tinkerboard.cpp
-        src/tinkerboard_spi.cpp
         src/dummy.cpp
         src/ad5360.cpp
         src/ad7616.cpp
         src/ad7730.cpp
         )
+
+IF(BUILD_RPI)
+        LIST(APPEND SOURCES
+        src/raspberry_pi.cpp
+        src/raspberry_pi_spi.cpp
+                )
+ENDIF()
+
+IF(BUILD_TX1)
+        LIST(APPEND SOURCES
+        src/jetson_tx1.cpp
+        src/jetson_tx1_spi.cpp
+        src/jetson_tx1_gpio.cpp
+                )
+ENDIF()
+
+IF(BUILD_TINKERBOARD)
+        LIST(APPEND SOURCES
+        src/tinkerboard.cpp
+        src/tinkerboard_spi.cpp
+                )
+ENDIF()
+
+IF(BUILD_LINUX_PLATFORM)
+        LIST(APPEND SOURCES
+        src/linux_platform.cpp
+        src/linux_platform_spi.cpp
+        src/linux_platform_gpio.cpp
+                )
+ENDIF()
+
+## Declare a C++ library
+add_library(arl_robot ${SOURCES})
 
 target_link_libraries(arl_robot
         ${catkin_LIBRARIES}

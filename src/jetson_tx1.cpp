@@ -1,4 +1,4 @@
-#include "arl_hw/jetson_tx1.h"
+#include <arl_hw/jetson_tx1.h>
 #include <ros/ros.h>
 
 JetsonTX1::JetsonTX1() {

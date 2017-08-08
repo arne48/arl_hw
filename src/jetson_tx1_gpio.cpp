@@ -1,4 +1,4 @@
-#include "arl_hw/jetson_tx1_gpio.h"
+#include <arl_hw/jetson_tx1_gpio.h>
 
 JetsonTX1_GPIO::JetsonTX1_GPIO() {
 }

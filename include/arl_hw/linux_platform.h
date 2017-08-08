@@ -1,11 +1,11 @@
-#ifndef ARL_RASPBERRY_PI_H
-#define ARL_RASPBERRY_PI_H
+#ifndef ARL_HW_LINUX_PLATFORM_H
+#define ARL_HW_LINUX_PLATFORM_H
 
 #include <vector>
 #include <map>
 #include <arl_hw/communication_device.h>
-#include <arl_hw/raspberry_pi_spi.h>
-#include <bcm2835.h>
+#include <arl_hw/linux_platform_spi.h>
+#include <arl_hw/linux_platform_gpio.h>
 #include <arl_hw/ad5360.h>
 #include <arl_hw/ad7616.h>
 #include <arl_hw/ad7730.h>
@@ -14,42 +14,42 @@
 #define BLOW_OFF 0.0
 
 /**
- * Implementation of CommunicationDevice base class which communicates to hardware using a Raspberry Pi
+ * Implementation of CommunicationDevice base class which communicates to hardware using a spidev and sysfs
  */
-class RaspberryPi : public CommunicationDevice {
+class LinuxPlatform : public CommunicationDevice {
 public:
   /**
    * Default Constructor
    */
-  RaspberryPi();
+  LinuxPlatform();
 
   /**
    * Destructor
    */
-  ~RaspberryPi();
+  ~LinuxPlatform();
 
   /**
-   * Reads current robot state from hardware on a Raspberry Pi
+   * Reads current robot state from hardware on a NVIDIA Jetson TX1
    * @return current state of hardware
    */
   virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status_vec, std::vector<std::pair<int, int> > pressure_controllers,
                     std::vector<std::pair<int, int> > tension_controllers);
 
   /**
-   * @param command command to issue to hardware on a Raspberry Pi
+   * @param command command to issue to hardware on a NVIDIA Jetson TX1
    * @return success of command
    */
   virtual bool write(std::vector<arl_datatypes::muscle_command_data_t> &command_vec);
 
   /**
-   * Initialize communication device on a Raspberry Pi
+   * Initialize communication device on a NVIDIA Jetson TX1
    * @return success of command
    */
   virtual bool initialize(std::vector<std::pair<int, int> > pressure_controllers,
                           std::vector<std::pair<int, int> > tension_controllers);
 
   /**
-   * Cleanup and close communication device on a Raspberry Pi
+   * Cleanup and close communication device on a NVIDIA Jetson TX1
    * @return success of command
    */
   virtual bool close();
@@ -68,23 +68,20 @@ public:
 
 private:
   AD7730 *_lcell;
-  uint8_t _lcell_buffer[64];
+  uint8_t _lcell_buffer[32];
 
   AD5360 *_dac;
   AD7616 *_adc;
-  RaspberryPi_SPI *_spi;
+  LinuxPlatform_SPI *_spi;
+  LinuxPlatform_GPIO *_gpio;
 
   std::map<int, std::set<int>> _pressure_ports;
   std::map<int, std::set<int>> _tension_ports;
 
-  int _gpios[16] = {RPI_V2_GPIO_P1_24, RPI_V2_GPIO_P1_26, RPI_V2_GPIO_P1_32, RPI_V2_GPIO_P1_36, RPI_V2_GPIO_P1_07,
-                    RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_31, RPI_V2_GPIO_P1_33,
-                    RPI_V2_GPIO_P1_35, RPI_V2_GPIO_P1_37, RPI_V2_GPIO_P1_03, RPI_V2_GPIO_P1_05, RPI_V2_GPIO_P1_08,
-                    RPI_V2_GPIO_P1_10};
-
-  uint8_t _dac_latch_port = RPI_GPIO_P1_18;
-  uint8_t _adc_conversion_port = RPI_GPIO_P1_16;
+  int _dac_latch = 186;
+  int _adc_conversion_start = 219;
 
 };
 
-#endif // ARL_RASPBERRY_PI_H
+
+#endif //ARL_HW_LINUX_PLATFORM_H

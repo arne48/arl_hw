@@ -25,7 +25,11 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
     dev = new JetsonTX1();
     initialized = true;
     ROS_INFO("NVIDIA Jetson TX1 initialized");
-  }else if(driver_config.platform == "tinkerboard") {
+  } else if(driver_config.platform == "linux_platform") {
+    dev = new LinuxPlatform();
+    initialized = true;
+    ROS_INFO("Linux spidev and sysfs platform initialized");
+  } else if(driver_config.platform == "tinkerboard") {
     dev = new TinkerBoard();
     initialized = true;
     ROS_INFO("Asus TinkerBoard initialized");

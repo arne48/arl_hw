@@ -1,4 +1,4 @@
-#include "arl_hw/jetson_tx1_spi.h"
+#include <arl_hw/jetson_tx1_spi.h>
 #include <ros/ros.h>
 
 JetsonTX1_SPI::JetsonTX1_SPI() {
