@@ -6,9 +6,9 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules/")
 
 OPTION(BUILD_RPI "Build with Raspberry Pi 3 support" ON)
-OPTION(BUILD_TX1 "Build with Jetson TX1 support" ON)
+OPTION(BUILD_TX1 "Build with Jetson TX1 support" OFF)
 OPTION(BUILD_LINUX_PLATFORM "Build with Linux spidev and sysfs support" ON)
-OPTION(BUILD_TINKERBOARD "Build with Asus Tinkerboard support" ON)
+OPTION(BUILD_TINKERBOARD "Build with Asus Tinkerboard support" OFF)
 
 ##Uncomment for Debug Build
 #set(DCMAKE_BUILD_TYPE Debug)
@@ -29,14 +29,11 @@ find_package(catkin REQUIRED COMPONENTS
         std_srvs
         )
 
-#Replaced by BCM2835
-#find_package(WiringPi REQUIRED)
 find_package(BCM2835 REQUIRED)
 find_package (Threads REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system thread)
-
 
 catkin_package(
         INCLUDE_DIRS include
@@ -49,7 +46,6 @@ include_directories(
         include
         ${catkin_INCLUDE_DIRS}
         ${Boost_INCLUDE_DIRS}
-#       ${WIRINGPI_INCLUDE_DIRS}
         ${BCM2835_INCLUDE_DIRS}
         )
 
@@ -62,6 +58,8 @@ SET(SOURCES
         )
 
 IF(BUILD_RPI)
+        MESSAGE(STATUS "Using platform code for the Raspberry Pi 3")
+        add_definitions(-DFOR_RPI)
         LIST(APPEND SOURCES
         src/raspberry_pi.cpp
         src/raspberry_pi_spi.cpp
@@ -69,6 +67,8 @@ IF(BUILD_RPI)
 ENDIF()
 
 IF(BUILD_TX1)
+        MESSAGE(STATUS "Using platform code for the Jetson TX1")
+        add_definitions(-DFOR_TX1)
         LIST(APPEND SOURCES
         src/jetson_tx1.cpp
         src/jetson_tx1_spi.cpp
@@ -77,6 +77,8 @@ IF(BUILD_TX1)
 ENDIF()
 
 IF(BUILD_TINKERBOARD)
+        MESSAGE(STATUS "Using platform code for the Asus Tinkerboard")
+        add_definitions(-DFOR_TINKERBOARD)
         LIST(APPEND SOURCES
         src/tinkerboard.cpp
         src/tinkerboard_spi.cpp
@@ -84,6 +86,8 @@ IF(BUILD_TINKERBOARD)
 ENDIF()
 
 IF(BUILD_LINUX_PLATFORM)
+        MESSAGE(STATUS "Using platform code for the Linux spidev and sysfs")
+        add_definitions(-DFOR_LINUX_PLATFORM)
         LIST(APPEND SOURCES
         src/linux_platform.cpp
         src/linux_platform_spi.cpp
@@ -96,7 +100,6 @@ add_library(arl_robot ${SOURCES})
 
 target_link_libraries(arl_robot
         ${catkin_LIBRARIES}
-#       ${WIRINGPI_LIBRARIES}
         ${BCM2835_LIBRARIES}
         )
 

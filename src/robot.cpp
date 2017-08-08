@@ -17,22 +17,52 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
 
   getConfigurationFromParameterServer(nh);
 
+  bool using_fallback_dummy = false;
+
   if (driver_config.platform == "raspberry_pi") {
+
+#ifdef FOR_RPI
     dev = new RaspberryPi();
     initialized = true;
     ROS_INFO("RaspberryPi initialized");
+#else
+    ROS_FATAL("Driver was not built with RaspberryPi support");
+    using_fallback_dummy = true;
+#endif
+
   } else if(driver_config.platform == "jetson_tx1") {
+
+#ifdef FOR_TX1
     dev = new JetsonTX1();
     initialized = true;
     ROS_INFO("NVIDIA Jetson TX1 initialized");
+#else
+    ROS_FATAL("Driver was not built with Jetson TX1 support");
+    using_fallback_dummy = true;
+#endif
+
   } else if(driver_config.platform == "linux_platform") {
+
+#ifdef FOR_LINUX_PLATFORM
     dev = new LinuxPlatform();
     initialized = true;
     ROS_INFO("Linux spidev and sysfs platform initialized");
+#else
+    ROS_FATAL("Driver was not built with Linux Platform support");
+    using_fallback_dummy = true;
+#endif
+
   } else if(driver_config.platform == "tinkerboard") {
+
+#ifdef FOR_TINKERBOARD
     dev = new TinkerBoard();
     initialized = true;
     ROS_INFO("Asus TinkerBoard initialized");
+#else
+    ROS_FATAL("Driver was not built with Asus Tinkerboard support");
+    using_fallback_dummy = true;
+#endif
+
   } else if(driver_config.platform == "dummy") {
     dev = new Dummy();
     initialized = true;
@@ -40,7 +70,13 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
   } else {
     dev = new Dummy();
     initialized = true;
-    ROS_INFO("Using Dummy interface");
+    ROS_WARN("Platform name not know using Dummy instead");
+  }
+
+  if(using_fallback_dummy) {
+    dev = new Dummy();
+    initialized = true;
+    ROS_FATAL("Using Fallback Dummy");
   }
 
   dev->initialize(pressure_controllers_, tension_controllers_);
