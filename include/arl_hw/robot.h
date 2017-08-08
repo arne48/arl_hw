@@ -19,6 +19,7 @@
 
 #include <set>
 #include <vector>
+#include <string>
 
 /**
  * Implementation of Robot Hardware Interface for ARL's pneumatic muscle driven robots
@@ -27,8 +28,7 @@ class ARLRobot : public hardware_interface::RobotHW {
 public:
 
   struct config{
-    bool using_raspberry_pi;
-    bool using_jetson_tx1;
+    std::string platform;
     bool halt_on_slow_rt_loop;
     bool publish_every_rt_jitter;
     double min_acceptable_rt_loop_frequency;

@@ -17,14 +17,18 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
 
   getConfigurationFromParameterServer(nh);
 
-  if (driver_config.using_raspberry_pi) {
+  if (driver_config.platform == "raspberry_pi") {
     dev = new RaspberryPi();
     initialized = true;
     ROS_INFO("RPi initialized");
-  } else if(driver_config.using_jetson_tx1) {
+  } else if(driver_config.platform == "jetson_tx1") {
     dev = new JetsonTX1;
     initialized = true;
     ROS_INFO("NVIDIA Jetson TX1 initialized");
+  } else if(driver_config.platform == "dummy") {
+    dev = new Dummy();
+    initialized = true;
+    ROS_INFO("Using dummy interface");
   }
   else {
     dev = new Dummy();
@@ -134,15 +138,13 @@ void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
 
   ROS_DEBUG("Reading configuration");
 
-  nh.param<bool>("/using_raspberry_pi", driver_config.using_raspberry_pi, false);
-
-  nh.param<bool>("/using_jetson_tx1", driver_config.using_jetson_tx1, false);
+  nh.param<std::string>("/platform", driver_config.platform, "dummy");
 
   nh.param<bool>("/publish_every_rt_jitter", driver_config.publish_every_rt_jitter, false);
 
   nh.param<bool>("/halt_on_slow_rt_loop", driver_config.halt_on_slow_rt_loop, false);
 
-  nh.param<double>("/min_acceptable_rt_loop_frequency", driver_config.min_acceptable_rt_loop_frequency, 1000.0);
+  nh.param<double>("/min_acceptable_rt_loop_frequency", driver_config.min_acceptable_rt_loop_frequency, 490.0);
 
 
   XmlRpc::XmlRpcValue muscle_list;
