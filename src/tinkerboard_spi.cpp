@@ -2,7 +2,8 @@
 #include <bcm2835.h>
 #include <ros/ros.h>
 
-TinkerBoard_SPI::TinkerBoard_SPI() {
+TinkerBoard_SPI::TinkerBoard_SPI(TinkerBoard_GPIO *gpio) : Embedded_SPI(gpio)  {
+  _gpio = gpio;
 
   if (!bcm2835_spi_begin()) {
     ROS_ERROR("bcm2835_spi_begin failed.");

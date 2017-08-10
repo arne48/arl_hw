@@ -1,7 +1,9 @@
 #include <arl_hw/linux_platform_spi.h>
 #include <ros/ros.h>
 
-LinuxPlatform_SPI::LinuxPlatform_SPI() {
+LinuxPlatform_SPI::LinuxPlatform_SPI(LinuxPlatform_GPIO *gpio) : Embedded_SPI(gpio) {
+  _gpio = gpio;
+
   _spi_config = {
     device : "/dev/spidev1.1",
     mode : 1,
@@ -17,10 +19,6 @@ LinuxPlatform_SPI::LinuxPlatform_SPI() {
   ret = ioctl(_spi_descriptor, SPI_IOC_RD_BITS_PER_WORD, _spi_config.bits);
   ret = ioctl(_spi_descriptor, SPI_IOC_WR_MAX_SPEED_HZ, _spi_config.speed);
   ret = ioctl(_spi_descriptor, SPI_IOC_RD_MAX_SPEED_HZ, _spi_config.speed);*/
-}
-
-LinuxPlatform_SPI::LinuxPlatform_SPI(LinuxPlatform_GPIO *gpio) : LinuxPlatform_SPI::LinuxPlatform_SPI() {
-  _gpio = gpio;
 }
 
 LinuxPlatform_SPI::~LinuxPlatform_SPI() {

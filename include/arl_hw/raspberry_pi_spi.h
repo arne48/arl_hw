@@ -2,16 +2,14 @@
 #define ARL_HW_RASPBERRYPI_SPI_H
 
 #include <arl_hw/embedded_spi.h>
+#include <arl_hw/raspberry_pi_gpio.h>
 
 /**
  * Implementation of the embedded SPI interface
  */
 class RaspberryPi_SPI : public Embedded_SPI {
 public:
-  /**
-   * Default Constructor
-   */
-  RaspberryPi_SPI();
+  RaspberryPi_SPI(RaspberryPi_GPIO *gpio);
 
   /**
    * Destructor
@@ -39,7 +37,9 @@ public:
    * @return true if transfer was executed successfully
    */
   virtual bool transferSPI(int cs, int data_len, char data_tx[], char data_rx[]);
-  
+
+private:
+  RaspberryPi_GPIO *_gpio;
 };
 
 

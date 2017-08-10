@@ -19,10 +19,6 @@
  */
 class LinuxPlatform_SPI : public Embedded_SPI  {
 public:
-  /**
-   * Default Constructor
-   */
-  LinuxPlatform_SPI();
 
   LinuxPlatform_SPI(LinuxPlatform_GPIO *gpio);
 

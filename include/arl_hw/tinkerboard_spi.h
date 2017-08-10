@@ -2,16 +2,14 @@
 #define ARL_HW_TINKERBOARD_SPI_H
 
 #include <arl_hw/embedded_spi.h>
+#include <arl_hw/tinkerboard_gpio.h>
 
 /**
  * Implementation of the embedded SPI interface
  */
 class TinkerBoard_SPI : public Embedded_SPI {
 public:
-  /**
-   * Default Constructor
-   */
-  TinkerBoard_SPI();
+  TinkerBoard_SPI(TinkerBoard_GPIO *gpio);
 
   /**
    * Destructor
@@ -40,6 +38,8 @@ public:
    */
   virtual bool transferSPI(int cs, int data_len, char data_tx[], char data_rx[]);
 
+private:
+  TinkerBoard_GPIO *_gpio;
 };
 
 

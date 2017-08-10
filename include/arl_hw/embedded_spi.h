@@ -1,15 +1,17 @@
 #ifndef ARL_HW_EMBEDDED_SPI_H
 #define ARL_HW_EMBEDDED_SPI_H
 
+#include <arl_hw/embedded_gpio.h>
+
 /**
  * Interface class for accessing the SPI bus of an arbitrary platform
  */
 class Embedded_SPI {
 public:
   /**
-   * Default Constructor
+   * Constructor providing EmbeddedGPIO for setting CS in software
    */
-  Embedded_SPI() {};
+  Embedded_SPI(Embedded_GPIO *gpio) {};
 
   /**
    * Destructor

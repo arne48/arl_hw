@@ -3,12 +3,12 @@
 
 TinkerBoard::TinkerBoard() {
 
-  if (!bcm2835_init()) {
+  if (bcm2835_init() != 1) {
     ROS_ERROR("bcm2835_init failed.");
   }
 
-  _spi = new TinkerBoard_SPI();
   _gpio = new TinkerBoard_GPIO();
+  _spi = new TinkerBoard_SPI(_gpio);
   _dac = new AD5360(_spi);
   _adc = new AD7616(_spi, _gpio, _adc_conversion_port);
   _lcell = new AD7730(_spi);
