@@ -29,27 +29,27 @@ public:
   ~LinuxPlatform();
 
   /**
-   * Reads current robot state from hardware on a NVIDIA Jetson TX1
+   * Reads current robot state from hardware on a Linux platform using spidev and sysfs
    * @return current state of hardware
    */
   virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status_vec, std::vector<std::pair<int, int> > pressure_controllers,
                     std::vector<std::pair<int, int> > tension_controllers);
 
   /**
-   * @param command command to issue to hardware on a NVIDIA Jetson TX1
+   * @param command command to issue to hardware on a Linux platform using spidev and sysfs
    * @return success of command
    */
-  virtual bool write(std::vector<arl_datatypes::muscle_command_data_t> &command);
+  virtual bool write(std::vector<arl_datatypes::muscle_command_data_t> &command_vec);
 
   /**
-   * Initialize communication device on a NVIDIA Jetson TX1
+   * Initialize communication device on a Linux platform using spidev and sysfs
    * @return success of command
    */
   virtual bool initialize(std::vector<std::pair<int, int> > pressure_controllers,
                           std::vector<std::pair<int, int> > tension_controllers);
 
   /**
-   * Cleanup and close communication device on a NVIDIA Jetson TX1
+   * Cleanup and close communication device on a Linux platform using spidev and sysfs
    * @return success of command
    */
   virtual bool close();
@@ -67,13 +67,13 @@ public:
   virtual void reset_muscle(std::pair<int, int> muscle);
 
 private:
-//  AD7730 *_lcell;
-  uint8_t _lcell_buffer[32];
+  AD7730 *_lcell;
+  uint8_t _lcell_buffer[64];
 
-//  AD5360 *_dac;
-//  AD7616 *_adc;
-//  LinuxPlatform_SPI *_spi;
-//  LinuxPlatform_GPIO *_gpio;
+  AD5360 *_dac;
+  AD7616 *_adc;
+  LinuxPlatform_SPI *_spi;
+  LinuxPlatform_GPIO *_gpio;
 
   std::map<int, std::set<int>> _pressure_ports;
   std::map<int, std::set<int>> _tension_ports;
