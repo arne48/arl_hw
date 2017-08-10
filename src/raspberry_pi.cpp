@@ -8,8 +8,9 @@ RaspberryPi::RaspberryPi() {
   }
 
   _spi = new RaspberryPi_SPI();
+  _gpio = new RaspberryPi_GPIO();
   _dac = new AD5360(_spi);
-  _adc = new AD7616(_spi);
+  _adc = new AD7616(_spi, _gpio, _adc_conversion_port);
   _lcell = new AD7730(_spi);
 
   //Chip-Selects

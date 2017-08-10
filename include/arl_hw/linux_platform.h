@@ -39,7 +39,7 @@ public:
    * @param command command to issue to hardware on a NVIDIA Jetson TX1
    * @return success of command
    */
-  virtual bool write(std::vector<arl_datatypes::muscle_command_data_t> &command_vec);
+  virtual bool write(std::vector<arl_datatypes::muscle_command_data_t> &command);
 
   /**
    * Initialize communication device on a NVIDIA Jetson TX1
@@ -67,19 +67,21 @@ public:
   virtual void reset_muscle(std::pair<int, int> muscle);
 
 private:
-  AD7730 *_lcell;
+//  AD7730 *_lcell;
   uint8_t _lcell_buffer[32];
 
-  AD5360 *_dac;
-  AD7616 *_adc;
-  LinuxPlatform_SPI *_spi;
-  LinuxPlatform_GPIO *_gpio;
+//  AD5360 *_dac;
+//  AD7616 *_adc;
+//  LinuxPlatform_SPI *_spi;
+//  LinuxPlatform_GPIO *_gpio;
 
   std::map<int, std::set<int>> _pressure_ports;
   std::map<int, std::set<int>> _tension_ports;
 
-  int _dac_latch = 186;
-  int _adc_conversion_start = 219;
+  int _gpios[16] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+
+  int _dac_latch_port = 0;
+  int _adc_conversion_port = 0;
 
 };
 

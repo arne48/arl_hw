@@ -12,7 +12,6 @@
 #include <arl_hw/datatypes.h>
 #include <arl_hw/communication_device.h>
 #include <arl_hw/raspberry_pi.h>
-#include <arl_hw/jetson_tx1.h>
 #include <arl_hw/tinkerboard.h>
 #include <arl_hw/linux_platform.h>
 #include <arl_hw/dummy.h>

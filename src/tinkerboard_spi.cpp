@@ -32,7 +32,3 @@ bool TinkerBoard_SPI::transferSPI(int cs, int data_len, char data_tx[], char dat
   bcm2835_gpio_write(cs, HIGH);
   return true;
 }
-
-void TinkerBoard_SPI::setSCLKDivider(int divider) {
-  bcm2835_spi_setClockDivider(divider);
-}

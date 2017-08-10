@@ -5,6 +5,7 @@
 #include <map>
 #include <arl_hw/communication_device.h>
 #include <arl_hw/raspberry_pi_spi.h>
+#include <arl_hw/raspberry_pi_gpio.h>
 #include <bcm2835.h>
 #include <arl_hw/ad5360.h>
 #include <arl_hw/ad7616.h>
@@ -73,6 +74,7 @@ private:
   AD5360 *_dac;
   AD7616 *_adc;
   RaspberryPi_SPI *_spi;
+  RaspberryPi_GPIO *_gpio;
 
   std::map<int, std::set<int>> _pressure_ports;
   std::map<int, std::set<int>> _tension_ports;
@@ -82,8 +84,8 @@ private:
                     RPI_V2_GPIO_P1_35, RPI_V2_GPIO_P1_37, RPI_V2_GPIO_P1_03, RPI_V2_GPIO_P1_05, RPI_V2_GPIO_P1_08,
                     RPI_V2_GPIO_P1_10};
 
-  uint8_t _dac_latch_port = RPI_GPIO_P1_18;
-  uint8_t _adc_conversion_port = RPI_GPIO_P1_16;
+  int _dac_latch_port = RPI_GPIO_P1_18;
+  int _adc_conversion_port = RPI_GPIO_P1_16;
 
 };
 

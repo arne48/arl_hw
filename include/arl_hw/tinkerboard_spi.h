@@ -1,5 +1,5 @@
-#ifndef TINKERBOARD_SPI_H
-#define TINKERBOARD_SPI_H
+#ifndef ARL_HW_TINKERBOARD_SPI_H
+#define ARL_HW_TINKERBOARD_SPI_H
 
 #include <arl_hw/embedded_spi.h>
 
@@ -40,13 +40,7 @@ public:
    */
   virtual bool transferSPI(int cs, int data_len, char data_tx[], char data_rx[]);
 
-  /**
-   * Sets the clock prescaler of SPI device
-   * @param divider value to set the frequency divider to
-   */
-  virtual void setSCLKDivider(int divider);
-
 };
 
 
-#endif //TINKERBOARD_SPI_H
+#endif //ARL_HW_TINKERBOARD_SPI_H

@@ -8,8 +8,9 @@ TinkerBoard::TinkerBoard() {
   }
 
   _spi = new TinkerBoard_SPI();
+  _gpio = new TinkerBoard_GPIO();
   _dac = new AD5360(_spi);
-  _adc = new AD7616(_spi);
+  _adc = new AD7616(_spi, _gpio, _adc_conversion_port);
   _lcell = new AD7730(_spi);
 
   //Chip-Selects

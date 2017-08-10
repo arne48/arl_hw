@@ -6,14 +6,13 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules/")
 
 OPTION(BUILD_RPI "Build with Raspberry Pi 3 support" ON)
-OPTION(BUILD_TX1 "Build with Jetson TX1 support" OFF)
 OPTION(BUILD_LINUX_PLATFORM "Build with Linux spidev and sysfs support" ON)
-OPTION(BUILD_TINKERBOARD "Build with Asus Tinkerboard support" OFF)
+OPTION(BUILD_TINKERBOARD "Build with Asus Tinkerboard support" ON)
 
 ##Uncomment for Debug Build
 #set(DCMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -O0 -g")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_DEBUG} -O3")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 
 
 find_package(catkin REQUIRED COMPONENTS
@@ -29,7 +28,6 @@ find_package(catkin REQUIRED COMPONENTS
         std_srvs
         )
 
-find_package(BCM2835 REQUIRED)
 find_package (Threads REQUIRED)
 
 ## System dependencies are found with CMake's conventions
@@ -42,13 +40,6 @@ catkin_package(
 #       DEPENDS system_lib
 )
 
-include_directories(
-        include
-        ${catkin_INCLUDE_DIRS}
-        ${Boost_INCLUDE_DIRS}
-        ${BCM2835_INCLUDE_DIRS}
-        )
-
 SET(SOURCES
         src/robot.cpp
         src/dummy.cpp
@@ -57,22 +48,33 @@ SET(SOURCES
         src/ad7730.cpp
         )
 
+SET(ROBOT_LIBRARIES
+        ${catkin_LIBRARIES}
+        )
+
+SET(INCLUDE_DIRS
+        include
+        ${catkin_INCLUDE_DIRS}
+        ${Boost_INCLUDE_DIRS}
+        )
+
 IF(BUILD_RPI)
         MESSAGE(STATUS "Using platform code for the Raspberry Pi 3")
         add_definitions(-DFOR_RPI)
+        find_package(BCM2835 REQUIRED)
+
         LIST(APPEND SOURCES
         src/raspberry_pi.cpp
         src/raspberry_pi_spi.cpp
+        src/raspberry_pi_gpio.cpp
                 )
-ENDIF()
 
-IF(BUILD_TX1)
-        MESSAGE(STATUS "Using platform code for the Jetson TX1")
-        add_definitions(-DFOR_TX1)
-        LIST(APPEND SOURCES
-        src/jetson_tx1.cpp
-        src/jetson_tx1_spi.cpp
-        src/jetson_tx1_gpio.cpp
+        LIST(APPEND ROBOT_LIBRARIES
+        ${BCM2835_LIBRARIES}
+                )
+
+        LIST(APPEND INCLUDE_DIRS
+        ${BCM2835_INCLUDE_DIRS}
                 )
 ENDIF()
 
@@ -82,6 +84,7 @@ IF(BUILD_TINKERBOARD)
         LIST(APPEND SOURCES
         src/tinkerboard.cpp
         src/tinkerboard_spi.cpp
+        src/tinkerboard_gpio.cpp
                 )
 ENDIF()
 
@@ -95,12 +98,15 @@ IF(BUILD_LINUX_PLATFORM)
                 )
 ENDIF()
 
+include_directories(
+        ${INCLUDE_DIRS}
+)
+
 ## Declare a C++ library
 add_library(arl_robot ${SOURCES})
 
 target_link_libraries(arl_robot
-        ${catkin_LIBRARIES}
-        ${BCM2835_LIBRARIES}
+        ${ROBOT_LIBRARIES}
         )
 
 add_executable(arl_driver_node src/driver.cpp src/driver_utils.cpp src/rt_history.cpp)
@@ -114,18 +120,18 @@ target_link_libraries(arl_driver_node
 
 ##test files
 
-add_executable(test_jetson_tx1 tests/jetson_tx1_test.cpp)
-
-target_link_libraries(test_jetson_tx1
-        ${catkin_LIBRARIES}
-        )
-
-add_executable(test_rpi_bcm2835 tests/rpi_bcm2835_test.cpp)
-
-target_link_libraries(test_rpi_bcm2835
-        ${catkin_LIBRARIES}
-        ${BCM2835_LIBRARIES}
-        )
+#add_executable(test_jetson_tx1 tests/jetson_tx1_test.cpp)
+#
+#target_link_libraries(test_jetson_tx1
+#        ${catkin_LIBRARIES}
+#        )
+#
+#add_executable(test_rpi_bcm2835 tests/rpi_bcm2835_test.cpp)
+#
+#target_link_libraries(test_rpi_bcm2835
+#        ${catkin_LIBRARIES}
+#        ${BCM2835_LIBRARIES}
+#        )
 
 #add_executable(test_rpi_wiringpi tests/rpi_wiringpi_test.cpp)
 

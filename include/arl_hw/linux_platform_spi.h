@@ -19,24 +19,6 @@
  */
 class LinuxPlatform_SPI : public Embedded_SPI  {
 public:
-
-  struct spi_config_t {
-    const char *device;
-    uint8_t mode;
-    uint8_t bits;
-    uint32_t speed;
-    uint16_t delay;
-  };
-
-  struct spi_ioc_transfer_t {
-    unsigned long tx_buf;
-    unsigned long rx_buf;
-    uint32_t len;
-    uint16_t delay_usecs;
-    uint32_t speed_hz;
-    uint8_t bits_per_word;
-  };
-
   /**
    * Default Constructor
    */
@@ -71,20 +53,31 @@ public:
    */
   virtual bool transferSPI(int cs, int data_len, char data_tx[], char data_rx[]);
 
-  /**
-   * Sets the clock prescaler of SPI device
-   * @param divider value to set the frequency divider to
-   */
-  virtual void setSCLKDivider(int divider);
-
 
 private:
   LinuxPlatform_GPIO *_gpio;
 
+  struct spi_ioc_transfer_t {
+    unsigned long tx_buf;
+    unsigned long rx_buf;
+    uint32_t len;
+    uint16_t delay_usecs;
+    uint32_t speed_hz;
+    uint8_t bits_per_word;
+  };
+
+  struct spi_config_t {
+    const char *device;
+    uint8_t mode;
+    uint8_t bits;
+    uint32_t speed;
+    uint16_t delay;
+  };
+
   int _spi_descriptor;
   spi_config_t _spi_config;
-  spi_ioc_transfer _spi_ioc_transfer;
+  spi_ioc_transfer_t _spi_ioc_transfer;
 };
 
 
-#endif //ARL_HW_JETSON_TX1_SPI_H
+#endif //ARL_HW_LINUX_PLATFORM_SPI_H

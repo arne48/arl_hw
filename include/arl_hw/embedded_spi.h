@@ -36,12 +36,6 @@ public:
    */
   virtual bool transferSPI(int cs, int data_len, char data_tx[], char data_rx[]) = 0;
 
-  /**
-   * Sets the clock prescaler of SPI device
-   * @param divider
-   */
-  virtual void setSCLKDivider(int divider) = 0;
-
 };
 
 

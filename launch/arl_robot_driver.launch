@@ -4,7 +4,7 @@
   <!-- Driver parameters -->
   <rosparam command="load" file="$(find arl_hw)/config/driver.yaml" />
 
-  <!-- Robot Driver -->
-  <node pkg="arl_hw" type="arl_driver_node" name="arl_driver_node" />
+  <!-- Robot Driver
+  <node pkg="arl_hw" type="arl_driver_node" name="arl_driver_node" />-->
 
 </launch>
