@@ -2,74 +2,80 @@
 #include <ros/ros.h>
 
 LinuxPlatform::LinuxPlatform() {
+  _gpio = new LinuxPlatform_GPIO();
+  _gpio->init();
 
-//  _gpio = new LinuxPlatform_GPIO();
-//  _gpio->init();
-//
-//  _spi = new LinuxPlatform_SPI(_gpio);
+  _spi = new LinuxPlatform_SPI(_gpio);
 
-  //_dac = new AD5360(_spi);
-  //_adc = new AD7616(_spi, _gpio, _adc_conversion_port);
-  //_lcell = new AD7730(_spi);
+  _dac = new AD5360(_spi);
+  _adc = new AD7616(_spi, _gpio, _adc_conversion_port);
+  _lcell = new AD7730(_spi);
 
 }
 
 LinuxPlatform::~LinuxPlatform() {
-//  delete _lcell;
-//  delete _adc;
-//  delete _dac;
-//  delete _gpio;
-//  delete _spi;
-//  _gpio->deinit();
+  delete _lcell;
+  delete _adc;
+  delete _dac;
+  delete _gpio;
+  delete _spi;
+  _gpio->deinit();
 }
 
 bool LinuxPlatform::read(std::vector<arl_datatypes::muscle_status_data_t> &status, std::vector<std::pair<int, int> > pressure_controllers,
                        std::vector<std::pair<int, int> > tension_controllers) {
-  std::map<int, std::set<int>> pressure_ports;
-  for (std::pair<int, int> controller : pressure_controllers) {
-    pressure_ports[controller.first].insert(controller.second % 8);
-  }
-  std::map<int, std::set<int>> tension_ports;
-  for (std::pair<int, int> controller : tension_controllers) {
-    tension_ports[controller.first].insert(controller.second);
-  }
-
-  std::map<int, uint32_t[16]> storage;
-  for (auto const &entity : pressure_ports) {
+  std::map<int, uint16_t[16]> pressure_storage;
+  for (auto const &entity : _pressure_ports) {
     for (int channel : entity.second) {
-      uint32_t read_data = 0b10000000000000001000000000000000;
-      storage[entity.first][channel] = (uint16_t) ((read_data & 0xFFFF0000) >> 16);
-      storage[entity.first][channel + 8] = (uint16_t) (read_data & 0x0000FFFF);
+      uint32_t read_data = _adc->getMeasurementPair(_gpios[entity.first], channel);
+      pressure_storage[entity.first][channel] = (uint16_t) ((read_data & 0xFFFF0000) >> 16);
+      pressure_storage[entity.first][channel + 8] = (uint16_t) (read_data & 0x0000FFFF);
     }
   }
 
-  std::map<int, uint16_t[16]> tension_storage;
-  uint16_t _lcell_buffer[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-  for (auto const &entity : tension_ports) {
+
+  std::map<int, uint32_t[16]> tension_storage;
+  for (auto const &entity : _tension_ports) {
+    _lcell->readData(_gpios[entity.first], _lcell_buffer);
     for (int channel : entity.second) {
-      tension_storage[entity.first][channel] = _lcell_buffer[channel];
+      tension_storage[entity.first][channel] =
+          _lcell_buffer[(3 * channel)] << 16 | _lcell_buffer[(3 * channel) + 1] << 8 | _lcell_buffer[(3 * channel) + 2];
     }
+
   }
 
   status.clear();
   for (unsigned int i = 0; i < pressure_controllers.size(); i++) {
-    status.push_back(
-        //force wrong order to test correct checking in calling function (robot->read())
-        {pressure_controllers[(i - 1) % pressure_controllers.size()], tension_controllers[(i - 1) % pressure_controllers.size()], i,
-         tension_storage[tension_controllers[(i - 1) % pressure_controllers.size()].first][tension_controllers[(i - 1) % pressure_controllers.size()].second]});
-    //{pressure_controllers[i], tension_controllers[i], i,
-    //tension_storage[tension_controllers[i].first][tension_controllers[i].second]});
+    status.push_back({pressure_controllers[i], tension_controllers[i],
+                      pressure_storage[pressure_controllers[i].first][pressure_controllers[i].second],
+                      tension_storage[tension_controllers[i].first][tension_controllers[i].second]});
   }
 
   return true;
 }
 
 bool LinuxPlatform::write(std::vector<arl_datatypes::muscle_command_data_t> &command_vec) {
+  for (arl_datatypes::muscle_command_data_t command : command_vec) {
+    _dac->setNormalized(_gpios[command.controller_port_activation.first], (uint8_t) command.controller_port_activation.second / (uint8_t) 8,
+                        (uint8_t) command.controller_port_activation.second % (uint8_t) 8,
+                        command.activation);
+  }
   return true;
 }
 
 bool LinuxPlatform::initialize(std::vector<std::pair<int, int> > pressure_controllers,
                              std::vector<std::pair<int, int> > tension_controllers) {
+
+  //Determine which channels need to be read in order to not have to read whole controller
+  for (std::pair<int, int> controller : pressure_controllers) {
+    _pressure_ports[controller.first].insert(controller.second % 8);
+  }
+
+
+  for (std::pair<int, int> controller : tension_controllers) {
+    _tension_ports[controller.first].insert(controller.second);
+  }
+
   return true;
 }
 
@@ -78,7 +84,9 @@ bool LinuxPlatform::close() {
 }
 
 void LinuxPlatform::emergency_stop(std::pair<int, int> muscle) {
+  _dac->setVoltage(_gpios[muscle.first], (uint8_t) muscle.second / (uint8_t) 8, (uint8_t) muscle.second % (uint8_t) 8, BLOW_OFF);
 }
 
 void LinuxPlatform::reset_muscle(std::pair<int, int> muscle) {
+  _dac->reset(_gpios[muscle.first], (uint8_t) muscle.second / (uint8_t) 8, (uint8_t) muscle.second % (uint8_t) 8);
 }
