@@ -12,7 +12,7 @@
 #include <arl_hw/ad7730.h>
 
 
-#define BLOW_OFF 0.0
+#define BLOW_OFF_VOLTAGE 0.0
 
 /**
  * Implementation of CommunicationDevice base class which communicates to hardware using a Asus Tinkerboard

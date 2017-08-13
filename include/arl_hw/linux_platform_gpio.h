@@ -11,8 +11,8 @@
 
 #include <arl_hw/embedded_gpio.h>
 
-#define SYSFS_GPIO_DIR "/sys/class/gpio"
-#define MAX_BUF 64
+#define GPIO_DIR "/sys/class/gpio"
+#define MAX_BUF 256
 
 class LinuxPlatform_GPIO : public Embedded_GPIO {
 public:
@@ -21,13 +21,13 @@ public:
 
   ~LinuxPlatform_GPIO();
 
-  virtual void init();
+  virtual void init(int gpio_address);
 
-  virtual void deinit();
+  virtual void deinit(int gpio_address);
 
   virtual void set_mode(int gpio_address, Embedded_GPIO::gpio_mode mode);
 
-  virtual void set_output(int gpio_num, Embedded_GPIO::gpio_state);
+  virtual void set_output(int gpio_address, Embedded_GPIO::gpio_state state);
 
   virtual Embedded_GPIO::gpio_state read_input(int gpio_address);
 

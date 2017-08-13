@@ -3,7 +3,18 @@
 
 LinuxPlatform::LinuxPlatform() {
   _gpio = new LinuxPlatform_GPIO();
-  _gpio->init();
+
+  for(uint8_t idx=0; idx<16; idx++) {
+    _gpio->init(_gpios[idx]);
+  }
+  _gpio->init(_adc_conversion_port);
+  _gpio->init(_dac_latch_port);
+
+  _gpio->set_mode(_dac_latch_port, Embedded_GPIO::gpio_mode::OUTPUT);
+  _gpio->set_output(_dac_latch_port, Embedded_GPIO::gpio_state::OFF);
+
+  _gpio->set_mode(_adc_conversion_port, Embedded_GPIO::gpio_mode::OUTPUT);
+  _gpio->set_output(_adc_conversion_port, Embedded_GPIO::gpio_state::ON);
 
   _spi = new LinuxPlatform_SPI(_gpio);
 
@@ -14,12 +25,17 @@ LinuxPlatform::LinuxPlatform() {
 }
 
 LinuxPlatform::~LinuxPlatform() {
+  for(uint8_t idx=0; idx<16; idx++) {
+    _gpio->deinit(_gpios[idx]);
+  }
+  _gpio->deinit(_adc_conversion_port);
+  _gpio->deinit(_dac_latch_port);
+
   delete _lcell;
   delete _adc;
   delete _dac;
   delete _gpio;
   delete _spi;
-  _gpio->deinit();
 }
 
 bool LinuxPlatform::read(std::vector<arl_datatypes::muscle_status_data_t> &status, std::vector<std::pair<int, int> > pressure_controllers,
@@ -84,7 +100,7 @@ bool LinuxPlatform::close() {
 }
 
 void LinuxPlatform::emergency_stop(std::pair<int, int> muscle) {
-  _dac->setVoltage(_gpios[muscle.first], (uint8_t) muscle.second / (uint8_t) 8, (uint8_t) muscle.second % (uint8_t) 8, BLOW_OFF);
+  _dac->setVoltage(_gpios[muscle.first], (uint8_t) muscle.second / (uint8_t) 8, (uint8_t) muscle.second % (uint8_t) 8, BLOW_OFF_VOLTAGE);
 }
 
 void LinuxPlatform::reset_muscle(std::pair<int, int> muscle) {

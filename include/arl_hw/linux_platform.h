@@ -11,7 +11,7 @@
 #include <arl_hw/ad7730.h>
 
 
-#define BLOW_OFF 0.0
+#define BLOW_OFF_VOLTAGE 0.0
 
 /**
  * Implementation of CommunicationDevice base class which communicates to hardware using a spidev and sysfs
@@ -78,10 +78,10 @@ private:
   std::map<int, std::set<int>> _pressure_ports;
   std::map<int, std::set<int>> _tension_ports;
 
-  int _gpios[16] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+  int _gpios[16] = {419, 420, 468, 479, 433, 478, 432, 431, 404, 469, 327, 403, 462, 463, 477, 476};
 
-  int _dac_latch_port = 0;
-  int _adc_conversion_port = 0;
+  int _dac_latch_port = 405;
+  int _adc_conversion_port = 471;
 
 };
 

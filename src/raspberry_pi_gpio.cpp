@@ -5,10 +5,10 @@ RaspberryPi_GPIO::RaspberryPi_GPIO() {
 
 RaspberryPi_GPIO::~RaspberryPi_GPIO() {}
 
-void RaspberryPi_GPIO::init() {
+void RaspberryPi_GPIO::init(int gpio_address) {
 }
 
-void RaspberryPi_GPIO::deinit() {
+void RaspberryPi_GPIO::deinit(int gpio_address) {
 }
 
 void RaspberryPi_GPIO::set_mode(int gpio_address, Embedded_GPIO::gpio_mode mode) {

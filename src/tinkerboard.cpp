@@ -100,7 +100,7 @@ bool TinkerBoard::close() {
 }
 
 void TinkerBoard::emergency_stop(std::pair<int, int> muscle) {
-  _dac->setVoltage(_gpios[muscle.first], (uint8_t) muscle.second / (uint8_t) 8, (uint8_t) muscle.second % (uint8_t) 8, BLOW_OFF);
+  _dac->setVoltage(_gpios[muscle.first], (uint8_t) muscle.second / (uint8_t) 8, (uint8_t) muscle.second % (uint8_t) 8, BLOW_OFF_VOLTAGE);
 }
 
 void TinkerBoard::reset_muscle(std::pair<int, int> muscle) {

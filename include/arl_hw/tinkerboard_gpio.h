@@ -10,13 +10,13 @@ public:
 
   ~TinkerBoard_GPIO();
 
-  virtual void init();
+  virtual void init(int gpio_address);
 
-  virtual void deinit();
+  virtual void deinit(int gpio_address);
 
   virtual void set_mode(int gpio_address, Embedded_GPIO::gpio_mode mode);
 
-  virtual void set_output(int gpio_num, Embedded_GPIO::gpio_state);
+  virtual void set_output(int gpio_address, Embedded_GPIO::gpio_state state);
 
   virtual Embedded_GPIO::gpio_state read_input(int gpio_address);
 

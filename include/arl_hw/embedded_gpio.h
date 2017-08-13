@@ -20,9 +20,9 @@ public:
    */
   virtual ~Embedded_GPIO() {};
 
-  virtual void init() = 0;
+  virtual void init(int gpio_address) = 0;
 
-  virtual void deinit() = 0;
+  virtual void deinit(int gpio_address) = 0;
 
   virtual void set_mode(int gpio_address, gpio_mode mode) = 0;
 

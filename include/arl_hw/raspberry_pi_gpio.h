@@ -11,9 +11,9 @@ public:
 
   ~RaspberryPi_GPIO();
 
-  virtual void init();
+  virtual void init(int gpio_address);
 
-  virtual void deinit();
+  virtual void deinit(int gpio_address);
 
   virtual void set_mode(int gpio_address, Embedded_GPIO::gpio_mode mode);
 
