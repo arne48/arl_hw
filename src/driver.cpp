@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <signal.h>
+#include <cstdio>
+#include <csignal>
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <pthread.h>
@@ -12,8 +12,6 @@
 #include <std_srvs/Trigger.h>
 #include <std_srvs/SetBool.h>
 
-#define CLOCK_PRIO 0
-#define CONTROL_PRIO 0
 #define RATE 500 //Hz
 
 static pthread_t controlThread;
@@ -127,7 +125,7 @@ void *controlLoop(void *) {
 
       //Just write new data to muscle controllers as long as the rt loop is stable
       if (!driver_stats.rt_loop_not_making_timing) {
-        //robot.write(now, period);
+        robot.write(now, period);
       }
       after_write = driver_utils::get_now();
 

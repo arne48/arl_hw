@@ -10,6 +10,7 @@
 #include <sys/ioctl.h>
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
+#include <string>
 
 #include <arl_hw/embedded_spi.h>
 #include <arl_hw/linux_platform_gpio.h>
@@ -53,26 +54,13 @@ public:
 private:
   LinuxPlatform_GPIO *_gpio;
 
-  struct spi_ioc_transfer_t {
-    unsigned long tx_buf;
-    unsigned long rx_buf;
-    uint32_t len;
-    uint16_t delay_usecs;
-    uint32_t speed_hz;
-    uint8_t bits_per_word;
-  };
-
-  struct spi_config_t {
-    const char *device;
-    uint8_t mode;
-    uint8_t bits;
-    uint32_t speed;
-    uint16_t delay;
-  };
+  std::string _device;
+  uint8_t _mode;
+  uint8_t _bits;
+  uint32_t _speed;
 
   int _spi_descriptor;
-  spi_config_t _spi_config;
-  spi_ioc_transfer_t _spi_ioc_transfer;
+  struct spi_ioc_transfer _spi_ioc_transfer;
 };
 
 
