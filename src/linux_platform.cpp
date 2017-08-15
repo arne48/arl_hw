@@ -6,6 +6,8 @@ LinuxPlatform::LinuxPlatform() {
 
   for(uint8_t idx=0; idx<16; idx++) {
     _gpio->init(_gpios[idx]);
+    _gpio->set_mode(_gpios[idx], Embedded_GPIO::gpio_mode::OUTPUT);
+    _gpio->set_output(_gpios[idx], Embedded_GPIO::gpio_state::ON);
   }
   _gpio->init(_adc_conversion_port);
   _gpio->init(_dac_latch_port);
