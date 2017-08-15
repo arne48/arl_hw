@@ -12,8 +12,7 @@ OPTION(BUILD_TINKERBOARD "Build with Asus Tinkerboard support" OFF)
 ##Uncomment for Debug Build
 #set(DCMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -O0 -g")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_DEBUG} -O0")
-
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
 find_package(catkin REQUIRED COMPONENTS
         control_toolbox
