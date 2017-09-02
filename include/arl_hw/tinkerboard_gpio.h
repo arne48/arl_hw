@@ -2,6 +2,7 @@
 #define ARL_HW_TINKERBOARD_GPIO_H
 
 #include <arl_hw/embedded_gpio.h>
+#include <tinkerboard_io.h>
 
 class TinkerBoard_GPIO : public Embedded_GPIO {
 public:

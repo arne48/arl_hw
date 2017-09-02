@@ -6,7 +6,7 @@
 #include <arl_hw/communication_device.h>
 #include <arl_hw/tinkerboard_spi.h>
 #include <arl_hw/tinkerboard_gpio.h>
-#include <bcm2835.h>
+#include <tinkerboard_io.h>
 #include <arl_hw/ad5360.h>
 #include <arl_hw/ad7616.h>
 #include <arl_hw/ad7730.h>
@@ -79,13 +79,13 @@ private:
   std::map<int, std::set<int>> _pressure_ports;
   std::map<int, std::set<int>> _tension_ports;
 
-  int _gpios[16] = {RPI_V2_GPIO_P1_24, RPI_V2_GPIO_P1_26, RPI_V2_GPIO_P1_32, RPI_V2_GPIO_P1_36, RPI_V2_GPIO_P1_07,
-                    RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_31, RPI_V2_GPIO_P1_33,
-                    RPI_V2_GPIO_P1_35, RPI_V2_GPIO_P1_37, RPI_V2_GPIO_P1_03, RPI_V2_GPIO_P1_05, RPI_V2_GPIO_P1_08,
-                    RPI_V2_GPIO_P1_10};
+  int _gpios[16] = {24, 26, 32, 36,
+                    7, 11, 13, 15,
+                    31, 33, 35, 37,
+                    3, 5, 8, 10};
 
-  int _dac_latch_port = RPI_GPIO_P1_18;
-  int _adc_conversion_port = RPI_GPIO_P1_16;
+  int _dac_latch_port = 18;
+  int _adc_conversion_port = 16;
 
 };
 

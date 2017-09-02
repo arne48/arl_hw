@@ -3,6 +3,7 @@
 
 #include <arl_hw/embedded_spi.h>
 #include <arl_hw/tinkerboard_gpio.h>
+#include <tinkerboard_io.h>
 
 /**
  * Implementation of the embedded SPI interface
@@ -40,6 +41,7 @@ public:
 
 private:
   TinkerBoard_GPIO *_gpio;
+  struct spi_mode_config_t _mode;
 };
 
 

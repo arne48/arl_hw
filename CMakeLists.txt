@@ -5,6 +5,11 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules/")
 
+#
+#IMPORTANT!!! Due to the defines used in the bcm2835 library
+#             the driver can just be build with either Raspberry Pi
+#             OR Tinker Board support
+#
 OPTION(BUILD_RPI "Build with Raspberry Pi 3 support" ON)
 OPTION(BUILD_LINUX_PLATFORM "Build with Linux spidev and sysfs support" ON)
 OPTION(BUILD_TINKERBOARD "Build with Asus Tinkerboard support" OFF)
@@ -80,10 +85,20 @@ ENDIF()
 IF(BUILD_TINKERBOARD)
         MESSAGE(STATUS "Using platform code for the Asus Tinkerboard")
         add_definitions(-DFOR_TINKERBOARD)
+        find_package(TINKERBOARD_IO REQUIRED)
+
         LIST(APPEND SOURCES
         src/tinkerboard.cpp
         src/tinkerboard_spi.cpp
         src/tinkerboard_gpio.cpp
+                )
+
+        LIST(APPEND ROBOT_LIBRARIES
+                ${TINKERBOARD_IO_LIBRARIES}
+                )
+
+        LIST(APPEND INCLUDE_DIRS
+                ${TINKERBOARD_IO_INCLUDE_DIRS}
                 )
 ENDIF()
 
@@ -119,23 +134,9 @@ target_link_libraries(arl_driver_node
 
 ##test files
 
-#add_executable(test_jetson_tx1 tests/jetson_tx1_test.cpp)
-#
-#target_link_libraries(test_jetson_tx1
-#        ${catkin_LIBRARIES}
-#        )
-#
 #add_executable(test_rpi_bcm2835 tests/rpi_bcm2835_test.cpp)
 #
 #target_link_libraries(test_rpi_bcm2835
 #        ${catkin_LIBRARIES}
 #        ${BCM2835_LIBRARIES}
-#        )
-
-#add_executable(test_rpi_wiringpi tests/rpi_wiringpi_test.cpp)
-
-#target_link_libraries(test_rpi_wiringpi
-#        ${catkin_LIBRARIES}
-#        ${WIRINGPI_LIBRARIES}
-#        Threads::Threads
 #        )

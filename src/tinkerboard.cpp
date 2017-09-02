@@ -3,8 +3,8 @@
 
 TinkerBoard::TinkerBoard() {
 
-  if (bcm2835_init() != 1) {
-    ROS_ERROR("bcm2835_init failed.");
+  if (tinkerboard_init() != 1) {
+    ROS_ERROR("Initialization of Tinker Board failed.");
   }
 
   _gpio = new TinkerBoard_GPIO();
@@ -15,17 +15,17 @@ TinkerBoard::TinkerBoard() {
 
   //Chip-Selects
   for(uint8_t idx = 0; idx < 16; idx++) {
-    bcm2835_gpio_fsel(_gpios[idx], BCM2835_GPIO_FSEL_OUTP);
-    bcm2835_gpio_write(_gpios[idx], HIGH);
+    tinkerboard_set_gpio_mode(_gpios[idx], OUTPUT);
+    tinkerboard_set_gpio_state(_gpios[idx], HIGH);
   }
 
   //DAC-Latch
-  bcm2835_gpio_fsel(RPI_V2_GPIO_P1_18, BCM2835_GPIO_FSEL_OUTP);
-  bcm2835_gpio_write(RPI_V2_GPIO_P1_18, LOW);
+  tinkerboard_set_gpio_mode(_dac_latch_port, OUTPUT);
+  tinkerboard_set_gpio_state(_dac_latch_port, LOW);
 
   //ADC-Convst
-  bcm2835_gpio_fsel(RPI_V2_GPIO_P1_16, BCM2835_GPIO_FSEL_OUTP);
-  bcm2835_gpio_write(RPI_V2_GPIO_P1_16, HIGH);
+  tinkerboard_set_gpio_mode(_adc_conversion_port, OUTPUT);
+  tinkerboard_set_gpio_state(_adc_conversion_port, HIGH);
 
 }
 
@@ -33,7 +33,7 @@ TinkerBoard::~TinkerBoard() {
   delete _adc;
   delete _dac;
   delete _spi;
-  bcm2835_close();
+  tinkerboard_end();
 }
 
 bool TinkerBoard::read(std::vector<arl_datatypes::muscle_status_data_t> &status, std::vector<std::pair<int, int> > pressure_controllers,
