@@ -9,7 +9,7 @@ TinkerBoard_SPI::TinkerBoard_SPI(TinkerBoard_GPIO *gpio) : Embedded_SPI(gpio)  {
   mode.clk_mode = 1;
   mode.clk_divider = 8;
   mode.data_frame_size = SPIDataFrameSize::DFS_8;
-  mode.slave_select = SPISlaveSelect::SS_NONE;
+  mode.slave_select = NO_SS;
   mode.transfer_mode = SPITransferMode::TRANSMIT_RECEIVE;
   mode.byte_order = SPIByteOrder::MSB_FIRST;
 
