@@ -30,17 +30,6 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
     using_fallback_dummy = true;
 #endif
 
-  } else if(driver_config.platform == "jetson_tx1") {
-
-#ifdef FOR_TX1
-    dev = new JetsonTX1();
-    initialized = true;
-    ROS_INFO("NVIDIA Jetson TX1 initialized");
-#else
-    ROS_FATAL("Driver was not built with Jetson TX1 support");
-    using_fallback_dummy = true;
-#endif
-
   } else if(driver_config.platform == "linux_platform") {
 
 #ifdef FOR_LINUX_PLATFORM

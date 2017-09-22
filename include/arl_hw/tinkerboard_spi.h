@@ -1,17 +1,16 @@
-#ifndef TINKERBOARD_SPI_H
-#define TINKERBOARD_SPI_H
+#ifndef ARL_HW_TINKERBOARD_SPI_H
+#define ARL_HW_TINKERBOARD_SPI_H
 
 #include <arl_hw/embedded_spi.h>
+#include <arl_hw/tinkerboard_gpio.h>
+#include <tinkerboard_io.h>
 
 /**
  * Implementation of the embedded SPI interface
  */
 class TinkerBoard_SPI : public Embedded_SPI {
 public:
-  /**
-   * Default Constructor
-   */
-  TinkerBoard_SPI();
+  TinkerBoard_SPI(TinkerBoard_GPIO *gpio);
 
   /**
    * Destructor
@@ -40,13 +39,10 @@ public:
    */
   virtual bool transferSPI(int cs, int data_len, char data_tx[], char data_rx[]);
 
-  /**
-   * Sets the clock prescaler of SPI device
-   * @param divider value to set the frequency divider to
-   */
-  virtual void setSCLKDivider(int divider);
-
+private:
+  TinkerBoard_GPIO *_gpio;
+  struct spi_mode_config_t _mode;
 };
 
 
-#endif //TINKERBOARD_SPI_H
+#endif //ARL_HW_TINKERBOARD_SPI_H

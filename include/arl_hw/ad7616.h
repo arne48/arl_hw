@@ -4,7 +4,7 @@
 #include <math.h>
 #include <stdint.h>
 #include <arl_hw/embedded_spi.h>
-#include <bcm2835.h>
+#include <arl_hw/embedded_gpio.h>
 
 class AD7616 {
 public:
@@ -12,7 +12,7 @@ public:
    * Constructor
    * @param dev interface to use the platform's SPI bus
    */
-  AD7616(Embedded_SPI *dev);
+  AD7616(Embedded_SPI *dev, Embedded_GPIO *gpio, int trigger_measurement_gpio);
 
   /**
    * Issues a measurement of a certain channel pair [VAx & VBx]
@@ -24,6 +24,9 @@ public:
 
 private:
   Embedded_SPI *_dev;
+  Embedded_GPIO *_gpio;
+  int _trigger_measurement_gpio;
+
   void prepareChannel(uint8_t channel, int cs);
 
   char _rx_buffer[4] = {0,0,0,0};

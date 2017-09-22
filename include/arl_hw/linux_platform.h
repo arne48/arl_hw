@@ -11,7 +11,7 @@
 #include <arl_hw/ad7730.h>
 
 
-#define BLOW_OFF 0.0
+#define BLOW_OFF_VOLTAGE 0.0
 
 /**
  * Implementation of CommunicationDevice base class which communicates to hardware using a spidev and sysfs
@@ -29,27 +29,27 @@ public:
   ~LinuxPlatform();
 
   /**
-   * Reads current robot state from hardware on a NVIDIA Jetson TX1
+   * Reads current robot state from hardware on a Linux platform using spidev and sysfs
    * @return current state of hardware
    */
   virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status_vec, std::vector<std::pair<int, int> > pressure_controllers,
                     std::vector<std::pair<int, int> > tension_controllers);
 
   /**
-   * @param command command to issue to hardware on a NVIDIA Jetson TX1
+   * @param command command to issue to hardware on a Linux platform using spidev and sysfs
    * @return success of command
    */
   virtual bool write(std::vector<arl_datatypes::muscle_command_data_t> &command_vec);
 
   /**
-   * Initialize communication device on a NVIDIA Jetson TX1
+   * Initialize communication device on a Linux platform using spidev and sysfs
    * @return success of command
    */
   virtual bool initialize(std::vector<std::pair<int, int> > pressure_controllers,
                           std::vector<std::pair<int, int> > tension_controllers);
 
   /**
-   * Cleanup and close communication device on a NVIDIA Jetson TX1
+   * Cleanup and close communication device on a Linux platform using spidev and sysfs
    * @return success of command
    */
   virtual bool close();
@@ -68,7 +68,7 @@ public:
 
 private:
   AD7730 *_lcell;
-  uint8_t _lcell_buffer[32];
+  uint8_t _lcell_buffer[64];
 
   AD5360 *_dac;
   AD7616 *_adc;
@@ -78,8 +78,10 @@ private:
   std::map<int, std::set<int>> _pressure_ports;
   std::map<int, std::set<int>> _tension_ports;
 
-  int _dac_latch = 186;
-  int _adc_conversion_start = 219;
+  int _gpios[16] = {419, 420, 468, 479, 433, 478, 432, 431, 404, 469, 327, 403, 462, 463, 477, 476};
+
+  int _dac_latch_port = 405;
+  int _adc_conversion_port = 471;
 
 };
 

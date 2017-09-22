@@ -5,13 +5,14 @@
 #include <map>
 #include <arl_hw/communication_device.h>
 #include <arl_hw/tinkerboard_spi.h>
-#include <bcm2835.h>
+#include <arl_hw/tinkerboard_gpio.h>
+#include <tinkerboard_io.h>
 #include <arl_hw/ad5360.h>
 #include <arl_hw/ad7616.h>
 #include <arl_hw/ad7730.h>
 
 
-#define BLOW_OFF 0.0
+#define BLOW_OFF_VOLTAGE 0.0
 
 /**
  * Implementation of CommunicationDevice base class which communicates to hardware using a Asus Tinkerboard
@@ -73,17 +74,18 @@ private:
   AD5360 *_dac;
   AD7616 *_adc;
   TinkerBoard_SPI *_spi;
+  TinkerBoard_GPIO *_gpio;
 
   std::map<int, std::set<int>> _pressure_ports;
   std::map<int, std::set<int>> _tension_ports;
 
-  int _gpios[16] = {RPI_V2_GPIO_P1_24, RPI_V2_GPIO_P1_26, RPI_V2_GPIO_P1_32, RPI_V2_GPIO_P1_36, RPI_V2_GPIO_P1_07,
-                    RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_31, RPI_V2_GPIO_P1_33,
-                    RPI_V2_GPIO_P1_35, RPI_V2_GPIO_P1_37, RPI_V2_GPIO_P1_03, RPI_V2_GPIO_P1_05, RPI_V2_GPIO_P1_08,
-                    RPI_V2_GPIO_P1_10};
+  int _gpios[16] = {24, 26, 32, 36,
+                    7, 11, 13, 15,
+                    31, 33, 35, 37,
+                    3, 5, 8, 10};
 
-  uint8_t _dac_latch_port = RPI_GPIO_P1_18;
-  uint8_t _adc_conversion_port = RPI_GPIO_P1_16;
+  int _dac_latch_port = 18;
+  int _adc_conversion_port = 16;
 
 };
 

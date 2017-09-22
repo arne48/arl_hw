@@ -11,10 +11,19 @@
 
 #include <arl_hw/datatypes.h>
 #include <arl_hw/communication_device.h>
+
+#ifdef FOR_RPI
 #include <arl_hw/raspberry_pi.h>
-#include <arl_hw/jetson_tx1.h>
+#endif
+
+#ifdef FOR_TINKERBOARD
 #include <arl_hw/tinkerboard.h>
+#endif
+
+#ifdef FOR_LINUX_PLATFORM
 #include <arl_hw/linux_platform.h>
+#endif
+
 #include <arl_hw/dummy.h>
 #include <arl_interfaces/muscle_interface.h>
 #include <arl_controllers/muscle_controller.h>

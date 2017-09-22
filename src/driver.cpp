@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <signal.h>
+#include <cstdio>
+#include <csignal>
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <pthread.h>
@@ -12,8 +12,6 @@
 #include <std_srvs/Trigger.h>
 #include <std_srvs/SetBool.h>
 
-#define CLOCK_PRIO 0
-#define CONTROL_PRIO 0
 #define RATE 500 //Hz
 
 static pthread_t controlThread;

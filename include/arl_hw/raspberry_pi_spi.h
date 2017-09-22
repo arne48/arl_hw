@@ -2,16 +2,14 @@
 #define ARL_HW_RASPBERRYPI_SPI_H
 
 #include <arl_hw/embedded_spi.h>
+#include <arl_hw/raspberry_pi_gpio.h>
 
 /**
  * Implementation of the embedded SPI interface
  */
 class RaspberryPi_SPI : public Embedded_SPI {
 public:
-  /**
-   * Default Constructor
-   */
-  RaspberryPi_SPI();
+  RaspberryPi_SPI(RaspberryPi_GPIO *gpio);
 
   /**
    * Destructor
@@ -40,12 +38,8 @@ public:
    */
   virtual bool transferSPI(int cs, int data_len, char data_tx[], char data_rx[]);
 
-  /**
-   * Sets the clock prescaler of SPI device
-   * @param divider value to set the frequency divider to
-   */
-  virtual void setSCLKDivider(int divider);
-
+private:
+  RaspberryPi_GPIO *_gpio;
 };
 
 

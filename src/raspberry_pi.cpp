@@ -3,35 +3,44 @@
 
 RaspberryPi::RaspberryPi() {
 
-  if (!bcm2835_init()) {
+  if (bcm2835_init() != 1) {
     ROS_ERROR("bcm2835_init failed.");
   }
 
-  _spi = new RaspberryPi_SPI();
+  _gpio = new RaspberryPi_GPIO();
+  _spi = new RaspberryPi_SPI(_gpio);
   _dac = new AD5360(_spi);
-  _adc = new AD7616(_spi);
+  _adc = new AD7616(_spi, _gpio, _adc_conversion_port);
   _lcell = new AD7730(_spi);
 
   //Chip-Selects
   for(uint8_t idx = 0; idx < 16; idx++) {
-    bcm2835_gpio_fsel(_gpios[idx], BCM2835_GPIO_FSEL_OUTP);
-    bcm2835_gpio_write(_gpios[idx], HIGH);
+//    bcm2835_gpio_fsel(_gpios[idx], BCM2835_GPIO_FSEL_OUTP);
+//    bcm2835_gpio_write(_gpios[idx], HIGH);
+    _gpio->set_mode(_gpios[idx], Embedded_GPIO::gpio_mode::OUTPUT);
+    _gpio->set_output(_gpios[idx], Embedded_GPIO::gpio_state::ON);
   }
 
   //DAC-Latch
-  bcm2835_gpio_fsel(RPI_V2_GPIO_P1_18, BCM2835_GPIO_FSEL_OUTP);
-  bcm2835_gpio_write(RPI_V2_GPIO_P1_18, LOW);
+//  bcm2835_gpio_fsel(RPI_V2_GPIO_P1_18, BCM2835_GPIO_FSEL_OUTP);
+//  bcm2835_gpio_write(RPI_V2_GPIO_P1_18, LOW);
+  _gpio->set_mode(RPI_V2_GPIO_P1_18, Embedded_GPIO::gpio_mode::OUTPUT);
+  _gpio->set_output(RPI_V2_GPIO_P1_18, Embedded_GPIO::gpio_state::OFF);
 
   //ADC-Convst
-  bcm2835_gpio_fsel(RPI_V2_GPIO_P1_16, BCM2835_GPIO_FSEL_OUTP);
-  bcm2835_gpio_write(RPI_V2_GPIO_P1_16, HIGH);
+//  bcm2835_gpio_fsel(RPI_V2_GPIO_P1_16, BCM2835_GPIO_FSEL_OUTP);
+//  bcm2835_gpio_write(RPI_V2_GPIO_P1_16, HIGH);
+  _gpio->set_mode(RPI_V2_GPIO_P1_16, Embedded_GPIO::gpio_mode::OUTPUT);
+  _gpio->set_output(RPI_V2_GPIO_P1_16, Embedded_GPIO::gpio_state::ON);
 
 }
 
 RaspberryPi::~RaspberryPi() {
   delete _adc;
   delete _dac;
+  delete _lcell;
   delete _spi;
+  delete _gpio;
   bcm2835_close();
 }
 
@@ -99,7 +108,7 @@ bool RaspberryPi::close() {
 }
 
 void RaspberryPi::emergency_stop(std::pair<int, int> muscle) {
-  _dac->setVoltage(_gpios[muscle.first], (uint8_t) muscle.second / (uint8_t) 8, (uint8_t) muscle.second % (uint8_t) 8, BLOW_OFF);
+  _dac->setVoltage(_gpios[muscle.first], (uint8_t) muscle.second / (uint8_t) 8, (uint8_t) muscle.second % (uint8_t) 8, BLOW_OFF_VOLTAGE);
 }
 
 void RaspberryPi::reset_muscle(std::pair<int, int> muscle) {
