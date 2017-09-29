@@ -72,7 +72,8 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
 
 
   for (unsigned int i = 0; i < names_.size(); i++) {
-    arl_interfaces::MuscleHandle muscle_handle(names_[i], &desired_pressures_[i], &current_pressures_[i], &tensions_[i], &activations_[i]);
+    arl_interfaces::MuscleHandle muscle_handle(names_[i], &desired_pressures_[i], &current_pressures_[i], &tensions_[i],
+                                               &activations_[i], &tensions_filtered_[i], &control_modes_[i]);
     muscle_interface.registerHandle(muscle_handle);
   }
 
@@ -190,7 +191,7 @@ void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
 
 
   /* define all muscles */
-  for (int i = 0; i < muscle_list.size(); ++i) {
+  for (unsigned int i = 0; i < muscle_list.size(); ++i) {
     if (!muscle_list[i].hasMember("name") || !muscle_list[i].hasMember("initial_value")) {
       ROS_ERROR("Either name or initial value not defined for %d muscle", i);
       continue;
@@ -209,7 +210,12 @@ void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
       current_pressures_.push_back(0.0);
       tensions_.push_back(0.0);
       activations_.push_back(-0.3);
+      tensions_filtered_.push_back(0.0);
+      control_modes_.push_back(0);
 
+      index_map_[name] = i;
+
+      //TODO use emplace_back for in-place construction
       activation_controllers_.push_back({muscle_list[i]["activation_controller_port"], muscle_list[i]["activation_controller_channel"]});
       pressure_controllers_.push_back({muscle_list[i]["pressure_controller_port"], muscle_list[i]["pressure_controller_channel"]});
       tension_controllers_.push_back({muscle_list[i]["tension_controller_port"], muscle_list[i]["tension_controller_channel"]});
@@ -221,6 +227,39 @@ void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
     }
     catch (...) {
       ROS_ERROR("Unable to parse muscle information");
+    }
+
+  }
+}
+
+struct ARLRobot::muscle_info_t ARLRobot::getMuscleInfo(unsigned long index) {
+  struct muscle_info_t ret;
+  ret.name = names_[index];
+  ret.activation = activations_[index];
+  ret.current_pressure = current_pressures_[index];
+  ret.desired_pressure = desired_pressures_[index];
+  ret.tension = tensions_[index];
+  ret.tension_filtered = tensions_filtered_[index];
+  ret.control_mode = control_modes_[index];
+  return ret;
+}
+
+unsigned long ARLRobot::getNumberOfMuscles() {
+  return names_.size();
+}
+
+void ARLRobot::updateMuscleValues(arl_hw_msgs::MusculatureCommand::ConstPtr musculature_command) {
+
+  for (arl_hw_msgs::MuscleCommand command : musculature_command->muscle_commands) {
+    unsigned int muscle_index = index_map_.find(command.name)->second;
+
+    if (command.control_mode == arl_hw_msgs::MuscleCommand::CONTROL_MODE_BY_ACTIVATION) {
+      control_modes_[muscle_index] = arl_hw_msgs::MuscleCommand::CONTROL_MODE_BY_ACTIVATION;
+      desired_pressures_[muscle_index] = 0.0;
+      activations_[muscle_index] = command.activation;
+    } else if (command.control_mode == arl_hw_msgs::MuscleCommand::CONTROL_MODE_BY_PRESSURE) {
+      control_modes_[muscle_index] = arl_hw_msgs::MuscleCommand::CONTROL_MODE_BY_PRESSURE;
+      desired_pressures_[muscle_index] = command.pressure;
     }
 
   }

@@ -11,6 +11,7 @@
 
 #include <arl_hw/datatypes.h>
 #include <arl_hw/communication_device.h>
+#include <arl_hw_msgs/MusculatureCommand.h>
 
 #ifdef FOR_RPI
 #include <arl_hw/raspberry_pi.h>
@@ -31,6 +32,8 @@
 #include <set>
 #include <vector>
 #include <string>
+#include <map>
+
 
 /**
  * Implementation of Robot Hardware Interface for ARL's pneumatic muscle driven robots
@@ -43,6 +46,16 @@ public:
     bool halt_on_slow_rt_loop;
     bool publish_every_rt_jitter;
     double min_acceptable_rt_loop_frequency;
+  };
+
+  struct muscle_info_t{
+    std::string name;
+    double activation;
+    double current_pressure;
+    double desired_pressure;
+    double tension;
+    double tension_filtered;
+    uint8_t control_mode;
   };
 
   config driver_config;
@@ -105,6 +118,12 @@ public:
    */
   void resetMuscle(std::string name);
 
+  struct muscle_info_t getMuscleInfo(unsigned long index);
+
+  unsigned long getNumberOfMuscles();
+
+  void updateMuscleValues(arl_hw_msgs::MusculatureCommand::ConstPtr musculature_command);
+
 private:
   arl_interfaces::MuscleInterface muscle_interface; /**< MuscleInterface for usage of MuscleController */
   bool initialized; /**< Saves if robot is already intialized*/
@@ -114,6 +133,9 @@ private:
   std::vector<double> current_pressures_; /**< Internal datastructure which contains all muscle's current pressures */
   std::vector<double> tensions_; /**< Internal datastructure which contains all muscle's tensions */
   std::vector<double> activations_; /**< Internal datastructure which contains all normalized muscle's activation values */
+  std::vector<double> tensions_filtered_;
+  std::vector<uint8_t> control_modes_;
+  std::map<std::string, unsigned int> index_map_;
   std::vector<std::pair<int, int> > activation_controllers_; /**< Internal datastructure which contains the address (Controller Port[Chip-Select Id] : Channel on Controller) for every muscle's activation controller*/
   std::vector<std::pair<int,int> > pressure_controllers_; /**< Internal datastructure which contains the address (Controller Port[Chip-Select Id] : Channel on Controller) for every muscle's pressure controller*/
   std::vector<std::pair<int,int> > tension_controllers_; /**< Internal datastructure which contains the address (Controller Port[Chip-Select Id] : Channel on Controller) for every muscle's tension controller*/

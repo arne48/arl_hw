@@ -6,6 +6,7 @@
 #include <ros/ros.h>
 #include <diagnostic_updater/DiagnosticStatusWrapper.h>
 #include <diagnostic_msgs/DiagnosticArray.h>
+#include <arl_hw_msgs/MusculatureState.h>
 #include <realtime_tools/realtime_publisher.h>
 #include <std_msgs/Float64.h>
 
