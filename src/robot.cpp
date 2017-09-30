@@ -215,9 +215,9 @@ void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
 
       index_map_[name] = i;
 
-      activation_controllers_.emplace_back({muscle_list[i]["activation_controller_port"], muscle_list[i]["activation_controller_channel"]});
-      pressure_controllers_.emplace_back({muscle_list[i]["pressure_controller_port"], muscle_list[i]["pressure_controller_channel"]});
-      tension_controllers_.emplace_back({muscle_list[i]["tension_controller_port"], muscle_list[i]["tension_controller_channel"]});
+      activation_controllers_.push_back({muscle_list[i]["activation_controller_port"], muscle_list[i]["activation_controller_channel"]});
+      pressure_controllers_.push_back({muscle_list[i]["pressure_controller_port"], muscle_list[i]["pressure_controller_channel"]});
+      tension_controllers_.push_back({muscle_list[i]["tension_controller_port"], muscle_list[i]["tension_controller_channel"]});
 
       pressure_ports.insert(muscle_list[i]["pressure_controller_port"]);
       tension_ports.insert(muscle_list[i]["tension_controller_port"]);
