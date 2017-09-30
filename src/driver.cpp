@@ -8,7 +8,9 @@
 #include <arl_hw/robot.h>
 #include <arl_hw/rt_history.h>
 #include <arl_hw/driver_utils.h>
+#include <arl_hw_msgs/MusculatureCommand.h>
 #include <controller_manager/controller_manager.h>
+#include <realtime_tools/realtime_buffer.h>
 #include <std_srvs/Trigger.h>
 #include <std_srvs/SetBool.h>
 
@@ -18,12 +20,19 @@ static pthread_t controlThread;
 static pthread_attr_t controlThreadAttr;
 ARLRobot robot;
 
+struct MusculatureCommands {
+  arl_hw_msgs::MusculatureCommand::ConstPtr musculature_command_;
+};
+realtime_tools::RealtimeBuffer<MusculatureCommands> commands_;
+MusculatureCommands commands_struct_;
+
 void *controlLoop(void *) {
   struct timespec ts = {0, 0};
   struct timespec tick;
 
   double last_published, last_loop_start, last_rt_monitor_time;
   unsigned rt_cycle_count = 0;
+  unsigned long loop_count = 0;
   double rt_loop_monitor_period = 0.6 / 3;
   RTLoopHistory rt_loop_history(3, RATE);
   driver_utils::statistics_t driver_stats;
@@ -36,7 +45,10 @@ void *controlLoop(void *) {
   realtime_tools::RealtimePublisher<diagnostic_msgs::DiagnosticArray> publisher(nh, "/diagnostics", 2);
   realtime_tools::RealtimePublisher<std_msgs::Float64> *rtpublisher =
     new realtime_tools::RealtimePublisher<std_msgs::Float64>(nh, "/realtime_jitter", 2);
+  realtime_tools::RealtimePublisher<arl_hw_msgs::MusculatureState> musculature_state_publisher(nh, "/musculature/state", 2);
 
+  commands_struct_.musculature_command_ = nullptr;
+  commands_.initRT(commands_struct_);
 
   // Publish one-time before entering real-time to pre-allocate message vectors
   driver_utils::publishDiagnostics(publisher, driver_stats);
@@ -77,11 +89,21 @@ void *controlLoop(void *) {
     // Check for Emergency Halt
     driver_stats.emergency_stop_engaged = robot.emergency_stop;
 
+    // Read received musculature command from non-rt context
+    commands_struct_ = *(commands_.readFromRT());
+
+    // Update robot muscle value according to command
+    if (commands_struct_.musculature_command_) {
+      robot.updateMuscleValues(commands_struct_.musculature_command_);
+    }
+
     double start;
     double after_read;
     double after_cm;
     double after_write;
 
+    // If emergency stop IS engaged then just resend command to blow-off muscles.
+    // In this case not all actions are executed on the controllers anymore
     if (driver_stats.emergency_stop_engaged) {
       start = driver_utils::get_now();
       after_read = start;
@@ -97,6 +119,9 @@ void *controlLoop(void *) {
         last_published = end;
       }
 
+
+    // If emergency stop IS NOT engaged proceed as usual with all updates
+    // and controller actions
     } else {
       // Track how long the actual loop takes
       double this_loop_start = driver_utils::get_now();
@@ -135,13 +160,40 @@ void *controlLoop(void *) {
       driver_stats.write_acc(after_write - after_cm);
 
       double end = driver_utils::get_now();
+
+      // Publishing diagnostics information
       if ((end - last_published) > 1.0) {
         driver_utils::publishDiagnostics(publisher, driver_stats);
         last_published = end;
       }
 
-      driver_utils::checkSevereRTMiss(&last_rt_monitor_time, &rt_cycle_count, rt_loop_monitor_period, rt_loop_history, driver_stats, start,
-                                      robot);
+      // Publishing musculature state message
+      if (loop_count % 5 == 0) {
+        if (musculature_state_publisher.trylock()) {
+          musculature_state_publisher.msg_.header.stamp = ros::Time::now();
+          musculature_state_publisher.msg_.header.frame_id = "0";
+
+          musculature_state_publisher.msg_.muscle_states.clear();
+          unsigned long muscle_number = robot.getNumberOfMuscles();
+          for (unsigned long idx = 0; idx < muscle_number; idx++) {
+            struct ARLRobot::muscle_info_t muscle_info = robot.getMuscleInfo(idx);
+            arl_hw_msgs::Muscle muscle_msg;
+            muscle_msg.name = muscle_info.name;
+            muscle_msg.activation = muscle_info.activation;
+            muscle_msg.current_pressure = muscle_info.current_pressure;
+            muscle_msg.desired_pressure = muscle_info.desired_pressure;
+            muscle_msg.tension = muscle_info.tension;
+            muscle_msg.tension_filtered = muscle_info.tension_filtered;
+            muscle_msg.control_mode = muscle_info.control_mode;
+            musculature_state_publisher.msg_.muscle_states.push_back(muscle_msg);
+          }
+          musculature_state_publisher.unlockAndPublish();
+        }
+      }
+
+      driver_utils::checkSevereRTMiss(&last_rt_monitor_time, &rt_cycle_count, rt_loop_monitor_period,
+                                      rt_loop_history, driver_stats, start, robot);
+      loop_count++;
     }
 
     // Compute end of next period
@@ -181,6 +233,11 @@ bool emergencyStopService(std_srvs::SetBool::Request &req, std_srvs::SetBool::Re
   return true;
 }
 
+void musculatureCommandCallback(const arl_hw_msgs::MusculatureCommand::ConstPtr& msg) {
+  commands_struct_.musculature_command_ = msg;
+  commands_.writeFromNonRT(commands_struct_);
+}
+
 int main(int argc, char **argv) {
 
   // Keep the kernel from swapping us out
@@ -195,6 +252,7 @@ int main(int argc, char **argv) {
 
   ros::ServiceServer reset = nh.advertiseService("/reset_muscles", resetMusclesService);
   ros::ServiceServer halt = nh.advertiseService("/emergency_stop", emergencyStopService);
+  ros::Subscriber musculature_sub = nh.subscribe("/musculature/command", 2, musculatureCommandCallback);
 
   //Start thread
   int rv;

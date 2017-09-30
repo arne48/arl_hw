@@ -10,7 +10,8 @@
 3. Usage
 	1. Config Files
 	2. Launch Files
-4. Build Status
+4. Topics
+5. Build Status
 
 ## Introduction
 This package contains the RobotHW Interface and the device driver components for the ARL Upper Limb Robot.
@@ -57,6 +58,18 @@ The next lines will explain the content and usage of this package's  config and 
 ### Launch Files
 * arl_robot_driver.launch
 First this file loads the muscle descriptions for this driver to the parameter server and then launches the driver node.
+
+## Topics
+### Publishers
+* _/musculature/state_ [arl_hw_msgs::MusculatureState]
+* _/diagnostics_ [diagnostic_msgs::DiagnosticArray]
+* _/realtime_jitter_ [std_msgs::Float64]
+
+
+### Subscribers
+* _/musculature/command_ [arl_hw_msgs::MusculatureCommand]
+* _/emergency_stop_ [std_srvs::Trigger::Request]
+* _/reset_muscles_ [std_srvs::Trigger::Request]
 
 ## Build Status
 TBA
