@@ -211,14 +211,13 @@ void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
       tensions_.push_back(0.0);
       activations_.push_back(-0.3);
       tensions_filtered_.push_back(0.0);
-      control_modes_.push_back(0);
+      control_modes_.push_back(arl_hw_msgs::MuscleCommand::CONTROL_MODE_BY_ACTIVATION);
 
       index_map_[name] = i;
 
-      //TODO use emplace_back for in-place construction
-      activation_controllers_.push_back({muscle_list[i]["activation_controller_port"], muscle_list[i]["activation_controller_channel"]});
-      pressure_controllers_.push_back({muscle_list[i]["pressure_controller_port"], muscle_list[i]["pressure_controller_channel"]});
-      tension_controllers_.push_back({muscle_list[i]["tension_controller_port"], muscle_list[i]["tension_controller_channel"]});
+      activation_controllers_.emplace_back({muscle_list[i]["activation_controller_port"], muscle_list[i]["activation_controller_channel"]});
+      pressure_controllers_.emplace_back({muscle_list[i]["pressure_controller_port"], muscle_list[i]["pressure_controller_channel"]});
+      tension_controllers_.emplace_back({muscle_list[i]["tension_controller_port"], muscle_list[i]["tension_controller_channel"]});
 
       pressure_ports.insert(muscle_list[i]["pressure_controller_port"]);
       tension_ports.insert(muscle_list[i]["tension_controller_port"]);
