@@ -21,7 +21,7 @@ static pthread_attr_t controlThreadAttr;
 ARLRobot robot;
 
 struct MusculatureCommands {
-  arl_hw_msgs::MusculatureCommand::ConstPtr musculature_command_;
+  arl_hw_msgs::MusculatureCommand musculature_command_;
 };
 realtime_tools::RealtimeBuffer<MusculatureCommands> commands_;
 MusculatureCommands commands_struct_;
@@ -47,7 +47,7 @@ void *controlLoop(void *) {
     new realtime_tools::RealtimePublisher<std_msgs::Float64>(nh, "/realtime_jitter", 2);
   realtime_tools::RealtimePublisher<arl_hw_msgs::MusculatureState> musculature_state_publisher(nh, "/musculature/state", 2);
 
-  commands_struct_.musculature_command_ = nullptr;
+  commands_struct_.musculature_command_ = arl_hw_msgs::MusculatureCommand();
   commands_.initRT(commands_struct_);
 
   // Publish one-time before entering real-time to pre-allocate message vectors
@@ -93,9 +93,7 @@ void *controlLoop(void *) {
     commands_struct_ = *(commands_.readFromRT());
 
     // Update robot muscle value according to command
-    if (commands_struct_.musculature_command_) {
-      robot.updateMuscleValues(commands_struct_.musculature_command_);
-    }
+    robot.updateMuscleValues(commands_struct_.musculature_command_);
 
     double start = 0, after_read = 0, after_cm = 0, after_write = 0;
 
@@ -231,7 +229,8 @@ bool emergencyStopService(std_srvs::SetBool::Request &req, std_srvs::SetBool::Re
 }
 
 void musculatureCommandCallback(const arl_hw_msgs::MusculatureCommand::ConstPtr& msg) {
-  commands_struct_.musculature_command_ = msg;
+  commands_struct_.musculature_command_.muscle_commands = msg->muscle_commands;
+  commands_struct_.musculature_command_.header = msg->header;
   commands_.writeFromNonRT(commands_struct_);
 }
 

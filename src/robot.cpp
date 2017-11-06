@@ -247,9 +247,9 @@ unsigned long ARLRobot::getNumberOfMuscles() {
   return names_.size();
 }
 
-void ARLRobot::updateMuscleValues(arl_hw_msgs::MusculatureCommand::ConstPtr musculature_command) {
+void ARLRobot::updateMuscleValues(arl_hw_msgs::MusculatureCommand musculature_command) {
 
-  for (arl_hw_msgs::MuscleCommand command : musculature_command->muscle_commands) {
+  for (arl_hw_msgs::MuscleCommand command : musculature_command.muscle_commands) {
     unsigned int muscle_index = index_map_.find(command.name)->second;
 
     if (command.control_mode == arl_hw_msgs::MuscleCommand::CONTROL_MODE_BY_ACTIVATION) {

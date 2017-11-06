@@ -122,7 +122,7 @@ public:
 
   unsigned long getNumberOfMuscles();
 
-  void updateMuscleValues(arl_hw_msgs::MusculatureCommand::ConstPtr musculature_command);
+  void updateMuscleValues(arl_hw_msgs::MusculatureCommand musculature_command);
 
 private:
   arl_interfaces::MuscleInterface muscle_interface; /**< MuscleInterface for usage of MuscleController */
