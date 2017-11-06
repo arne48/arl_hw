@@ -78,7 +78,7 @@ namespace driver_utils {
   }
 
   double get_now() {
-    struct timespec n;
+    struct timespec n = {0, 0};
     clock_gettime(CLOCK_MONOTONIC, &n);
     return double(n.tv_nsec) / NSEC_PER_SECOND + n.tv_sec;
   }
@@ -95,7 +95,7 @@ namespace driver_utils {
 
     timespecInc(&timestamp, sampling_ns);
 
-    struct timespec before;
+    struct timespec before = {0, 0};
     clock_gettime(CLOCK_REALTIME, &before);
 
     timestamp.tv_sec = before.tv_sec;
@@ -108,7 +108,7 @@ namespace driver_utils {
   void
   checkOverrun(statistics_t &driver_stats, double start, double after_read, double after_cm, double after_write,
                int period_int, struct timespec &timestamp) {
-    struct timespec before;
+    struct timespec before = {0, 0};
 
     clock_gettime(CLOCK_REALTIME, &before);
     if ((before.tv_sec + double(before.tv_nsec) / NSEC_PER_SECOND) > (timestamp.tv_sec + double(timestamp.tv_nsec) / NSEC_PER_SECOND)) {
@@ -170,6 +170,24 @@ namespace driver_utils {
       *rt_cycle_count = 0;
       *last_rt_monitor_time = start;
     }
+  }
+
+  struct statistics_t init_driver_statistics(){
+    driver_utils::statistics_t ret;
+    ret.overruns = 0;
+    ret.recent_overruns = 0;
+    ret.last_overrun = 0;
+    ret.last_severe_overrun = 0;
+    ret.overrun_loop_sec = 0;
+    ret.overrun_read = 0;
+    ret.overrun_write = 0;
+    ret.overrun_cm = 0;
+    ret.halt_rt_loop_frequency = 0;
+    ret.rt_loop_frequency = 0;
+    ret.rt_loop_not_making_timing = false;
+    ret.emergency_stop_engaged = false;
+
+    return ret;
   }
 
 }

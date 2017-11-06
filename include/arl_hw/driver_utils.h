@@ -49,6 +49,12 @@ namespace driver_utils {
   };
 
   /**
+   * Returns an initialized instance of driver statistics
+   * @return
+   */
+  struct statistics_t init_driver_statistics();
+
+  /**
    * Publishes diagnostic message based on driver statistics
    * @param publisher
    * @param driver_stats

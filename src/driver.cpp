@@ -28,14 +28,14 @@ MusculatureCommands commands_struct_;
 
 void *controlLoop(void *) {
   struct timespec ts = {0, 0};
-  struct timespec tick;
+  struct timespec tick = {0, 0};
 
-  double last_published, last_loop_start, last_rt_monitor_time;
+  double last_published = 0, last_loop_start = 0, last_rt_monitor_time = 0;
   unsigned rt_cycle_count = 0;
   unsigned long loop_count = 0;
   double rt_loop_monitor_period = 0.6 / 3;
   RTLoopHistory rt_loop_history(3, RATE);
-  driver_utils::statistics_t driver_stats;
+  driver_utils::statistics_t driver_stats = driver_utils::init_driver_statistics();
 
   ros::NodeHandle nh;
 
@@ -54,7 +54,7 @@ void *controlLoop(void *) {
   driver_utils::publishDiagnostics(publisher, driver_stats);
 
   // Set real-time scheduler
-  struct sched_param thread_param;
+  struct sched_param thread_param = {0};
   int policy = SCHED_FIFO;
   thread_param.sched_priority = sched_get_priority_max(policy);
   pthread_setschedparam(pthread_self(), policy, &thread_param);
@@ -97,10 +97,7 @@ void *controlLoop(void *) {
       robot.updateMuscleValues(commands_struct_.musculature_command_);
     }
 
-    double start;
-    double after_read;
-    double after_cm;
-    double after_write;
+    double start = 0, after_read = 0, after_cm = 0, after_write = 0;
 
     // If emergency stop IS engaged then just resend command to blow-off muscles.
     // In this case not all actions are executed on the controllers anymore
@@ -206,7 +203,7 @@ void *controlLoop(void *) {
     driver_utils::waitForNextControlLoop(tick, int(rate.expectedCycleTime().toNSec()));
 
     // Calculate RT loop jitter
-    struct timespec after;
+    struct timespec after = {0, 0};
     clock_gettime(CLOCK_REALTIME, &after);
     double jitter = (after.tv_sec - tick.tv_sec + double(after.tv_nsec - tick.tv_nsec) / NSEC_PER_SECOND);
     driver_stats.jitter_acc(jitter);
