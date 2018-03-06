@@ -15,21 +15,15 @@ RaspberryPi::RaspberryPi() {
 
   //Chip-Selects
   for(uint8_t idx = 0; idx < 16; idx++) {
-//    bcm2835_gpio_fsel(_gpios[idx], BCM2835_GPIO_FSEL_OUTP);
-//    bcm2835_gpio_write(_gpios[idx], HIGH);
     _gpio->set_mode(_gpios[idx], Embedded_GPIO::gpio_mode::OUTPUT);
     _gpio->set_output(_gpios[idx], Embedded_GPIO::gpio_state::ON);
   }
 
   //DAC-Latch
-//  bcm2835_gpio_fsel(RPI_V2_GPIO_P1_18, BCM2835_GPIO_FSEL_OUTP);
-//  bcm2835_gpio_write(RPI_V2_GPIO_P1_18, LOW);
   _gpio->set_mode(RPI_V2_GPIO_P1_18, Embedded_GPIO::gpio_mode::OUTPUT);
   _gpio->set_output(RPI_V2_GPIO_P1_18, Embedded_GPIO::gpio_state::OFF);
 
   //ADC-Convst
-//  bcm2835_gpio_fsel(RPI_V2_GPIO_P1_16, BCM2835_GPIO_FSEL_OUTP);
-//  bcm2835_gpio_write(RPI_V2_GPIO_P1_16, HIGH);
   _gpio->set_mode(RPI_V2_GPIO_P1_16, Embedded_GPIO::gpio_mode::OUTPUT);
   _gpio->set_output(RPI_V2_GPIO_P1_16, Embedded_GPIO::gpio_state::ON);
 
@@ -45,7 +39,9 @@ RaspberryPi::~RaspberryPi() {
 }
 
 bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status, std::vector<std::pair<int, int> > pressure_controllers,
-                       std::vector<std::pair<int, int> > tension_controllers) {
+                       std::vector<std::pair<int, int> > tension_controllers,
+                       std::vector<arl_datatypes::analog_input_status_data_t> &analog_input_status_vec,
+                       std::vector<std::pair<int, int> > analog_inputs_controllers) {
 
   std::map<int, uint16_t[16]> pressure_storage;
   for (auto const &entity : _pressure_ports) {

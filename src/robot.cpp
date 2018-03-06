@@ -1,7 +1,7 @@
 #include <arl_hw/robot.h>
 
 ARLRobot::ARLRobot() {
-  initialized = false;
+  initialized = true;
 }
 
 ARLRobot::~ARLRobot() {
@@ -10,7 +10,7 @@ ARLRobot::~ARLRobot() {
     return;
   }
 
-  dev->close();
+  dev_->close();
 }
 
 void ARLRobot::initialize(ros::NodeHandle nh) {
@@ -22,7 +22,7 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
   if (driver_config.platform == "raspberry_pi") {
 
 #ifdef FOR_RPI
-    dev = new RaspberryPi();
+    dev_ = new RaspberryPi();
     initialized = true;
     ROS_INFO("RaspberryPi initialized");
 #else
@@ -33,9 +33,9 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
   } else if(driver_config.platform == "linux_platform") {
 
 #ifdef FOR_LINUX_PLATFORM
-    dev = new LinuxPlatform();
+    dev_ = new LinuxPlatform();
     initialized = true;
-    ROS_INFO("Linux spidev and sysfs platform initialized");
+    ROS_INFO("Linux spidev_ and sysfs platform initialized");
 #else
     ROS_FATAL("Driver was not built with Linux Platform support");
     using_fallback_dummy = true;
@@ -44,7 +44,7 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
   } else if(driver_config.platform == "tinkerboard") {
 
 #ifdef FOR_TINKERBOARD
-    dev = new TinkerBoard();
+    dev_ = new TinkerBoard();
     initialized = true;
     ROS_INFO("Asus TinkerBoard initialized");
 #else
@@ -53,22 +53,22 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
 #endif
 
   } else if(driver_config.platform == "dummy") {
-    dev = new Dummy();
+    dev_ = new Dummy();
     initialized = true;
     ROS_INFO("Using Dummy interface");
   } else {
-    dev = new Dummy();
+    dev_ = new Dummy();
     initialized = true;
     ROS_WARN("Platform name not know using Dummy instead");
   }
 
   if(using_fallback_dummy) {
-    dev = new Dummy();
+    dev_ = new Dummy();
     initialized = true;
     ROS_FATAL("Using Fallback Dummy");
   }
 
-  dev->initialize(pressure_controllers_, tension_controllers_);
+  dev_->initialize(pressure_controllers_, tension_controllers_);
 
 
   for (unsigned int i = 0; i < names_.size(); i++) {
@@ -87,7 +87,7 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
     command.controller_port_activation = activation_controllers_[i];
     command_vec.push_back(command);
   }
-  dev->write(command_vec);
+  dev_->write(command_vec);
 
   command_vec.clear();
 
@@ -97,18 +97,18 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
     command.controller_port_activation = activation_controllers_[i];
     command_vec.push_back(command);
   }
-  dev->write(command_vec);
+  dev_->write(command_vec);
 
-
-  status.reserve(names_.size());
+  muscle_status_.reserve(names_.size());
+  analog_input_status_.reserve(analog_input_names_.size());
 
   emergency_stop = false;
 }
 
 void ARLRobot::close() {
-  dev->close();
+  dev_->close();
 
-  ROS_INFO("Device uninitialized");
+  ROS_INFO("dev_ice uninitialized");
 }
 
 void ARLRobot::read(const ros::Time &time, const ros::Duration &period) {
@@ -117,28 +117,46 @@ void ARLRobot::read(const ros::Time &time, const ros::Duration &period) {
     return;
   }
 
-  dev->read(status, pressure_controllers_, tension_controllers_);
+  dev_->read(muscle_status_, pressure_controllers_, tension_controllers_,
+             analog_input_status_, analog_input_controllers_);
 
   /* States of controllers should be in the same order as in the internal
    * datastructure. To ensure this the address (controller port & channel)
    * of the pressure controller of each muscle are used as identifier.
    * If this check fails the address is searched in the remaining muscles.
    */
-  if(status.size() == names_.size()){
-    for (unsigned int i = 0; i < status.size(); i++) {
+  if (muscle_status_.size() == names_.size()) {
+    for (unsigned int i = 0; i < muscle_status_.size(); i++) {
       unsigned int size = pressure_controllers_.size();
       for (unsigned int j = 0; j < size; j++) {
         int guessed_id = (i + j) % size;
-        if (pressure_controllers_[guessed_id].first == status[i].controller_port_pressure.first &&
-            pressure_controllers_[guessed_id].second == status[i].controller_port_pressure.second) {
-          current_pressures_[guessed_id] = status[i].current_pressure;
-          tensions_[guessed_id] = status[i].tension;
+        if (pressure_controllers_[guessed_id].first == muscle_status_[i].controller_port_pressure.first &&
+            pressure_controllers_[guessed_id].second == muscle_status_[i].controller_port_pressure.second) {
+          current_pressures_[guessed_id] = muscle_status_[i].current_pressure;
+          tensions_[guessed_id] = muscle_status_[i].tension;
           break;
         }
       }
     }
   } else {
-    ROS_ERROR("%d muscles are registered on robot but the status of %d were read from hardware", int(names_.size()), int(status.size()));
+    ROS_ERROR("%d muscles are registered on robot but the status of %d were read from hardware", int(names_.size()), int(muscle_status_.size()));
+  }
+
+  if (analog_input_status_.size() == analog_input_names_.size()) {
+    for (unsigned int i = 0; i < analog_input_status_.size(); i++) {
+      unsigned int size = analog_input_controllers_.size();
+      for (unsigned int j = 0; j < size; j++) {
+        int guessed_id = (i + j) % size;
+        if (analog_input_controllers_[guessed_id].first == analog_input_status_[i].controller_port_analog_input.first &&
+            analog_input_controllers_[guessed_id].second == analog_input_status_[i].controller_port_analog_input.second) {
+          analog_inputs_[guessed_id] = analog_input_status_[i].analog_reading;
+          break;
+        }
+      }
+    }
+  } else {
+    ROS_ERROR("%d analog inputs are registered on robot but the status of %d were read from hardware",
+              int(analog_input_names_.size()), int(analog_input_status_.size()));
   }
 
   //ROS_DEBUG("READ with %f hz", 1 / period.toSec());
@@ -154,15 +172,15 @@ void ARLRobot::write(const ros::Time &time, const ros::Duration &period) {
 
   for (unsigned int i = 0; i < names_.size(); i++) {
     //if (activations_[i] != last_activations_[i]) {
-      arl_datatypes::muscle_command_data_t command;
-      command.activation = activations_[i];
-      command.controller_port_activation = activation_controllers_[i];
-      //last_activations_[i] = activations_[i];
-      command_vec.push_back(command);
+    arl_datatypes::muscle_command_data_t command;
+    command.activation = activations_[i];
+    command.controller_port_activation = activation_controllers_[i];
+    //last_activations_[i] = activations_[i];
+    command_vec.push_back(command);
     //}
   }
 
-  dev->write(command_vec);
+  dev_->write(command_vec);
 
   //ROS_DEBUG("WRITE with %f hz", 1 / period.toSec());
 }
@@ -189,11 +207,13 @@ void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
     ROS_DEBUG("Muscle list of size %d found", muscle_list.size());
   }
 
-
   /* define all muscles */
   for (unsigned int i = 0; i < muscle_list.size(); ++i) {
-    if (!muscle_list[i].hasMember("name") || !muscle_list[i].hasMember("initial_value")) {
-      ROS_ERROR("Either name or initial value not defined for %d muscle", i);
+    if (!muscle_list[i].hasMember("name") || !muscle_list[i].hasMember("initial_value") ||
+        !muscle_list[i].hasMember("activation_controller_port") || !muscle_list[i].hasMember("activation_controller_channel") ||
+        !muscle_list[i].hasMember("pressure_controller_port") || !muscle_list[i].hasMember("pressure_controller_channel") ||
+        !muscle_list[i].hasMember("tension_controller_port") || !muscle_list[i].hasMember("tension_controller_channel")) {
+      ROS_ERROR("Definition not complete for muscle %d", i);
       continue;
     }
 
@@ -227,24 +247,64 @@ void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
     catch (...) {
       ROS_ERROR("Unable to parse muscle information");
     }
+  }
 
+  //Try to access all analog input fields
+  XmlRpc::XmlRpcValue analog_inputs;
+  nh.getParam("/analog_inputs", analog_inputs);
+  if (analog_inputs.getType() != XmlRpc::XmlRpcValue::TypeArray) {
+    ROS_ERROR("Parameter analog_inputs should be an array");
+    return;
+  } else {
+    ROS_DEBUG("Analog inputs list of size %d found", analog_inputs.size());
+  }
+
+  for (unsigned int i = 0; i < analog_inputs.size(); ++i) {
+    if (!analog_inputs[i].hasMember("name") || !analog_inputs[i].hasMember("controller_channel") ||
+        !analog_inputs[i].hasMember("controller_port")) {
+      ROS_ERROR("Either name, channel or port not defined for analog input %d", i);
+      continue;
+    }
+
+    try {
+      std::string name = std::string(analog_inputs[i]["name"]);
+      analog_input_names_.push_back(name);
+      analog_input_controllers_.push_back({analog_inputs[i]["controller_port"], analog_inputs[i]["controller_channel"]});
+      analog_inputs_.push_back(0.0);
+    }
+    catch (...) {
+      ROS_ERROR("Unable to parse analog inputs information");
+    }
   }
 }
 
 struct ARLRobot::muscle_info_t ARLRobot::getMuscleInfo(unsigned long index) {
-  struct muscle_info_t ret;
-  ret.name = names_[index];
-  ret.activation = activations_[index];
-  ret.current_pressure = current_pressures_[index];
-  ret.desired_pressure = desired_pressures_[index];
-  ret.tension = tensions_[index];
-  ret.tension_filtered = tensions_filtered_[index];
-  ret.control_mode = control_modes_[index];
+  struct muscle_info_t ret = {
+      .name = names_[index],
+      .activation = activations_[index],
+      .current_pressure = current_pressures_[index],
+      .desired_pressure = desired_pressures_[index],
+      .tension = tensions_[index],
+      .tension_filtered = tensions_filtered_[index],
+      .control_mode = control_modes_[index]
+  };
   return ret;
 }
 
 unsigned long ARLRobot::getNumberOfMuscles() {
   return names_.size();
+}
+
+unsigned long ARLRobot::getNumberOfAnalogInputs() {
+  return analog_input_names_.size();
+}
+
+struct ARLRobot::analog_input_info_t ARLRobot::getAnalogInputInfo(unsigned long index) {
+  struct analog_input_info_t ret = {
+      .name = analog_input_names_[index],
+      .voltage = analog_inputs_[index]
+  };
+  return ret;
 }
 
 void ARLRobot::updateMuscleValues(arl_hw_msgs::MusculatureCommand musculature_command) {
@@ -266,7 +326,7 @@ void ARLRobot::updateMuscleValues(arl_hw_msgs::MusculatureCommand musculature_co
 
 void ARLRobot::executeEmergencyStop() {
   for (unsigned int i = 0; i < names_.size(); i++) {
-    dev->emergency_stop(activation_controllers_[i]);
+    dev_->emergency_stop(activation_controllers_[i]);
     desired_pressures_[i] = 0.0;
     activations_[i] = -1.0;
   }
@@ -274,7 +334,7 @@ void ARLRobot::executeEmergencyStop() {
 
 void ARLRobot::resetMuscles() {
   for (unsigned int i = 0; i < names_.size(); i++) {
-    dev->reset_muscle(activation_controllers_[i]);
+    dev_->reset_muscle(activation_controllers_[i]);
     desired_pressures_[i] = 0.0;
     activations_[i] = -1.0;
   }
@@ -283,7 +343,7 @@ void ARLRobot::resetMuscles() {
 void ARLRobot::resetMuscle(std::string name) {
   for (unsigned int i = 0; i < names_.size(); i++) {
     if (names_[i] == name) {
-      dev->reset_muscle(activation_controllers_[i]);
+      dev_->reset_muscle(activation_controllers_[i]);
       desired_pressures_[i] = 0.0;
       activations_[i] = -1.0;
     }

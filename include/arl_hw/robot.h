@@ -58,6 +58,11 @@ public:
     uint8_t control_mode;
   };
 
+  struct analog_input_info_t {
+    std::string name;
+    double voltage;
+  };
+
   config driver_config;
   bool emergency_stop;
 
@@ -122,27 +127,35 @@ public:
 
   unsigned long getNumberOfMuscles();
 
+  unsigned long getNumberOfAnalogInputs();
+
+  struct analog_input_info_t getAnalogInputInfo(unsigned long index);
+
   void updateMuscleValues(arl_hw_msgs::MusculatureCommand musculature_command);
 
 private:
   arl_interfaces::MuscleInterface muscle_interface; /**< MuscleInterface for usage of MuscleController */
   bool initialized; /**< Saves if robot is already intialized*/
-  CommunicationDevice *dev; /**< Handle for communication interface to robot's hardware */
+  CommunicationDevice *dev_; /**< Handle for communication interface to robot's hardware */
   std::vector<std::string> names_; /**< Internal datastructure which contains all muscle's names */
+  std::vector<std::string> analog_input_names_; /**< Internal datastructure which contains all generic analog input's names */
   std::vector<double> desired_pressures_; /**< Internal datastructure which contains all muscle's desired pressures */
   std::vector<double> current_pressures_; /**< Internal datastructure which contains all muscle's current pressures */
   std::vector<double> tensions_; /**< Internal datastructure which contains all muscle's tensions */
   std::vector<double> activations_; /**< Internal datastructure which contains all normalized muscle's activation values */
   std::vector<double> tensions_filtered_;
+  std::vector<double> analog_inputs_;
   std::vector<uint8_t> control_modes_;
   std::map<std::string, unsigned int> index_map_;
   std::vector<std::pair<int, int> > activation_controllers_; /**< Internal datastructure which contains the address (Controller Port[Chip-Select Id] : Channel on Controller) for every muscle's activation controller*/
   std::vector<std::pair<int,int> > pressure_controllers_; /**< Internal datastructure which contains the address (Controller Port[Chip-Select Id] : Channel on Controller) for every muscle's pressure controller*/
   std::vector<std::pair<int,int> > tension_controllers_; /**< Internal datastructure which contains the address (Controller Port[Chip-Select Id] : Channel on Controller) for every muscle's tension controller*/
+  std::vector<std::pair<int,int> > analog_input_controllers_; /**< Internal datastructure which contains the address (Controller Port[Chip-Select Id] : Channel on Controller) for every generic analog input*/
   std::vector<double> last_activations_; /**< Internal datastructure last activation values to prevent wasting time on setting the same value multiple times */
   std::set<int> pressure_ports; /**< Internal datastructure to store pressure controller ids as unique set */
   std::set<int> tension_ports; /**< Internal datastructure to store tension controller ids as unique set */
-  std::vector<arl_datatypes::muscle_status_data_t> status; /**< Internal datastructure to store the status of registered muscles */
+  std::vector<arl_datatypes::muscle_status_data_t> muscle_status_; /**< Internal datastructure to store the status of registered muscles */
+  std::vector<arl_datatypes::analog_input_status_data_t> analog_input_status_;
 
 };
 

@@ -37,7 +37,9 @@ TinkerBoard::~TinkerBoard() {
 }
 
 bool TinkerBoard::read(std::vector<arl_datatypes::muscle_status_data_t> &status, std::vector<std::pair<int, int> > pressure_controllers,
-                       std::vector<std::pair<int, int> > tension_controllers) {
+                       std::vector<std::pair<int, int> > tension_controllers,
+                       std::vector<arl_datatypes::analog_input_status_data_t> &analog_input_status_vec,
+                       std::vector<std::pair<int, int> > analog_inputs_controllers) {
 
   std::map<int, uint16_t[16]> pressure_storage;
   for (auto const &entity : _pressure_ports) {

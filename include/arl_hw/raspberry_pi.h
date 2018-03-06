@@ -33,8 +33,9 @@ public:
    * Reads current robot state from hardware on a Raspberry Pi
    * @return current state of hardware
    */
-  virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status_vec, std::vector<std::pair<int, int> > pressure_controllers,
-                    std::vector<std::pair<int, int> > tension_controllers);
+  virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &muscle_status_vec, std::vector<std::pair<int, int> > pressure_controllers,
+                    std::vector<std::pair<int, int> > tension_controllers, std::vector<arl_datatypes::analog_input_status_data_t> &analog_input_status_vec,
+                    std::vector<std::pair<int, int> > analog_inputs_controllers);
 
   /**
    * @param command command to issue to hardware on a Raspberry Pi

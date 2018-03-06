@@ -9,6 +9,7 @@
 #include <arl_hw/rt_history.h>
 #include <arl_hw/driver_utils.h>
 #include <arl_hw_msgs/MusculatureCommand.h>
+#include <arl_hw_msgs/AnalogInputArray.h>
 #include <controller_manager/controller_manager.h>
 #include <realtime_tools/realtime_buffer.h>
 #include <std_srvs/Trigger.h>
@@ -18,13 +19,14 @@
 
 static pthread_t controlThread;
 static pthread_attr_t controlThreadAttr;
-ARLRobot robot;
+static ARLRobot robot;
 
-struct MusculatureCommands {
+struct RTBuffer {
   arl_hw_msgs::MusculatureCommand musculature_command_;
+  arl_hw_msgs::AnalogInputArray analog_inputs_;
 };
-realtime_tools::RealtimeBuffer<MusculatureCommands> commands_;
-MusculatureCommands commands_struct_;
+realtime_tools::RealtimeBuffer<RTBuffer> commands_;
+RTBuffer commands_struct_;
 
 void *controlLoop(void *) {
   struct timespec ts = {0, 0};
@@ -46,6 +48,7 @@ void *controlLoop(void *) {
   realtime_tools::RealtimePublisher<std_msgs::Float64> *rtpublisher =
     new realtime_tools::RealtimePublisher<std_msgs::Float64>(nh, "/realtime_jitter", 2);
   realtime_tools::RealtimePublisher<arl_hw_msgs::MusculatureState> musculature_state_publisher(nh, "/musculature/state", 2);
+  realtime_tools::RealtimePublisher<arl_hw_msgs::AnalogInputArray> analog_input_publisher(nh, "/sensor_readings/analog_inputs", 2);
 
   commands_struct_.musculature_command_ = arl_hw_msgs::MusculatureCommand();
   commands_.initRT(commands_struct_);
@@ -162,7 +165,7 @@ void *controlLoop(void *) {
         last_published = end;
       }
 
-      // Publishing musculature state message
+      // Publishing musculature state and analog inputs message
       if (loop_count % 5 == 0) {
         if (musculature_state_publisher.trylock()) {
           musculature_state_publisher.msg_.header.stamp = ros::Time::now();
@@ -184,6 +187,24 @@ void *controlLoop(void *) {
           }
           musculature_state_publisher.unlockAndPublish();
         }
+
+        if (analog_input_publisher.trylock()) {
+          analog_input_publisher.msg_.header.stamp = ros::Time::now();
+          analog_input_publisher.msg_.header.frame_id = "0";
+
+          analog_input_publisher.msg_.inputs.clear();
+          unsigned long analog_input_number = robot.getNumberOfAnalogInputs();
+          for (unsigned long idx = 0; idx < analog_input_number; idx++) {
+            struct ARLRobot::analog_input_info_t analog_input_info = robot.getAnalogInputInfo(idx);
+            arl_hw_msgs::AnalogInput input_msg;
+            input_msg.name = analog_input_info.name;
+            input_msg.voltage = analog_input_info.voltage;
+            analog_input_publisher.msg_.inputs.push_back(input_msg);
+          }
+
+          analog_input_publisher.unlockAndPublish();
+        }
+
       }
 
       driver_utils::checkSevereRTMiss(&last_rt_monitor_time, &rt_cycle_count, rt_loop_monitor_period,

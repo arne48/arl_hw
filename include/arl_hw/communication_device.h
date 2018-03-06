@@ -35,8 +35,9 @@ public:
    * @param tension_controllers
    * @return success of command
    */
-  virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &status_vec, std::vector<std::pair<int, int> > pressure_controllers,
-                    std::vector<std::pair<int, int> > tension_controllers) = 0;
+  virtual bool read(std::vector<arl_datatypes::muscle_status_data_t> &muscle_status_vec, std::vector<std::pair<int, int> > pressure_controllers,
+                    std::vector<std::pair<int, int> > tension_controllers, std::vector<arl_datatypes::analog_input_status_data_t> &analog_input_status_vec,
+                    std::vector<std::pair<int, int> > analog_inputs_controllers) = 0;
 
   /**
    * Writes robot command to hardware

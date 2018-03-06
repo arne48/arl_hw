@@ -1,6 +1,7 @@
 #include <arl_hw/dummy.h>
 #include <map>
 #include <cstring>
+#include <ros/ros.h>
 
 Dummy::Dummy() {
 }
@@ -8,8 +9,9 @@ Dummy::Dummy() {
 Dummy::~Dummy() {
 }
 
-bool Dummy::read(std::vector<arl_datatypes::muscle_status_data_t> &status, std::vector<std::pair<int, int> > pressure_controllers,
-                 std::vector<std::pair<int, int> > tension_controllers) {
+bool Dummy::read(std::vector<arl_datatypes::muscle_status_data_t> &muscle_status, std::vector<std::pair<int, int> > pressure_controllers,
+                 std::vector<std::pair<int, int> > tension_controllers, std::vector<arl_datatypes::analog_input_status_data_t> &analog_input_status,
+                 std::vector<std::pair<int, int> > analog_inputs_controllers) {
 
   //Determine which channels need to be read in order to not have to read whole controller
   std::map<int, std::set<int>> pressure_ports;
@@ -38,14 +40,19 @@ bool Dummy::read(std::vector<arl_datatypes::muscle_status_data_t> &status, std::
     }
   }
 
-  status.clear();
+  muscle_status.clear();
   for (unsigned int i = 0; i < pressure_controllers.size(); i++) {
-    status.push_back(
+    muscle_status.push_back(
       //force wrong order to test correct checking in calling function (robot->read())
       {pressure_controllers[(i - 1) % pressure_controllers.size()], tension_controllers[(i - 1) % pressure_controllers.size()], i,
       tension_storage[tension_controllers[(i - 1) % pressure_controllers.size()].first][tension_controllers[(i - 1) % pressure_controllers.size()].second]});
       //{pressure_controllers[i], tension_controllers[i], i,
       //tension_storage[tension_controllers[i].first][tension_controllers[i].second]});
+  }
+
+  analog_input_status.clear();
+  for(unsigned int i = 0; i < analog_inputs_controllers.size(); i++) {
+    analog_input_status.push_back({analog_inputs_controllers[i], (double) i});
   }
 
   return true;

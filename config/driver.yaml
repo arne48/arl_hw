@@ -6,6 +6,14 @@ publish_every_rt_jitter: false
 
 platform: "raspberry_pi" #[raspberry_pi, linux_platform, tinkerboard, dummy]
 
+analog_inputs:
+  - name: analog_input_1
+    controller_port: 0
+    controller_channel: 0
+  - name: analog_input_2
+    controller_port: 0
+    controller_channel: 1
+
 muscle_list:
   - name: muscle_1
     initial_value: 0.0

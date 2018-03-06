@@ -47,6 +47,11 @@ namespace arl_datatypes {
     double activation;
   };
 
+  struct analog_input_status_data_t {
+    std::pair<int, int> controller_port_analog_input;
+    double analog_reading;
+  };
+
 
 }
 
