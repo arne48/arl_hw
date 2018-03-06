@@ -10,7 +10,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules/
 #             the driver can just be build with either Raspberry Pi
 #             OR Tinker Board support
 #
-OPTION(BUILD_RPI "Build with Raspberry Pi 3 support" OFF)
+OPTION(BUILD_RPI "Build with Raspberry Pi 3 support" ON)
 OPTION(BUILD_LINUX_PLATFORM "Build with Linux spidev and sysfs support" OFF)
 OPTION(BUILD_TINKERBOARD "Build with Asus Tinkerboard support" OFF)
 

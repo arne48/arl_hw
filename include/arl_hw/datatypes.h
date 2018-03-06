@@ -1,5 +1,5 @@
-#ifndef ARL_HW_DATA_H
-#define ARL_HW_DATA_H
+#ifndef ARL_HW_DATATYPES_H
+#define ARL_HW_DATATYPES_H
 
 #include <string>
 
@@ -47,6 +47,9 @@ namespace arl_datatypes {
     double activation;
   };
 
+  /**
+   * Conventional structure for passing the status of a generic analog input
+   */
   struct analog_input_status_data_t {
     std::pair<int, int> controller_port_analog_input;
     double analog_reading;
@@ -56,4 +59,4 @@ namespace arl_datatypes {
 }
 
 
-#endif //ARL_HW_DATA_H
+#endif //ARL_HW_DATATYPES_H

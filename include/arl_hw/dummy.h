@@ -1,6 +1,6 @@
 
-#ifndef DUMMY_H
-#define DUMMY_H
+#ifndef ARL_HW_DUMMY_H
+#define ARL_HW_DUMMY_H
 
 #include <vector>
 #include <arl_hw/communication_device.h>
@@ -40,7 +40,8 @@ public:
    * @return allways true
    */
   virtual bool initialize(std::vector<std::pair<int, int> > pressure_controllers,
-                          std::vector<std::pair<int, int> > tension_controllers);
+                          std::vector<std::pair<int, int> > tension_controllers,
+                          std::vector<std::pair<int, int> > analog_inputs_controllers);
 
   /**
    * Dummy close
@@ -62,4 +63,4 @@ public:
 
 };
 
-#endif // DUMMY_H
+#endif //ARL_HW_DUMMY_H

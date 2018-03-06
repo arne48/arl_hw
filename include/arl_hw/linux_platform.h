@@ -47,7 +47,8 @@ public:
    * @return success of command
    */
   virtual bool initialize(std::vector<std::pair<int, int> > pressure_controllers,
-                          std::vector<std::pair<int, int> > tension_controllers);
+                          std::vector<std::pair<int, int> > tension_controllers,
+                          std::vector<std::pair<int, int> > analog_inputs_controllers);
 
   /**
    * Cleanup and close communication device on a Linux platform using spidev and sysfs

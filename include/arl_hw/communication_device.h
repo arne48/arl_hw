@@ -1,5 +1,5 @@
-#ifndef COMMUNICATION_DEVICE_H
-#define COMMUNICATION_DEVICE_H
+#ifndef ARL_HW_COMMUNICATION_DEVICE_H
+#define ARL_HW_COMMUNICATION_DEVICE_H
 
 #include <vector>
 #include <set>
@@ -53,7 +53,8 @@ public:
    * @return success of command
    */
   virtual bool initialize(std::vector<std::pair<int, int> > pressure_controllers,
-                          std::vector<std::pair<int, int> > tension_controllers) = 0;
+                          std::vector<std::pair<int, int> > tension_controllers,
+                          std::vector<std::pair<int, int> > analog_inputs_controllers) = 0;
 
   /**
    * Cleanup to close communication device
@@ -76,4 +77,4 @@ public:
 
 };
 
-#endif // COMMUNICATION_DEVICE_H
+#endif //ARL_HW_COMMUNICATION_DEVICE_H

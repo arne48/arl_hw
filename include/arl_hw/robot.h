@@ -1,5 +1,5 @@
-#ifndef ROBOT_H
-#define ROBOT_H
+#ifndef ARL_HW_ROBOT_H
+#define ARL_HW_ROBOT_H
 
 
 #include <ros/ros.h>
@@ -159,4 +159,4 @@ private:
 
 };
 
-#endif // ROBOT_H
+#endif //ARL_HW_ROBOT_H

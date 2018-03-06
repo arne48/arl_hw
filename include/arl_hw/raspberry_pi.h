@@ -1,5 +1,5 @@
-#ifndef ARL_RASPBERRY_PI_H
-#define ARL_RASPBERRY_PI_H
+#ifndef ARL_HW_RASPBERRY_PI_H
+#define ARL_HW_RASPBERRY_PI_H
 
 #include <vector>
 #include <map>
@@ -48,7 +48,8 @@ public:
    * @return success of command
    */
   virtual bool initialize(std::vector<std::pair<int, int> > pressure_controllers,
-                          std::vector<std::pair<int, int> > tension_controllers);
+                          std::vector<std::pair<int, int> > tension_controllers,
+                          std::vector<std::pair<int, int> > analog_inputs_controllers);
 
   /**
    * Cleanup and close communication device on a Raspberry Pi
@@ -77,7 +78,7 @@ private:
   RaspberryPi_SPI *_spi;
   RaspberryPi_GPIO *_gpio;
 
-  std::map<int, std::set<int>> _pressure_ports;
+  std::map<int, std::set<int>> _analog_input_ports;
   std::map<int, std::set<int>> _tension_ports;
 
   int _gpios[16] = {RPI_V2_GPIO_P1_24, RPI_V2_GPIO_P1_26, RPI_V2_GPIO_P1_32, RPI_V2_GPIO_P1_36, RPI_V2_GPIO_P1_07,
@@ -90,4 +91,4 @@ private:
 
 };
 
-#endif // ARL_RASPBERRY_PI_H
+#endif //ARL_HW_RASPBERRY_PI_H

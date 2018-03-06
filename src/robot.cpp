@@ -68,7 +68,7 @@ void ARLRobot::initialize(ros::NodeHandle nh) {
     ROS_FATAL("Using Fallback Dummy");
   }
 
-  dev_->initialize(pressure_controllers_, tension_controllers_);
+  dev_->initialize(pressure_controllers_, tension_controllers_, analog_input_controllers_);
 
 
   for (unsigned int i = 0; i < names_.size(); i++) {

@@ -1,7 +1,6 @@
 #include <arl_hw/dummy.h>
 #include <map>
 #include <cstring>
-#include <ros/ros.h>
 
 Dummy::Dummy() {
 }
@@ -63,7 +62,8 @@ bool Dummy::write(std::vector<arl_datatypes::muscle_command_data_t> &command) {
 }
 
 bool Dummy::initialize(std::vector<std::pair<int, int> > pressure_controllers,
-                       std::vector<std::pair<int, int> > tension_controllers) {
+                       std::vector<std::pair<int, int> > tension_controllers,
+                       std::vector<std::pair<int, int> > analog_inputs_controllers) {
 
   std::map<int, std::set<int>> tension_ports;
   for (std::pair<int, int> controller : tension_controllers) {

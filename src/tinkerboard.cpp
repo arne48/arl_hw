@@ -82,7 +82,8 @@ bool TinkerBoard::write(std::vector<arl_datatypes::muscle_command_data_t> &comma
 }
 
 bool TinkerBoard::initialize(std::vector<std::pair<int, int> > pressure_controllers,
-                             std::vector<std::pair<int, int> > tension_controllers) {
+                             std::vector<std::pair<int, int> > tension_controllers,
+                             std::vector<std::pair<int, int> > analog_inputs_controllers) {
 
   //Determine which channels need to be read in order to not have to read whole controller
   for (std::pair<int, int> controller : pressure_controllers) {

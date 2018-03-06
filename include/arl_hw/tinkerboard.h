@@ -1,5 +1,5 @@
-#ifndef TINKERBOARD_H
-#define TINKERBOARD_H
+#ifndef ARL_HW_TINKERBOARD_H
+#define ARL_HW_TINKERBOARD_H
 
 #include <vector>
 #include <map>
@@ -48,7 +48,8 @@ public:
    * @return success of command
    */
   virtual bool initialize(std::vector<std::pair<int, int> > pressure_controllers,
-                          std::vector<std::pair<int, int> > tension_controllers);
+                          std::vector<std::pair<int, int> > tension_controllers,
+                          std::vector<std::pair<int, int> > analog_inputs_controllers);
 
   /**
    * Cleanup and close communication device on a Raspberry Pi
@@ -90,4 +91,4 @@ private:
 
 };
 
-#endif // TINKERBOARD_H
+#endif //ARL_HW_TINKERBOARD_H
