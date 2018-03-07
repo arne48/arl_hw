@@ -66,15 +66,22 @@ bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status,
 
   status.clear();
   for (unsigned int i = 0; i < pressure_controllers.size(); i++) {
+    //V
+    double voltage = (10.0 / 32768.0) * (int16_t)analog_input_storage[pressure_controllers[i].first][pressure_controllers[i].second];
+
+    //MPa
+    double pressure = (1.0 / 4.0) * (voltage - 1.0);
     status.push_back({pressure_controllers[i], tension_controllers[i],
-                      analog_input_storage[pressure_controllers[i].first][pressure_controllers[i].second],
+                      pressure,
                       tension_storage[tension_controllers[i].first][tension_controllers[i].second]});
   }
 
   analog_input_status.clear();
   for (unsigned int i = 0; i < analog_inputs_controllers.size(); i++) {
+    //V
+    double voltage = (10.0 / 32768.0) * (int16_t)analog_input_storage[analog_inputs_controllers[i].first][analog_inputs_controllers[i].second];
     analog_input_status.push_back({analog_inputs_controllers[i],
-                                   analog_input_storage[analog_inputs_controllers[i].first][analog_inputs_controllers[i].second]});
+                                   voltage});
   }
 
   return true;

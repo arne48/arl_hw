@@ -77,7 +77,7 @@ private:
   LinuxPlatform_SPI *_spi;
   LinuxPlatform_GPIO *_gpio;
 
-  std::map<int, std::set<int>> _pressure_ports;
+  std::map<int, std::set<int>> _analog_input_ports;
   std::map<int, std::set<int>> _tension_ports;
 
   int _gpios[16] = {419, 420, 468, 479, 433, 478, 432, 431, 404, 469, 327, 403, 462, 463, 477, 476};

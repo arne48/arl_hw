@@ -78,7 +78,7 @@ private:
   TinkerBoard_SPI *_spi;
   TinkerBoard_GPIO *_gpio;
 
-  std::map<int, std::set<int>> _pressure_ports;
+  std::map<int, std::set<int>> _analog_input_ports;
   std::map<int, std::set<int>> _tension_ports;
 
   int _gpios[16] = {24, 26, 32, 36,
