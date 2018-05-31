@@ -20,12 +20,12 @@ RaspberryPi::RaspberryPi() {
   }
 
   //DAC-Latch
-  _gpio->set_mode(RPI_V2_GPIO_P1_18, Embedded_GPIO::gpio_mode::OUTPUT);
-  _gpio->set_output(RPI_V2_GPIO_P1_18, Embedded_GPIO::gpio_state::OFF);
+  _gpio->set_mode(_dac_latch_port, Embedded_GPIO::gpio_mode::OUTPUT);
+  _gpio->set_output(_dac_latch_port, Embedded_GPIO::gpio_state::OFF);
 
   //ADC-Convst
-  _gpio->set_mode(RPI_V2_GPIO_P1_16, Embedded_GPIO::gpio_mode::OUTPUT);
-  _gpio->set_output(RPI_V2_GPIO_P1_16, Embedded_GPIO::gpio_state::ON);
+  _gpio->set_mode(_adc_conversion_port, Embedded_GPIO::gpio_mode::OUTPUT);
+  _gpio->set_output(_adc_conversion_port, Embedded_GPIO::gpio_state::ON);
 
 }
 
