@@ -14,7 +14,7 @@ RaspberryPi::RaspberryPi() {
   _lcell = new AD7730(_spi);
 
   //Chip-Selects
-  for(uint8_t idx = 0; idx < 16; idx++) {
+  for(uint8_t idx = 0; idx < CHIP_NUMBER; idx++) {
     _gpio->set_mode(_gpios[idx], Embedded_GPIO::gpio_mode::OUTPUT);
     _gpio->set_output(_gpios[idx], Embedded_GPIO::gpio_state::ON);
   }

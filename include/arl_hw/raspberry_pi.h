@@ -11,9 +11,6 @@
 #include <arl_hw/ad7616.h>
 #include <arl_hw/ad7730.h>
 
-
-#define BLOW_OFF_VOLTAGE 0.0
-
 /**
  * Implementation of CommunicationDevice base class which communicates to hardware using a Raspberry Pi
  */
@@ -81,7 +78,7 @@ private:
   std::map<int, std::set<int>> _analog_input_ports;
   std::map<int, std::set<int>> _tension_ports;
 
-  int _gpios[6] = {RPI_V2_GPIO_P1_36, RPI_V2_GPIO_P1_40, RPI_V2_GPIO_P1_07,
+  int _gpios[CHIP_NUMBER] = {RPI_V2_GPIO_P1_36, RPI_V2_GPIO_P1_40, RPI_V2_GPIO_P1_07,
                    RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_38, RPI_V2_GPIO_P1_37};
 
   int _dac_latch_port = RPI_V2_GPIO_P1_35;

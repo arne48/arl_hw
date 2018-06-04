@@ -11,9 +11,6 @@
 #include <arl_hw/ad7616.h>
 #include <arl_hw/ad7730.h>
 
-
-#define BLOW_OFF_VOLTAGE 0.0
-
 /**
  * Implementation of CommunicationDevice base class which communicates to hardware using a Asus Tinkerboard
  */
@@ -81,13 +78,10 @@ private:
   std::map<int, std::set<int>> _analog_input_ports;
   std::map<int, std::set<int>> _tension_ports;
 
-  int _gpios[16] = {24, 26, 32, 36,
-                    7, 11, 13, 15,
-                    31, 33, 35, 37,
-                    3, 5, 8, 10};
+  int _gpios[CHIP_NUMBER] = {36, 40, 7, 13, 38, 37};
 
-  int _dac_latch_port = 18;
-  int _adc_conversion_port = 16;
+  int _dac_latch_port = 35;
+  int _adc_conversion_port = 11;
 
 };
 

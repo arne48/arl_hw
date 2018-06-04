@@ -10,9 +10,6 @@
 #include <arl_hw/ad7616.h>
 #include <arl_hw/ad7730.h>
 
-
-#define BLOW_OFF_VOLTAGE 0.0
-
 /**
  * Implementation of CommunicationDevice base class which communicates to hardware using a spidev and sysfs
  */
@@ -80,7 +77,7 @@ private:
   std::map<int, std::set<int>> _analog_input_ports;
   std::map<int, std::set<int>> _tension_ports;
 
-  int _gpios[16] = {419, 420, 468, 479, 433, 478, 432, 431, 404, 469, 327, 403, 462, 463, 477, 476};
+  int _gpios[CHIP_NUMBER] = {419, 420, 468, 479, 433, 478};
 
   int _dac_latch_port = 405;
   int _adc_conversion_port = 471;

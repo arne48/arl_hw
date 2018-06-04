@@ -14,7 +14,7 @@ TinkerBoard::TinkerBoard() {
   _lcell = new AD7730(_spi);
 
   //Chip-Selects
-  for(uint8_t idx = 0; idx < 16; idx++) {
+  for(uint8_t idx = 0; idx < CHIP_NUMBER; idx++) {
     tinkerboard_set_gpio_mode(_gpios[idx], OUTPUT);
     tinkerboard_set_gpio_state(_gpios[idx], HIGH);
   }
