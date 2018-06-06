@@ -45,20 +45,20 @@ bool RaspberryPi::read(std::vector<arl_datatypes::muscle_status_data_t> &status,
 
   std::map<int, uint16_t[16]> analog_input_storage;
   for (auto const &entity : _analog_input_ports) {
-    for (int channel = 0; channel < 8; channel++) {
-      uint32_t read_data = _adc->getMeasurementPair(_gpios[entity], channel);
-      analog_input_storage[entity][channel] = (uint16_t) ((read_data & 0xFFFF0000) >> 16);
-      analog_input_storage[entity][channel + 8] = (uint16_t) (read_data & 0x0000FFFF);
+    for (int channel : entity.second) {
+      uint32_t read_data = _adc->getMeasurementPair(_gpios[entity.first], channel);
+      analog_input_storage[entity.first][channel] = (uint16_t) ((read_data & 0xFFFF0000) >> 16);
+      analog_input_storage[entity.first][channel + 8] = (uint16_t) (read_data & 0x0000FFFF);
     }
   }
 
 
   std::map<int, uint32_t[16]> tension_storage;
   for (auto const &entity : _tension_ports) {
-    _lcell->readData(_gpios[entity], _lcell_buffer);
-    for (int channel = 0; channel < 16; channel++) {
+    _lcell->readData(_gpios[entity.first], _lcell_buffer);
+    for (int channel : entity.second) {
 
-      tension_storage[entity][channel] =
+      tension_storage[entity.first][channel] =
         _lcell_buffer[(3 * channel)] << 16 | _lcell_buffer[(3 * channel) + 1] << 8 | _lcell_buffer[(3 * channel) + 2];
     }
 
@@ -102,15 +102,15 @@ bool RaspberryPi::initialize(std::vector<std::pair<int, int> > pressure_controll
 
   //Determine which channels need to be read in order to not have to read whole controller
   for (std::pair<int, int> controller : pressure_controllers) {
-    _analog_input_ports.insert(controller.first);
+    _analog_input_ports[controller.first].insert(controller.second % 8);
   }
 
   for (std::pair<int, int> controller : analog_inputs_controllers) {
-    _analog_input_ports.insert(controller.first);
+    _analog_input_ports[controller.first].insert(controller.second % 8);
   }
 
   for (std::pair<int, int> controller : tension_controllers) {
-    _tension_ports.insert(controller.first);
+    _tension_ports[controller.first].insert(controller.second);
   }
 
   return true;
