@@ -288,7 +288,7 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  thread_param.sched_priority = 80;
+  thread_param.sched_priority = sched_get_priority_max(SCHED_FIFO);
   ret = pthread_attr_setschedparam(&controlThreadAttr, &thread_param);
   if (ret) {
     printf("pthread setschedparam failed\n");
