@@ -4,7 +4,7 @@ halt_on_slow_rt_loop: false
 
 publish_every_rt_jitter: false
 
-platform: "dummy" #[raspberry_pi, linux_platform, tinkerboard, dummy]
+platform: "raspberry_pi" #[raspberry_pi, linux_platform, tinkerboard, dummy]
 
 analog_inputs:
   - name: analog_input_1
