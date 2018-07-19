@@ -11,9 +11,6 @@
 #include <arl_hw/ad7616.h>
 #include <arl_hw/ad7730.h>
 
-
-#define BLOW_OFF_VOLTAGE 0.0
-
 /**
  * Implementation of CommunicationDevice base class which communicates to hardware using a Raspberry Pi
  */
@@ -81,13 +78,11 @@ private:
   std::map<int, std::set<int>> _analog_input_ports;
   std::map<int, std::set<int>> _tension_ports;
 
-  int _gpios[16] = {RPI_V2_GPIO_P1_24, RPI_V2_GPIO_P1_26, RPI_V2_GPIO_P1_32, RPI_V2_GPIO_P1_36, RPI_V2_GPIO_P1_07,
-                    RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_31, RPI_V2_GPIO_P1_33,
-                    RPI_V2_GPIO_P1_35, RPI_V2_GPIO_P1_37, RPI_V2_GPIO_P1_03, RPI_V2_GPIO_P1_05, RPI_V2_GPIO_P1_08,
-                    RPI_V2_GPIO_P1_10};
+  int _gpios[CHIP_NUMBER] = {RPI_V2_GPIO_P1_36, RPI_V2_GPIO_P1_40, RPI_V2_GPIO_P1_07,
+                   RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_38, RPI_V2_GPIO_P1_37};
 
-  int _dac_latch_port = RPI_GPIO_P1_18;
-  int _adc_conversion_port = RPI_GPIO_P1_16;
+  int _dac_latch_port = RPI_V2_GPIO_P1_35;
+  int _adc_conversion_port = RPI_V2_GPIO_P1_11;
 
 };
 

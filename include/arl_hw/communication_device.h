@@ -5,6 +5,9 @@
 #include <set>
 #include <arl_hw/datatypes.h>
 
+#define CHIP_NUMBER 6
+#define BLOW_OFF_VOLTAGE 0.0
+
 /**
  * Important: The driver addresses controllers by the scheme [port(0-7):channel(0-15)]
  * this has to be taken into account.

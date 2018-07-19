@@ -14,18 +14,18 @@ RaspberryPi::RaspberryPi() {
   _lcell = new AD7730(_spi);
 
   //Chip-Selects
-  for(uint8_t idx = 0; idx < 16; idx++) {
+  for(uint8_t idx = 0; idx < CHIP_NUMBER; idx++) {
     _gpio->set_mode(_gpios[idx], Embedded_GPIO::gpio_mode::OUTPUT);
     _gpio->set_output(_gpios[idx], Embedded_GPIO::gpio_state::ON);
   }
 
   //DAC-Latch
-  _gpio->set_mode(RPI_V2_GPIO_P1_18, Embedded_GPIO::gpio_mode::OUTPUT);
-  _gpio->set_output(RPI_V2_GPIO_P1_18, Embedded_GPIO::gpio_state::OFF);
+  _gpio->set_mode(_dac_latch_port, Embedded_GPIO::gpio_mode::OUTPUT);
+  _gpio->set_output(_dac_latch_port, Embedded_GPIO::gpio_state::OFF);
 
   //ADC-Convst
-  _gpio->set_mode(RPI_V2_GPIO_P1_16, Embedded_GPIO::gpio_mode::OUTPUT);
-  _gpio->set_output(RPI_V2_GPIO_P1_16, Embedded_GPIO::gpio_state::ON);
+  _gpio->set_mode(_adc_conversion_port, Embedded_GPIO::gpio_mode::OUTPUT);
+  _gpio->set_output(_adc_conversion_port, Embedded_GPIO::gpio_state::ON);
 
 }
 

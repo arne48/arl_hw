@@ -17,8 +17,6 @@
 
 #define RATE 500 //Hz
 
-static pthread_t controlThread;
-static pthread_attr_t controlThreadAttr;
 static ARLRobot robot;
 
 struct RTBuffer {
@@ -55,13 +53,6 @@ void *controlLoop(void *) {
 
   // Publish one-time before entering real-time to pre-allocate message vectors
   driver_utils::publishDiagnostics(publisher, driver_stats);
-
-  // Set real-time scheduler
-  struct sched_param thread_param = {0};
-  int policy = SCHED_FIFO;
-  thread_param.sched_priority = sched_get_priority_max(policy);
-  pthread_setschedparam(pthread_self(), policy, &thread_param);
-
 
   //Set update rate with ROS datatype in HZ
   ros::Rate rate(RATE);
@@ -258,9 +249,9 @@ void musculatureCommandCallback(const arl_hw_msgs::MusculatureCommand::ConstPtr&
 int main(int argc, char **argv) {
 
   // Keep the kernel from swapping us out
-  if (mlockall(MCL_CURRENT | MCL_FUTURE) < 0) {
-    perror("mlockall");
-    return -1;
+  if(mlockall(MCL_CURRENT|MCL_FUTURE) == -1) {
+    printf("mlockall failed\n");
+    exit(EXIT_FAILURE);
   }
 
   //Initialize ROS communication
@@ -272,13 +263,55 @@ int main(int argc, char **argv) {
   ros::Subscriber musculature_sub = nh.subscribe("/musculature/command", 2, musculatureCommandCallback);
 
   //Start thread
-  int rv;
-  if ((rv = pthread_create(&controlThread, &controlThreadAttr, controlLoop, 0)) != 0) {
-    ROS_FATAL("Unable to create control thread: rv = %d", rv);
+
+  // Set real-time scheduler parameters
+  pthread_t controlThread;
+  pthread_attr_t controlThreadAttr;
+  struct sched_param thread_param;
+  int ret;
+
+  ret = pthread_attr_init(&controlThreadAttr);
+  if (ret) {
+    printf("init pthread attributes failed\n");
+    exit(EXIT_FAILURE);
+  }
+
+  ret = pthread_attr_setstacksize(&controlThreadAttr, PTHREAD_STACK_MIN);
+  if (ret) {
+    printf("pthread setstacksize failed\n");
+    exit(EXIT_FAILURE);
+  }
+
+  ret = pthread_attr_setschedpolicy(&controlThreadAttr, SCHED_FIFO);
+  if (ret) {
+    printf("pthread setschedpolicy failed\n");
+    exit(EXIT_FAILURE);
+  }
+
+  thread_param.sched_priority = sched_get_priority_max(SCHED_FIFO);
+  ret = pthread_attr_setschedparam(&controlThreadAttr, &thread_param);
+  if (ret) {
+    printf("pthread setschedparam failed\n");
+    exit(EXIT_FAILURE);
+  }
+
+  ret = pthread_attr_setinheritsched(&controlThreadAttr, PTHREAD_EXPLICIT_SCHED);
+  if (ret) {
+    printf("pthread setinheritsched failed\n");
+    exit(EXIT_FAILURE);
+  }
+
+  // Start control thread
+  ret = pthread_create(&controlThread, &controlThreadAttr, controlLoop, NULL);
+  if (ret) {
+    ROS_FATAL("Unable to create control thread: rv = %d", ret);
     exit(EXIT_FAILURE);
   }
 
   ros::spin();
-  pthread_join(controlThread, (void **) &rv);
+
+  ret = pthread_join(controlThread, NULL);
+  if (ret)
+    printf("join pthread failed\n");
 
 }
