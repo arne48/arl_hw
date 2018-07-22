@@ -251,29 +251,30 @@ void ARLRobot::getConfigurationFromParameterServer(ros::NodeHandle nh) {
 
   //Try to access all analog input fields
   XmlRpc::XmlRpcValue analog_inputs;
-  nh.getParam("/analog_inputs", analog_inputs);
-  if (analog_inputs.getType() != XmlRpc::XmlRpcValue::TypeArray) {
-    ROS_ERROR("Parameter analog_inputs should be an array");
-    return;
-  } else {
-    ROS_DEBUG("Analog inputs list of size %d found", analog_inputs.size());
-  }
-
-  for (unsigned int i = 0; i < analog_inputs.size(); ++i) {
-    if (!analog_inputs[i].hasMember("name") || !analog_inputs[i].hasMember("controller_channel") ||
-        !analog_inputs[i].hasMember("controller_port")) {
-      ROS_ERROR("Either name, channel or port not defined for analog input %d", i);
-      continue;
+  if(nh.getParam("/analog_inputs", analog_inputs)) {
+    if (analog_inputs.getType() != XmlRpc::XmlRpcValue::TypeArray) {
+      ROS_ERROR("Parameter analog_inputs should be an array");
+      return;
+    } else {
+      ROS_DEBUG("Analog inputs list of size %d found", analog_inputs.size());
     }
 
-    try {
-      std::string name = std::string(analog_inputs[i]["name"]);
-      analog_input_names_.push_back(name);
-      analog_input_controllers_.push_back({analog_inputs[i]["controller_port"], analog_inputs[i]["controller_channel"]});
-      analog_inputs_.push_back(0.0);
-    }
-    catch (...) {
-      ROS_ERROR("Unable to parse analog inputs information");
+    for (unsigned int i = 0; i < analog_inputs.size(); ++i) {
+      if (!analog_inputs[i].hasMember("name") || !analog_inputs[i].hasMember("controller_channel") ||
+          !analog_inputs[i].hasMember("controller_port")) {
+        ROS_ERROR("Either name, channel or port not defined for analog input %d", i);
+        continue;
+      }
+
+      try {
+        std::string name = std::string(analog_inputs[i]["name"]);
+        analog_input_names_.push_back(name);
+        analog_input_controllers_.push_back({analog_inputs[i]["controller_port"], analog_inputs[i]["controller_channel"]});
+        analog_inputs_.push_back(0.0);
+      }
+      catch (...) {
+        ROS_ERROR("Unable to parse analog inputs information");
+      }
     }
   }
 }
