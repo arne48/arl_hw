@@ -276,12 +276,6 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  ret = pthread_attr_setstacksize(&controlThreadAttr, PTHREAD_STACK_MIN);
-  if (ret) {
-    printf("pthread setstacksize failed\n");
-    exit(EXIT_FAILURE);
-  }
-
   ret = pthread_attr_setschedpolicy(&controlThreadAttr, SCHED_FIFO);
   if (ret) {
     printf("pthread setschedpolicy failed\n");
